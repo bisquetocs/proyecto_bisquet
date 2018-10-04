@@ -7,7 +7,7 @@ from django.utils import timezone
 from .models import Empleado, Empresa, Rol
 
 class IndexView(generic.ListView):
-    template_name = 'empleados/index.html'
+    template_name = 'empleados/empleados.html'
     context_object_name = 'empleados_list'
 
     def get_queryset(self):
