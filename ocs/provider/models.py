@@ -4,7 +4,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
-class provedor(models.Model):
+class proveedor(models.Model):
     razon_social = models.CharField(max_length=200)
     rfc = models.CharField(max_length=13)
     nombre = models.CharField(max_length=100)
