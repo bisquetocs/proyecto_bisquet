@@ -43,8 +43,13 @@ class RegisterView(generic.ListView):
         return Group.objects.all()
 def vote(request):
     try:
-        empleado = User.objects.get(username=request.POST['inputUser'])
+        usr = request.POST['inputUser']
+        employee = User.objects.get(username = usr)
     except (KeyError, User.DoesNotExist):
         return HttpResponseRedirect(reverse('registro'))
     else:
+        employee_group = User.groups.through.objects.get(user = employee)
+        grp = request.POST['inputRol']
+        employee_group.group = Group.objects.get(name = grp)
+        employee_group.save()
         return HttpResponseRedirect(reverse('empleados'))
