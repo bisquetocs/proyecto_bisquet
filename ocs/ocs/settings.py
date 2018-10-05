@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'empleados',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,7 +54,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ocs.urls'
-
+LOGIN_REDIRECT_URL = '/profile'
+LOGOUT_REDIRECT_URL = '/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
