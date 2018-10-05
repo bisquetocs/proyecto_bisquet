@@ -120,39 +120,30 @@
             </div>
           </div>
 
-          <h2>Section title</h2>
-          <div class="table-responsive">
-            <table class="table table-striped table-sm display" id="table_id">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                  <th>Header</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for item in empleados_list %}
-                <tr>
-                  <td>{{ item.nombre_empresa }}</td>
-                  <td>{{ item.razon_social }}</td>
-                  <td>ipsum</td>
-                  <td>dolor</td>
-                  <td>sit</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
+          <h2>Registrar Empleado</h2>
+          <form action="{% url 'empleados:vote' %}" method="post">
+            {% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputUser">Username</label>
+                <input type="text" class="form-control" id="inputUser" name="inputUser" placeholder="Username">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputRol">Rol</label>
+                <select id="inputRol" name="inputRol" class="form-control">
+                  <option selected>Elige un rol</option>
+                  {% for g in groups_list%}
+                      <option>{{ g.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
 
-                <a href="registro">
-                  <button type="button" class="btn btn-primary">Registrar empleado</button>
-                </a>
-          </div>
+            <button type="submit" class="btn btn-primary">Registrar</button>
+          </form>
         </main>
       </div>
     </div>
-
 
     <!-- Bootstrap core JavaScript
     ================================================== -->
@@ -172,11 +163,5 @@
     <!-- Graphs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 
-
-    <script>
-    $(document).ready( function () {
-      $('#table_id').DataTable();
-    } );
-    </script>
 
   </body>
