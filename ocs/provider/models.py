@@ -14,7 +14,7 @@ class proveedor(models.Model):
     fecha_registro = models.DateTimeField('date published')
 
     def __str__(self):
-        return self
+        return self.rfc
 
     def __getattr__(self, attrname):
         aux = self.attrname
