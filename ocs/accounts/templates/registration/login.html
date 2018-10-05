@@ -1,34 +1,60 @@
-{% block content %}
+{% load static %}
 
-{% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
-{% endif %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-{% if next %}
-    {% if user.is_authenticated %}
-    <p>Your account doesn't have access to this page. To proceed,
-    please login with an account that has access.</p>
-    {% else %}
-    <p>Please login to see this page.</p>
-    {% endif %}
-{% endif %}
 
-<form method="post" action="{% url 'login' %}">
-{% csrf_token %}
+    <title>Signin Template for Bootstrap</title>
 
-<div>
-  <td>{{ form.username.label_tag }}</td>
-  <td>{{ form.username }}</td>
-</div>
-<div>
-  <td>{{ form.password.label_tag }}</td>
-  <td>{{ form.password }}</td>
-</div>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
-<div>
-  <input type="submit" value="login" />
-  <input type="hidden" name="next" value="{{ next }}" />
-</div>
-</form>
+    <!-- Custom styles for this template -->
+    <link rel="stylesheet" type="text/css" href="{% static 'registration/signin.css' %}">
 
-{% endblock %}
+  </head>
+
+  <body class="text-center">
+
+    <form class="form-signin" method="post" action="{% url 'login' %}">
+
+      {% if next %}
+          {% if user.is_authenticated %}
+          <p>No tienes permiso para acceder a esta zona.</p>
+          {% else %}
+          <p>Por favor, inicia sesión para ver esta página.</p>
+          {% endif %}
+      {% endif %}
+
+      <img class="mb-4" src="{% static 'registration/OCS.png' %}" alt="OCS">
+      <h1 class="h3 mb-3 font-weight-normal">Inicia sesión</h1>
+
+      {% if form.errors %}
+      <p>El usuario o la contraseña ingresados no coinciden </p>
+      {% endif %}
+      {% csrf_token %}
+
+      {% csrf_token %}
+                <table class="table">
+                    <tr>
+                        <td><input id="id_username" name="username"
+                                   type="text" class="form-control"></td>
+                    </tr>
+                    <tr>
+                        <td><input id="id_password" name="password"
+                                   type="password" class="form-control"></td>
+                    </tr>
+                </table>
+
+
+      <input class="btn btn-lg btn-primary btn-block" type="submit" value="Entrar"></button>
+      <input type="hidden" name="next" value="{{ next }}" />
+      <p class="mt-5 mb-3 text-muted">&copy; 2018</p>
+    </form>
+  </body>
+</html>
