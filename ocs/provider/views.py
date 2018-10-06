@@ -8,10 +8,21 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 
+from .forms import RegisterProviderForm
 
-def RegisterView(request):
-    return render(request, 'provider/register.html')
+
 
 def registerProvider(request):
-    rfc = request.POST['rfc']
-    return 0
+    if request.method == 'POST':
+        register_form = RegisterProviderForm(request.POST)
+        if register_form.is_valid():
+            result = register_form.process_registration()
+            return render(request, 'provider/register.html', {'Success_mesage': result})
+
+    else:
+        register_form = RegisterProviderForm()
+    return render(request, 'provider/register.html', {'register_form': register_form})
+    #razon_social = request.POST
+    #rfc = request.POST['rfc']
+    #p = proveedor(question_text="What's new?", pub_date=timezone.now())
+    #return 0

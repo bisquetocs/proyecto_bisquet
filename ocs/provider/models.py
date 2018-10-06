@@ -11,6 +11,7 @@ class proveedor(models.Model):
     domicilio = models.TextField(max_length=200)
     mision = models.TextField(max_length=4000)
     vision = models.TextField(max_length=4000)
+    activo = models.BooleanField()
     fecha_registro = models.DateTimeField('date published')
 
     def __str__(self):
