@@ -38,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'accounts',
+    'franchise',
+    'products',
+    'provider',
 ]
 
 MIDDLEWARE = [
@@ -51,7 +55,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ocs.urls'
-
+LOGIN_REDIRECT_URL = '/profile'
+LOGOUT_REDIRECT_URL = '/'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
