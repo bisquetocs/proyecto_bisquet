@@ -3,6 +3,7 @@ from provider.models import proveedor
 from django.utils import timezone
 
 class RegisterProviderForm(forms.Form):
+    
     razon_social = forms.CharField(label='Razón social', max_length=200)
     rfc = forms.CharField(label='RFC', max_length=13)
     nombre = forms.CharField(label='Nombre', max_length=100)
