@@ -36,6 +36,9 @@
               <div class="input-group">
                 <input type="text" class="form-control" id="username" name="username" placeholder="Username"  required>
               </div>
+              {% if userAlreadyExists == 1 %}
+              <p class="text-danger">El usuario ya existe, por favor escoge otro</p>
+              {% endif %}
             </div>
 
             <div class="row">
@@ -55,6 +58,9 @@
             <div class="mb-3">
               <label for="email">Email </label>
               <input type="email" class="form-control" id="email" name="email" placeholder="nombre@ejemplo.com">
+              {% if emailAlreadyExists == 1 %}
+              <p class="text-danger">El correo ya existe, por favor escoge otro</p>
+              {% endif %}
             </div>
 
             <div class="row">

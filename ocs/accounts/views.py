@@ -20,12 +20,7 @@ from django.db import models
 
 # Create your views here.
 def home(request):
-    template = loader.get_template('home/index.html')
-    return HttpResponse(template.render({}, request))
-
-def logout(request):
-    tempate = loader.get_template('registration/logged_out.html')
-    return HttpResponse(template.render({}, request))
+    return render(request, 'home/index.html')
 
 @login_required
 def profile(request):
@@ -50,16 +45,20 @@ def registerUser(request):
 
     nu = User(username=uname, first_name=fName, last_name=lName, email=em)
     nu.set_password(passwd)
-    usertest = User
+    userTest = User
+
+    # Check if username already exists
     try:
-        usertest = User.objects.get(username=nu.username)
-    except usertest.DoesNotExist:
+        userTest = User.objects.get(username=nu.username)
+    except userTest.DoesNotExist:
         nu.save()
         g = Group.objects.get(name=role)
         g.user_set.add(nu)
         g.save()
-
+        # Redirect to home
         return HttpResponseRedirect('/')
-        # Redireccionar a home
     else:
-        return HttpResponse('EL usuario ya existe')
+        # Reload the form if the user already exists
+        return render(request, 'registration/register.html', {
+            'userAlreadyExists' : 1
+        })
