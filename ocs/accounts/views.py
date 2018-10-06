@@ -43,6 +43,16 @@ def registerUser(request):
     cpasswd = request.POST['confpass']
     role = request.POST['userRole']
 
+    if (uname==''  or fName=='' or lName=='' or em=='' or passwd=='' or cpasswd=='' or role==''):
+        return render(request, 'registration/register.html', {
+            'emptyField' : 1
+        })
+
+    if (passwd != cpasswd):
+        return render(request, 'registration/register.html', {
+            'passConfirmError' : 1
+        })
+
     nu = User(username=uname, first_name=fName, last_name=lName, email=em)
     nu.set_password(passwd)
     userTest = User

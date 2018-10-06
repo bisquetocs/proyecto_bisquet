@@ -24,6 +24,9 @@
       <div class="py-5 text-center">
         <img class="mb-4" src="{% static 'registration/OCS.png' %}" alt="OCS">
         <h2>Regístrate</h2>
+        {% if emptyField == 1 %}
+        <p class="text-danger">Es necesario llenar todos los campos para hacer el registro</p>
+        {% endif %}
       </div>
 
       <div class="row">
@@ -57,7 +60,7 @@
 
             <div class="mb-3">
               <label for="email">Email </label>
-              <input type="email" class="form-control" id="email" name="email" placeholder="nombre@ejemplo.com">
+              <input type="email" class="form-control" id="email" name="email" placeholder="nombre@ejemplo.com" required>
               {% if emailAlreadyExists == 1 %}
               <p class="text-danger">El correo ya existe, por favor escoge otro</p>
               {% endif %}
@@ -74,23 +77,28 @@
                 <input type="password" class="form-control" id="confpass" name="confpass" placeholder="" value="" required>
               </div>
             </div>
+            <div class="py-5 text-center">
+              {% if passConfirmError == 1 %}
+              <p class="text-danger">Las contraseñas no coinciden</p>
+              {% endif %}
+            </div>
 
             <hr class="mb-4">
             <p>Seleccione su rol en la pagina<p>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="userRole" id="userRole1" value="Administrador de empresa" checked>
+              <input class="form-check-input" type="radio" name="userRole" id="userRole1" value="Administrador de empresa" required>
               <label class="form-check-label" for="userRole1">
                 Proveedor
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="userRole" id="userRole2" value="Dueño de franquicia">
+              <input class="form-check-input" type="radio" name="userRole" id="userRole2" value="Dueño de franquicia" required>
               <label class="form-check-label" for="userRole2">
                 Franquicia
               </label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="userRole" id="userRole3" value="Empleado generico">
+              <input class="form-check-input" type="radio" name="userRole" id="userRole3" value="Empleado generico" required>
               <label class="form-check-label" for="userRole3">
                 Empleado
               </label>
