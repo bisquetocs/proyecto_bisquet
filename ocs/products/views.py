@@ -1,6 +1,5 @@
 # Create your views here.
 from django.http import HttpResponse, HttpResponseRedirect
-from .models import proveedor
 from django.template import loader
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render
@@ -10,7 +9,7 @@ from django.utils import timezone
 
 from .forms import RegisterProductForm
 
-
+from .models import proveedor
 
 def registerProduct(request):
     if request.method == 'POST':
