@@ -14,12 +14,6 @@ from django.views import generic
 from django.urls import reverse
 from django.db import models
 
-
-
-
-
-
-
 # Create your views here.
 def home(request):
     return render(request, 'home/index.html')
@@ -60,7 +54,14 @@ def vote(request):
         return HttpResponseRedirect(reverse('empleados'))
 
 def register(request):
-    return render(request, 'registration/register.html')
+    if request.method == 'POST':
+        register_form = RegisterProductForm(request.POST)
+        if register_form.is_valid():
+            result = register_form.process_registration()
+            return render(request, 'products/register.html', {'Success_mesage': result})
+    else:
+        return render(request, 'registration/register.html')
+
 
 def registerUser(request):
     uname = request.POST['username']
