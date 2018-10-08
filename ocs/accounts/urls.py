@@ -3,7 +3,7 @@ from django.urls import path, include
 from . import views
 from django.contrib.auth.forms import UserCreationForm
 
-app_name = 'accounts'
+#app_name = 'accounts'
 urlpatterns = [
     path('register/', views.register, name='register'),
     path('register/check', views.registerUser, name='registerUser'),
