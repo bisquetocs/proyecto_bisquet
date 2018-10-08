@@ -1,0 +1,6 @@
+<form action="{% url 'provider:register' %}" method="post">
+    {% csrf_token %}
+    {{ register_form }}
+    <input type="submit" value="Submit">
+</form>
+{{ Success_mesage }}
