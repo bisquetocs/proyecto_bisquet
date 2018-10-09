@@ -1,5 +1,5 @@
 from django import forms
-from provider.models import proveedor
+from provider.models import Provider
 from django.utils import timezone
 
 class RegisterProviderForm(forms.Form):
@@ -10,7 +10,7 @@ class RegisterProviderForm(forms.Form):
     mision = forms.CharField(label='Misión', max_length=4000)
     vision = forms.CharField(label='Visión', max_length=4000)
     def process_registration(self, user):
-        p = proveedor(razon_social=self.data['razon_social'],
+        p = Provider(razon_social=self.data['razon_social'],
                         rfc=self.data['rfc'],
                         nombre=self.data['nombre'],
                         domicilio=self.data['domicilio'],

@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterProviderForm
 
-from .models import proveedor
+from .models import Provider
 
 @login_required
 def registerProvider(request):
