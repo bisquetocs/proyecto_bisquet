@@ -8,8 +8,7 @@ from django.views import generic
 from django.utils import timezone
 
 from .forms import RegisterProductForm
-
-from .models import Provider
+from provider.models import Provider
 
 def registerProduct(request):
     if request.method == 'POST':

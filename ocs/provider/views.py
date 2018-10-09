@@ -1,4 +1,3 @@
-# Create your views here.
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.http import Http404
@@ -7,7 +6,6 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-
 
 from .forms import RegisterProviderForm
 
@@ -24,7 +22,3 @@ def registerProvider(request):
     else:
         register_form = RegisterProviderForm()
     return render(request, 'provider/register.html', {'register_form': register_form})
-    #razon_social = request.POST
-    #rfc = request.POST['rfc']
-    #p = proveedor(question_text="What's new?", pub_date=timezone.now())
-    #return 0
