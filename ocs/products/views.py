@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from .forms import RegisterProductForm
 
-from .models import proveedor
+from .models import Provider
 
 def registerProduct(request):
     if request.method == 'POST':
