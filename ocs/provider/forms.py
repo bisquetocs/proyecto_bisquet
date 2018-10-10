@@ -1,6 +1,8 @@
 from django import forms
-from provider.models import Provider
 from django.utils import timezone
+
+from provider.models import Provider
+from accounts.models import OCSUser
 
 class RegisterProviderForm(forms.Form):
     razon_social = forms.CharField(label='Razón social', max_length=200)
@@ -10,6 +12,7 @@ class RegisterProviderForm(forms.Form):
     mision = forms.CharField(label='Misión', max_length=4000)
     vision = forms.CharField(label='Visión', max_length=4000)
     def process_registration(self, user):
+        u = OCSUser.objects.get(user = user)
         p = Provider(razon_social=self.data['razon_social'],
                         rfc=self.data['rfc'],
                         nombre=self.data['nombre'],
@@ -20,4 +23,6 @@ class RegisterProviderForm(forms.Form):
                         fecha_registro=timezone.now(),
                         id_usuario=user)
         p.save()
+        u.id_provider = p
+        u.save()
         return 'Registro exitoso'

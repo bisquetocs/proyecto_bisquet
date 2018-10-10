@@ -16,11 +16,6 @@ from django.db import models
 from accounts.models import OCSUser
 
 
-
-
-
-
-
 # Create your views here.
 def home(request):
     return render(request, 'home/index.html')

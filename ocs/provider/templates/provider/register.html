@@ -1,6 +1,16 @@
 <form action="{% url 'provider:register' %}" method="post">
     {% csrf_token %}
+
+    <div>
+      {% for field in register_form %}
+        <p>field {% field %}</p>
+      {% endfor %}
+    </div>
+
     {{ register_form }}
+
+
+
     <input type="submit" value="Submit">
 </form>
 {{ Success_mesage }}
