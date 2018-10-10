@@ -27,8 +27,8 @@ def home(request):
 @login_required
 def profile(request):
     current_user = request.user
-
-    return render(request, 'profiles/dashboard.html', {
+    myuser = OCSUser.objects.get(user = current_user)
+    return render(request, 'profiles/dashboard.html', {'myuser':myuser
     ##    'name' : current_user.get_full_name(),
     ##    'rol' : current_user.groups.all()[0]
         })

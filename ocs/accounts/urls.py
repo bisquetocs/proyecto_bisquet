@@ -13,4 +13,6 @@ urlpatterns = [
     path('empleados/registro/', views.RegisterView.as_view(), name='registro'),
     path('vote/', views.vote, name='vote'),
     path('', views.home, name='home'),
+    path('../provider/',include('provider.urls')),
+    path('../franchise/',include('franchise.urls')),
 ]
