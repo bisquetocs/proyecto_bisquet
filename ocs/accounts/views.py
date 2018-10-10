@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.urls import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -18,7 +18,11 @@ from accounts.models import OCSUser
 
 # Create your views here.
 def home(request):
-    return render(request, 'home/index.html')
+    if request.user.is_authenticated:
+        return redirect('../accounts/profile')
+    else:
+        return render(request, 'home/index.html')
+
 
 @login_required
 def profile(request):
