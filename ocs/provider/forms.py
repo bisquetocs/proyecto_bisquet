@@ -5,12 +5,39 @@ from provider.models import Provider
 from accounts.models import OCSUser
 
 class RegisterProviderForm(forms.Form):
-    razon_social = forms.CharField(label='Razón social', max_length=200)
-    rfc = forms.CharField(label='RFC', max_length=13)
-    nombre = forms.CharField(label='Nombre', max_length=100)
-    domicilio = forms.CharField(label='Domicilio', max_length=200)
-    mision = forms.CharField(label='Misión', max_length=4000)
-    vision = forms.CharField(label='Visión', max_length=4000)
+    razon_social = forms.CharField(label='Razón social',max_length=200,
+        widget=forms.Textarea(
+            attrs={
+                'class':'form-control',
+                'rows':'2',
+            }))
+    rfc = forms.CharField(label='RFC', max_length=13,
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control',
+            }))
+    nombre = forms.CharField(label='Nombre', max_length=100,
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control',
+            }))
+    domicilio = forms.CharField(label='Domicilio', max_length=200,
+        widget=forms.TextInput(
+            attrs={
+                'class':'form-control',
+            }))
+    mision = forms.CharField(label='Misión', max_length=4000,
+        widget=forms.Textarea(
+            attrs={
+                'class':'form-control',
+                'rows':'3',
+            }))
+    vision = forms.CharField(label='Visión', max_length=4000,
+        widget=forms.Textarea(
+            attrs={
+                'class':'form-control',
+                'rows':'3',
+            }))
     def process_registration(self, user):
         u = OCSUser.objects.get(user = user)
         p = Provider(razon_social=self.data['razon_social'],
