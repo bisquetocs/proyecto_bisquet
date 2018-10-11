@@ -1,28 +1,28 @@
 {% load static %}
 
-<link rel="stylesheet" type="text/css" href="{% static 'profiles/dashboard.css' %}">
 
   <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <title>Dashboard OCS</title>
-
+    <title>OCS</title>
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'profiles/dashboard.css' %}">
     <!-- Custom styles for this template -->
   </head>
 
   <body>
+
+
     <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
-      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Company name</a>
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">NAME
+      </a>
       <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
-          <a class="nav-link" href="#">Sign out</a>
+          <a class="nav-link" href="{% url 'logout' %}"><span class="fa fa-sign-out"></span> Cerrar sesión</a>
         </li>
       </ul>
     </nav>
@@ -101,16 +101,30 @@
                   Year-end sale
                 </a>
               </li>
+              {% if myuser.id_provider == None and myuser.id_sucursal == None%}
+                <p>No perteneces a ningun proveedor</p>
+                <a class="btn btn-primary btn-sm" href="{% url 'provider:register' %}">
+                  Registrar proveedor
+                </a>
+                <p>No perteneces a ninguna franquicia</p>
+                <a class="btn btn-primary btn-sm" href="{% url 'franchise:register' %}">
+                  Registrar franquicia
+                </a>
+              {% elif myuser.id_provider != None %}
+                <p>Perteneces a la compañia: {{myuser.id_provider}}</p>
+              {% elif myuser.id_franchise != None %}
+                <p>Perteneces a la franquicia: {{myuser.id_franchise}}</p>
+              {% endif %}
             </ul>
           </div>
         </nav>
 
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
           <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Dashboard</h1>
+            <h1 class="h2">Inicio</h1>
             <div class="btn-toolbar mb-2 mb-md-0">
               <div class="btn-group mr-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Realizar pedido</button>
                 <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
               </div>
               <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">

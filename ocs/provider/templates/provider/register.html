@@ -1,6 +1,35 @@
-<form action="{% url 'provider:register' %}" method="post">
-    {% csrf_token %}
-    {{ register_form }}
-    <input type="submit" value="Submit">
-</form>
-{{ Success_mesage }}
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>OCS - Registro de proveedor</title>
+    <link rel="icon" type="image/png" href="{% static 'OCS.png' %}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class='container' style='max-width:750px'>
+      <br><br>
+      <center><img class="" src="{% static 'OCS.png' %}" alt="OCS"></center>
+      <form action="{% url 'provider:register' %}" method="post">
+        {% csrf_token %}
+        {% for field in register_form %}
+        <div class='form-group'>
+          <label for="{{ field.name }}">{{ field.label }}</label>
+          {{ field }}
+        </div>
+        {% endfor %}
+        <br>
+        <center><button type="submit" class="btn btn-success btn-lg btn-block">Registrar proveedor</button></center>
+      </form>
+      {{ Success_mesage }}
+    </div>
+    <footer class="my-5 pt-5 text-muted text-center text-small">
+      <br>
+      <p class="mb-1">&copy; 2018 OCS</p>
+
+    </footer>
+  </body>
+</html>

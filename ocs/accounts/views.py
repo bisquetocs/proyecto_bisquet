@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.urls import *
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
@@ -9,21 +9,22 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import redirect
-from django.views import generic
-from django.urls import reverse
 from django.db import models
 from accounts.models import OCSUser
 
 # Create your views here.
 def home(request):
-    return render(request, 'home/index.html')
+    if request.user.is_authenticated:
+        return redirect('../accounts/profile')
+    else:
+        return render(request, 'home/index.html')
+
 
 @login_required
 def profile(request):
     current_user = request.user
-
-    return render(request, 'profiles/dashboard.html', {
+    myuser = OCSUser.objects.get(user = current_user)
+    return render(request, 'profiles/dashboard.html', {'myuser':myuser
     ##    'name' : current_user.get_full_name(),
     ##    'rol' : current_user.groups.all()[0]
         })

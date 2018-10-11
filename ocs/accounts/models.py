@@ -6,8 +6,8 @@ from franchise.models import Franchise
 # Create your models here.
 class OCSUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    id_provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
-    id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
+    id_provider = models.ForeignKey(Provider, on_delete=models.CASCADE, null=True)
+    id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE, null=True)
     phone = models.CharField(max_length=10)
     rfc = models.CharField(max_length=12)
     num_ss = models.CharField(max_length=12)
