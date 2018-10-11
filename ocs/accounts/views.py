@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from django.views import generic
 from django.urls import reverse
 from django.db import models
+from accounts.models import OCSUser
 
 # Create your views here.
 def home(request):
@@ -94,6 +95,8 @@ def registerUser(request):
         g = Group.objects.get(name=role)
         g.user_set.add(nu)
         g.save()
+        ocsUser = OCSUser(user=nu)
+        ocsUser.save()
         # Redirect to home
         return HttpResponseRedirect('/')
     else:

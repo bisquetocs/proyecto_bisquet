@@ -3,10 +3,10 @@ import datetime
 
 from django.db import models
 from django.utils import timezone
-from provider.models import proveedor
+from provider.models import Provider
 
-class producto(models.Model):
-    id_proveedor = models.ForeignKey(proveedor, on_delete=models.CASCADE)
+class Product(models.Model):
+    id_provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=100)
     descripcion = models.CharField(max_length=200)
     activo = models.BooleanField()

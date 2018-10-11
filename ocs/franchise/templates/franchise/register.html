@@ -1,0 +1,6 @@
+<form action="{% url 'franchise:register' %}" method="post">
+    {% csrf_token %}
+    {{ register_form }}
+    <input type="submit" value="Submit">
+</form>
+{{ Success_mesage }}
