@@ -9,9 +9,6 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import redirect
-from django.views import generic
-from django.urls import reverse
 from django.db import models
 from accounts.models import OCSUser
 
