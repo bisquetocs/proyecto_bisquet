@@ -18,21 +18,22 @@ def registerFranchise(request):
         register_form = RegisterFranchiseForm(request.POST)
         if register_form.is_valid():
             result = register_form.process_registration(request.user)
-            return render(request, 'franchise/register.html', {'Success_mesage': result})
+            return render(request, 'franchise/home.html')
     else:
         u = OCSUser.objects.get(user = request.user)
         if u.id_franchise!=None:
-            return redirect('../franchise/infoFranchise')
+            return redirect('../franchise/home')
         elif u.id_franchise==None and (u.id_provider!=None):
-            return redirect('../provider/infoProvider')
+            return redirect('../provider/home')
         else:
             register_form = RegisterFranchiseForm()
             return render(request, 'franchise/register.html', {'register_form': register_form})
+
 @login_required
-def infoFranchise(request):
+def home(request):
     u = OCSUser.objects.get(user = request.user)
     if u.id_franchise!=None:
-        return render(request, 'franchise/info.html')
+        return render(request, 'franchise/home.html', {'usuario':u,})
     else:
         return redirect('../')
 

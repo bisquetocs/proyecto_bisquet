@@ -1,0 +1,23 @@
+{% extends "empleados/misEmpleados.html" %}
+
+{% block registrarEmpleado %}
+<form action="{% url 'linkEmployee' %}" method="post">
+  {% csrf_token %}
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label for="inputUser">Username</label>
+      <input type="text" class="form-control" id="inputUser" name="inputUser" placeholder="Username">
+    </div>
+    <div class="form-group col-md-6">
+      <label for="inputRol">Rol</label>
+      <select id="inputRol" name="inputRol" class="form-control">
+        <option selected>Elige un rol</option>
+        {% for g in groups_list %}
+            <option>{{ g.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Registrar</button>
+</form>
+{% endblock registrarEmpleado %}

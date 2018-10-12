@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib import messages
 
 from accounts.models import OCSUser
 from .forms import RegisterProductForm
@@ -18,6 +19,7 @@ def registerProduct(request):
         register_form = RegisterProductForm(request.POST)
         if register_form.is_valid():
             result = register_form.process_registration(u.id_provider)
+            messages.info(request, 'Producto registrado')
             return redirect(reverse('provider:home'))
     else:
         register_form = RegisterProductForm()

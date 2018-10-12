@@ -10,7 +10,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
 from django.db import models
-from accounts.models import OCSUser
+from django.db.models import Q
+from accounts.models import OCSUser, IsProviderOrFranchise
 
 # Create your views here.
 def home(request):
@@ -27,7 +28,7 @@ def registerUser(request):
         em = request.POST['email']
         passwd = request.POST['password']
         cpasswd = request.POST['confpass']
-        role = request.POST['userRole']
+        role = "Empleado generico"
         if (uname==''  or fName=='' or lName=='' or em=='' or passwd=='' or cpasswd=='' or role==''):
             return render(request, 'registration/register.html', {
                 'emptyField' : 1
@@ -44,12 +45,13 @@ def registerUser(request):
             userTest = User.objects.get(username=nu.username)
         except userTest.DoesNotExist:
             nu.save()
-            #g = Group.objects.get(name=role)
-            #g.user_set.add(nu)
-            #g.save()
+            g = Group.objects.get(name=role)
+            g.user_set.add(nu)
+            g.save()
             ocsUser = OCSUser(user=nu)
             ocsUser.save()
             # Redirect to home
+            messages.info(request, 'Registro exitoso')
             return redirect('../')
         else:
             # Reload the form if the user already exists
@@ -69,26 +71,59 @@ def locate(request):
     elif ocs_user.id_franchise != None:
         return redirect(reverse('franchise:home'))
 
-
-class EmpleadosView(generic.ListView):
-    template_name = 'empleados/empleados.html'
-    context_object_name = 'empleados_list'
-    def get_queryset(self):
-        return User.objects.all()
-class RegisterView(generic.ListView):
-    template_name = 'empleados/reg_empleado.html'
-    context_object_name = 'groups_list'
-    def get_queryset(self):
-        return Group.objects.all()
-def vote(request):
-    try:
-        usr = request.POST['inputUser']
-        employee = User.objects.get(username = usr)
-    except (KeyError, User.DoesNotExist):
-        return HttpResponseRedirect(reverse('registro'))
+@login_required
+def misEmpleados(request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    if ocs_user.id_provider is None:
+        #Es franchise
+        aux = "franchise/home.html"
+        empleados_list = OCSUser.objects.filter(id_franchise=ocs_user.id_franchise)
+    elif ocs_user.id_franchise is None:
+        #Es provider
+        aux = "provider/home.html"
+        empleados_list = OCSUser.objects.filter(id_provider=ocs_user.id_provider)
     else:
-        employee_group = User.groups.through.objects.get(user = employee)
-        grp = request.POST['inputRol']
-        employee_group.group = Group.objects.get(name = grp)
-        employee_group.save()
-        return HttpResponseRedirect(reverse('empleados'))
+        #Somos nosotros viendo a todos los que están registrados
+        empleados_list = OCSUser.objects.all()
+    return render(request, 'empleados/misEmpleados.html', {'usuario':ocs_user,'empleados_list':empleados_list,'aux':aux,})
+
+@login_required
+def registrarEmpleado(request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    if request.method == 'POST':
+        try:
+            employee = User.objects.get(username = request.POST['inputUser'])
+        except (KeyError, User.DoesNotExist):
+            messages.info(request, 'El usuario no existe')
+            return redirect('../myEmployees')
+        else:
+            ocs_employee = OCSUser.objects.get(user = employee)
+            if ocs_employee.id_provider == None and ocs_employee.id_franchise == None:
+                employee_group = User.groups.through.objects.get(user = employee)
+                grp = request.POST['inputRol']
+                ocs_employee.id_provider = ocs_user.id_provider
+                ocs_employee.save()
+                employee_group.group = Group.objects.get(name = grp)
+                employee_group.save()
+                messages.info(request, 'Registro exitoso!')
+            else:
+                messages.info(request, 'El empleado ya está registrado')
+            return redirect('../myEmployees')
+    else:
+        if ocs_user.id_provider is None: #Es franchise
+            aux = "franchise/home.html"
+            rolesf = IsProviderOrFranchise.objects.exclude(is_franchise=True)
+            roles = Group.objects.filter(~Q(id__in=rolesf))
+            empleados_list = OCSUser.objects.filter(id_franchise=ocs_user.id_franchise)
+        elif ocs_user.id_franchise is None: #Es provider
+            aux = "provider/home.html"
+            rolesp = IsProviderOrFranchise.objects.exclude(is_provider=True)
+            roles = Group.objects.filter(~Q(id__in=rolesp))
+            empleados_list = OCSUser.objects.filter(id_provider=ocs_user.id_provider)
+        return render(request, 'empleados/registrarEmpleado.html', {'usuario':ocs_user,'empleados_list':empleados_list,'groups_list':roles,'aux':aux,})
+
+
+
+
+
+#

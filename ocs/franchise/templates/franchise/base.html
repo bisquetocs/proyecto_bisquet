@@ -17,20 +17,7 @@
 <body>
   <div id="navbar">
     {% block navbar %}
-    <div class="container">
-      <br><br>
-      <p>HOME</p>
-      <a href="{% url 'login' %}">Iniciar sesion</a>
-      <a href="{% url 'registerUser' %}">Registrarse</a>
-      <br>
-      {% if messages %}
-      <ul class="messages">
-          {% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-          {% endfor %}
-      </ul>
-      {% endif %}
-    </div>
+    
     {% endblock navbar %}
   </div>
 

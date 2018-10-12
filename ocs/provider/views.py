@@ -19,7 +19,7 @@ def registerProvider(request):
         register_form = RegisterProviderForm(request.POST)
         if register_form.is_valid():
             result = register_form.process_registration(request.user)
-            return render(request, 'provider/home.html', {'Success_mesage': result})
+            return render(request, 'provider/home.html')
     else:
         u = OCSUser.objects.get(user = request.user)
         if u.id_provider!=None:
@@ -29,12 +29,14 @@ def registerProvider(request):
         else:
             register_form = RegisterProviderForm()
             return render(request, 'provider/register.html', {'register_form': register_form})
+
 @login_required
 def home(request):
     u = OCSUser.objects.get(user = request.user)
-    p = Product.objects.all()
+    prov = Provider.objects.get(id = u.id_provider.id)
+    prod = Product.objects.filter(id_provider = prov.id)
     if u.id_provider!=None:
-        return render(request, 'provider/home.html', {'usuario':u, 'productos':p,})
+        return render(request, 'provider/home.html', {'usuario':u, 'productos':prod,})
     else:
         return redirect('../')
 

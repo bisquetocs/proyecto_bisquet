@@ -1,0 +1,46 @@
+{% extends "provider/base.html" %}
+
+{% block title %}OCS - {{usuario.id_franchise.nombre}}{% endblock title %}
+
+{% block navbar %}
+<nav class="navbar navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{% url 'home' %}">{{usuario.id_franchise.nombre}}</a>
+  <ul class="navbar-nav px-3">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'logout' %}"><span class="fa fa-sign-out"></span> Cerrar sesión</a>
+    </li>
+  </ul>
+</nav>
+{% endblock navbar %}
+
+{% block sidebar %}
+{% endblock sidebar %}
+
+{% block content %}
+<div class="container text-center">
+  <h5>Perteneces a la franquicia: </h5>
+  <h4>{{usuario.id_franchise.nombre}}</h4>
+</div>
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <a class="btn btn-primary" href="/accounts/myEmployees/">
+        Empleados
+      </a>
+    </div>
+    <div class="col">
+
+    </div>
+  </div>
+  <br><br>
+  <div class="row">
+    <div class="col">
+      {% block extras %}
+      {% endblock extras %}
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}

@@ -6,13 +6,10 @@ from django.contrib.auth.forms import UserCreationForm
 #app_name = 'accounts'
 urlpatterns = [
     path('', views.home, name='home'),
+    path('registerUser/', views.registerUser, name='registerUser'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('locate/', views.locate, name='locate'),
-    path('registerUser', views.registerUser, name='registerUser'),
-
-
-    path('empleados/', views.EmpleadosView.as_view(), name='empleados'),
-    path('empleados/registro/', views.RegisterView.as_view(), name='registro'),
-    path('vote/', views.vote, name='vote'),
+    path('myEmployees/', views.misEmpleados, name='myEmployees'),
+    path('linkEmployee/', views.registrarEmpleado, name='linkEmployee'),
 
 ]

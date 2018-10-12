@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from provider.models import Provider
 from franchise.models import Franchise
 
@@ -12,3 +12,9 @@ class OCSUser(models.Model):
     rfc = models.CharField(max_length=12)
     num_ss = models.CharField(max_length=12)
     direccion = models.CharField(max_length=200)
+
+class IsProviderOrFranchise(models.Model):
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    is_provider = models.BooleanField(null=False, default=False)
+    is_franchise = models.BooleanField(null=False, default=False)
+    id_admin = models.BooleanField(null=False, default=False)
