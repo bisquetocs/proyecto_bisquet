@@ -54,7 +54,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ocs.urls'
-LOGIN_REDIRECT_URL = '/profile'
+LOGIN_REDIRECT_URL = '/locate'
 LOGOUT_REDIRECT_URL = '/'
 TEMPLATES = [
     {

@@ -1,0 +1,72 @@
+{% extends "home/index.html" %}
+{% block title %}OCS{% endblock title %}
+
+{% block navbar %}
+<nav class="navbar navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" href="{% url 'locate' %}">Order Control System</a>
+  <ul class="navbar-nav px-3">
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'logout' %}"><span class="fa fa-sign-out"></span> Cerrar sesión</a>
+    </li>
+  </ul>
+</nav>
+{% endblock navbar %}
+
+{% block sidebar %}
+{% endblock sidebar %}
+
+{% block content %}
+<div class="container text-center" style="margin-top:70px">
+  <div class="row" style="padding-top:30px">
+    <div class="col">
+      <h1>Bienvenido {{ usuario.username }}</h1>
+    </div>
+  </div>
+  <div class="row" style="padding-top:20px">
+    <div class="col">
+      <h2>Al parecer aún no cuentas con un rol definido</h2>
+    </div>
+  </div>
+  <div class="row" style="padding-top:10px">
+    <div class="col">
+      <h2>¿Qué es lo que eres?</h2>
+    </div>
+  </div>
+  <div class="row justify-content-center text-center" style="padding-top:10px">
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+      <div class="jumbotron">
+        <h3 class="display-4">Proveedor</h3>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" href="{% url 'provider:register' %}">
+          Registrar proveedor
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+      <div class="jumbotron">
+        <h3 class="display-4">Franquicia</h3>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" href="{% url 'franchise:register' %}">
+          Registrar franquicia
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+      <div class="jumbotron">
+        <h1 class="display-4">Empleado</h1>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          Soy empleado
+        </a>
+        <div class="collapse" id="collapseExample" style="padding-top:10px">
+          <p>Por favor espera en lo que tu cuenta es activada.</p>
+          <p>Si no sucede, pídele a tu contratador que active tu cuenta.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block footer %}
+{% endblock footer %}

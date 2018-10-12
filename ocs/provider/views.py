@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterProviderForm
 from accounts.models import OCSUser
+from products.models import Product
 
 from .models import Provider
 
@@ -18,21 +19,22 @@ def registerProvider(request):
         register_form = RegisterProviderForm(request.POST)
         if register_form.is_valid():
             result = register_form.process_registration(request.user)
-            return render(request, 'provider/register.html', {'Success_mesage': result})
+            return render(request, 'provider/home.html', {'Success_mesage': result})
     else:
         u = OCSUser.objects.get(user = request.user)
         if u.id_provider!=None:
-            return redirect('../provider/infoProvider')
+            return redirect('../provider/home')
         elif u.id_provider==None and (u.id_franchise!=None):
-            return redirect('../franchise/infoFranchise')
+            return redirect('../franchise/home')
         else:
             register_form = RegisterProviderForm()
             return render(request, 'provider/register.html', {'register_form': register_form})
 @login_required
-def infoProvider(request):
+def home(request):
     u = OCSUser.objects.get(user = request.user)
+    p = Product.objects.all()
     if u.id_provider!=None:
-        return render(request, 'provider/info.html')
+        return render(request, 'provider/home.html', {'usuario':u, 'productos':p,})
     else:
         return redirect('../')
 

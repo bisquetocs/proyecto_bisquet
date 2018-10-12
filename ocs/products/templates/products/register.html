@@ -1,6 +1,16 @@
+{% extends "provider/home.html" %}
+
+
+{% block extras %}
 <form action="{% url 'products:register' %}" method="post">
-    {% csrf_token %}
-    {{ register_form }}
-    <input type="submit" value="Submit">
+  {% csrf_token %}
+  {% for field in register_form %}
+  <div class='form-group'>
+    <label for="{{ field.name }}">{{ field.label }}</label>
+    {{ field }}
+  </div>
+  {% endfor %}
+  <br>
+  <center><button type="submit" class="btn btn-success btn-lg btn-block">Registrar producto</button></center>
 </form>
-{{ Success_mesage }}
+{% endblock extras %}
