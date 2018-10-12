@@ -1,3 +1,7 @@
+# Creted by:
+#
+#
+#
 from django import forms
 from django.utils import timezone
 
@@ -39,6 +43,7 @@ class RegisterProviderForm(forms.Form):
                 'class':'form-control',
                 'rows':'3',
             }))
+    #input, desc, output
     def process_registration(self, user):
         u = user
         ocsu = OCSUser.objects.get(user = user)
