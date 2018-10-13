@@ -16,7 +16,7 @@
 
           <input class="form-control" type="text" placeholder="" value="" name="link_code">
           {% if success == 1 %}
-          <p class="text-success">¡EXITO! Te has relacionado con el proveedor: </p>
+          <p class="text-success">¡EXITO! Te has relacionado con {{ franchise_name }}</p>
           {% endif %}
           {% if success == 0 %}
           <p class="text-danger">El código "{{ code }}" no coincide con ninguno registrado, ingrésalo de nuevo o consulta a tu proveedor.</p>

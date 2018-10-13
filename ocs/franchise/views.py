@@ -61,6 +61,7 @@ def link_provider(request):
             'usuario' : u,
             'success' : success,
             'code' : code,
+            'franchise_name' : l.id_franchise.nombre
             })
 
 
