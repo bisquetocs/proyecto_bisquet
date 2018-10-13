@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterFranchiseForm
+from provider.models import LinkWithF
 from accounts.models import OCSUser
 
 from .models import Franchise
@@ -39,9 +40,27 @@ def home(request):
 
 @login_required
 def link_provider(request):
+    success = ''
     u = OCSUser.objects.get(user = request.user)
+    code = ''
+    if request.method == 'POST':
+        code = request.POST['link_code']
+        try:
+            l = LinkWithF.objects.get(link_code=code)
+            if l.used:
+                success = 2
+            else:
+                l.id_franchise = u.id_franchise
+                l.active = True
+                l.used = True
+                l.save()
+                success = 1
+        except:
+            success = 0
     return render(request, 'link_provider/link_with_provider.html', {
             'usuario' : u,
+            'success' : success,
+            'code' : code,
             })
 
 
