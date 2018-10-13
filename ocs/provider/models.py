@@ -2,6 +2,7 @@ import datetime
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from franchise.models import Franchise
 
 class Provider(models.Model):
     razon_social = models.CharField(max_length=200)
@@ -17,3 +18,10 @@ class Provider(models.Model):
 
     def __str__(self):
         return self.rfc
+
+class LinkWithF(models.Model):
+    id_provider = models.ForeignKey(Provider, on_delete=models.CASCADE, blank=True, null=True)
+    id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE, blank=True, null=True)
+    link_code = models.CharField(max_length=12)
+    active = models.BooleanField()
+    used = models.BooleanField()
