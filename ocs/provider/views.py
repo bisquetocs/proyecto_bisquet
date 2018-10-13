@@ -40,6 +40,10 @@ def home(request):
     else:
         return redirect('../')
 
+@login_required
+def link_code(request):
+    u = OCSUser.objects.get(user = request.user)
+    return render(request, 'link_code/generate_link.html')
 
 
 
