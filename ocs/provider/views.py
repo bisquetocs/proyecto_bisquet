@@ -11,7 +11,14 @@ from .forms import RegisterProviderForm
 from accounts.models import OCSUser
 from products.models import Product
 
-from .models import Provider
+from .models import Provider, LinkWithF
+
+import string
+import random
+
+def code_generator(size=12, chars=string.ascii_uppercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 @login_required
 def registerProvider(request):
@@ -43,31 +50,18 @@ def home(request):
 @login_required
 def link_code(request):
     u = OCSUser.objects.get(user = request.user)
-    return render(request, 'link_code/generate_link.html')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#
+    code = ''
+    if request.method == 'POST':
+        code = code_generator()
+        l = LinkWithF(link_code=code, used=False, active=False)
+        try:
+            lTest = LinkWithF.objects.get(link_code=code)
+        except:
+            l.id_provider=u.id_provider
+            l.save()
+        else:
+            link_code(request)
+    return render(request, 'link_code/generate_link.html', {
+            'usuario' : u,
+            'code' : code
+            })
