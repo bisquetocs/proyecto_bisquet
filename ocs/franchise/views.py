@@ -37,6 +37,13 @@ def home(request):
     else:
         return redirect('../')
 
+@login_required
+def link_provider(request):
+    u = OCSUser.objects.get(user = request.user)
+    return render(request, 'link_provider/link_with_provider.html', {
+            'usuario' : u,
+            })
+
 
 
 
