@@ -55,7 +55,7 @@ def link_provider(request):
                 l.active = True
                 l.used = True
                 l.save()
-                f_name = l.id_franchise.nombre
+                f_name = l.id_provider.nombre
                 success = 1
         except:
             success = 0
@@ -68,9 +68,14 @@ def link_provider(request):
 
 @login_required
 def my_providers(request):
+    empty_list = 0
     u = OCSUser.objects.get(user = request.user)
+    relation_list = LinkWithF.objects.filter(id_franchise=u.id_franchise.id)
+
     return render(request, 'my_providers/consult_providers.html', {
             'usuario' : u,
+            'relation_list' : relation_list,
+            'empty_list' : empty_list
             })
 
 

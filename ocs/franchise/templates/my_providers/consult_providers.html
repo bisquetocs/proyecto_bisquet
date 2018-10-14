@@ -10,6 +10,18 @@
   <div class='container'>
     <div class='row'>
 
+      {% if empty_list == 1 %}
+      <div class="shadow-lg p-3 mb-5 bg-white rounded">
+        <p>
+          Aún no te has relacionado con proveedores.
+        </p>
+        <p>
+          Da click <a href="/franchise/my_providers/link/">aquí</a>
+          para enlazarte con tus proveedores registrados
+        </p>
+      </div>
+      {% endif %}
+      {% if empty_list == 0 %}
       <div class="col">
         <a class="btn btn-primary" href="/franchise/my_providers/link/">
           Enlazarme con un proveedor
@@ -25,33 +37,15 @@
         </thead>
 
         <tbody>
+          {% for provider in relation_list %}
           <tr>
-            <th>Frutas y verduras Lozano</th>
-            <th>Juanito el chido</th>
+            <th>{{ provider.id_provider.nombre }}</th>
+            <th>{{ provider.id_provider.id_usuario.first_name }} {{provider.id_provider.id_usuario.last_name}}</th>
           </tr>
-
-          <tr>
-            <th>Frutas y verduras Lozano</th>
-            <th>Juanito el chido</th>
-          </tr>
-
-          <tr>
-            <th>Frutas y verduras Lozano</th>
-            <th>Juanito el chido</th>
-          </tr>
-
-          <tr>
-            <th>Frutas y verduras Lozano</th>
-            <th>Juanito el chido</th>
-          </tr>
-
-          <tr>
-            <th>Frutas y verduras Lozano</th>
-            <th>Juanito el chido</th>
-          </tr>
+          {% endfor %}
         </tbody>
       </table>
-
+      {% endif %}
     </div>
   </div>
 
