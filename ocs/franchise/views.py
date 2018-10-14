@@ -66,7 +66,12 @@ def link_provider(request):
             'franchise_name' : f_name
             })
 
-
+@login_required
+def my_providers(request):
+    u = OCSUser.objects.get(user = request.user)
+    return render(request, 'my_providers/consult_providers.html', {
+            'usuario' : u,
+            })
 
 
 
