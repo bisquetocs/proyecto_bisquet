@@ -43,6 +43,7 @@ def link_provider(request):
     success = ''
     u = OCSUser.objects.get(user = request.user)
     code = ''
+    f_name = ''
     if request.method == 'POST':
         code = request.POST['link_code']
         try:
@@ -54,6 +55,7 @@ def link_provider(request):
                 l.active = True
                 l.used = True
                 l.save()
+                f_name = l.id_franchise.nombre
                 success = 1
         except:
             success = 0
@@ -61,7 +63,7 @@ def link_provider(request):
             'usuario' : u,
             'success' : success,
             'code' : code,
-            'franchise_name' : l.id_franchise.nombre
+            'franchise_name' : f_name
             })
 
 
