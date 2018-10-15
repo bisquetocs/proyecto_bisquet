@@ -14,7 +14,16 @@
 {% endblock navbar %}
 
 {% block sidebar %}
-
+<ul class="sidebar-nav">
+    <li class="sidebar-brand"></li>
+    <li><a href="/accounts/myEmployees/"><span class="fa fa-users"></span> Usuarios</a></li>
+    <li><a href="/products/myProducts"><span class="fa fa-book"></span> Catálogo</a></li>
+    <li><a href="#"><span class="fa fa-handshake-o"></span> Clientes</a></li>
+    <!--<li><a href="#">Events</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Contact</a></li>-->
+</ul>
 {% endblock sidebar %}
 
 {% block content %}
@@ -23,32 +32,6 @@
   <h4>{{usuario.id_provider.nombre}}</h4>
 </div>
 <div class="container">
-  <div class="row">
-    <div class="col">
-      <a class="btn btn-primary" href="{% url 'products:register' %}">
-        Registrar producto
-      </a>
-
-      {% for Producto in productos %}
-      <li><a href="/products/{{Producto.id}}/edit">
-        <span class="fa fa-edit"></span> {{ Producto.nombre }}
-      </a></li>
-      {% endfor %}
-    </div>
-
-    <div class="col">
-      <a class="btn btn-primary" href="/accounts/myEmployees/">
-        Empleados
-      </a>
-    </div>
-  </div>
-  <br><br>
-  <div class="row">
-    <div class="col">
-      {% block extras %}
-      {% endblock extras %}
-    </div>
-  </div>
   <div class="row">
     <div class="col">
       {% if messages %}

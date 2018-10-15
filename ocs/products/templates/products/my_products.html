@@ -1,0 +1,18 @@
+{% extends "provider/home.html" %}
+{% block content %}
+<a class="btn btn-primary" href="{% url 'products:register' %}">
+  Registrar producto
+</a>
+
+{% for Producto in productos %}
+<li><a href="/products/{{Producto.id}}/edit">
+  <span class="fa fa-edit"></span> {{ Producto.nombre }}
+</a></li>
+{% endfor %}
+{% block extras %}
+
+{% endblock extras %}
+
+
+
+{% endblock content %}

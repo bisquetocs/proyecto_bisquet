@@ -13,6 +13,12 @@ from .forms import RegisterProductForm
 from provider.models import Provider
 from .models import Product
 
+def my_products(request):
+    u = OCSUser.objects.get(user = request.user)
+    prov = Provider.objects.get(id = u.id_provider.id)
+    prod = Product.objects.filter(id_provider = prov.id)
+    return render(request, 'products/my_products.html', {'usuario':u, 'productos':prod,})
+
 def registerProduct(request):
     u = OCSUser.objects.get(user = request.user)
     if request.method == 'POST':
@@ -28,7 +34,9 @@ def registerProduct(request):
 def editProduct(request, id_product):
     u = OCSUser.objects.get(user = request.user)
     p = Product.objects.get(id = id_product)
-    return render(request, 'products/edit.html', {'usuario':u,'producto':p,})
+    prov = Provider.objects.get(id = u.id_provider.id)
+    prod = Product.objects.filter(id_provider = prov.id)
+    return render(request, 'products/edit.html', {'usuario':u,'producto':p,'productos':prod,})
 
 def ableUnableProduct(request, id_product):
     p = Product.objects.get(id = id_product)

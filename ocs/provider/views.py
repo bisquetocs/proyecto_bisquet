@@ -33,10 +33,9 @@ def registerProvider(request):
 @login_required
 def home(request):
     u = OCSUser.objects.get(user = request.user)
-    prov = Provider.objects.get(id = u.id_provider.id)
-    prod = Product.objects.filter(id_provider = prov.id)
+
     if u.id_provider!=None:
-        return render(request, 'provider/home.html', {'usuario':u, 'productos':prod,})
+        return render(request, 'provider/home.html', {'usuario':u,})
     else:
         return redirect('../')
 
