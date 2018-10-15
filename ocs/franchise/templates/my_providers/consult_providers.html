@@ -1,5 +1,6 @@
-{% extends "franchise/home.html" %}
 
+{% extends "franchise/home.html" %}
+{% load static %}
 {% block extras %}
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -57,28 +58,7 @@
 
 </div>
 
+<script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
 
-<script>
-$(document).ready( function () {
-    $('#my_providers').DataTable({
-      "language": {
-            "lengthMenu": "Mostrar _MENU_ elementos por página",
-            "zeroRecords": "No se encontraron resultados",
-            "info": "Página _PAGE_ de _PAGES_",
-            "infoEmpty": "No hay registros disponibles",
-            "infoFiltered": "(filtered from _MAX_ total records)",
-            "search":         "Buscar:",
-            "paginate": {
-                "first":      "Primero",
-                "last":       "Último",
-                "next":       "Siguiente",
-                "previous":   "Anterior"
-            },
-        }
-    });
-
-});
-
-</script>
 
 {% endblock extras %}
