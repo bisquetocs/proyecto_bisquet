@@ -1,0 +1,36 @@
+
+{% extends "provider/home.html" %}
+
+
+{% block extras %}
+
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Horario de oficina</h1>
+  </div>
+
+  <div class="container">
+    <p>Asigna las horas en las que tu empresa va a operar</p>
+    <p>Una hora de inicio y fin por día</p>
+    <div class='container'>
+      <div class='row'>
+        <div class="col-sm8">
+          <form method="post">
+          {% csrf_token %}
+          {% for days in days_list %}
+          <label for="start_hour">{{ days.nombre }}</label>
+          <input class="form-control" type="time" placeholder="" name="start_hour">
+          <input class="form-control" type="time" placeholder="" name="finish_hour">
+
+          {% endfor %}
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+{% endblock extras%}

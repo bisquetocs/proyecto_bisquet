@@ -25,3 +25,16 @@ class LinkWithF(models.Model):
     link_code = models.CharField(max_length=12)
     active = models.BooleanField()
     used = models.BooleanField()
+
+class Days(models.Model):
+    nombre = models.CharField(max_length = 100)
+    def __str__(self):
+        return self.nombre
+
+class OfficeHours(models.Model):
+    id_provider = models.ForeignKey(Provider, on_delete=models.CASCADE, blank=True, null=True)
+    day = models.ForeignKey(Days, on_delete=models.CASCADE, blank=True, null=True)
+    start_hour = models.DateTimeField()
+    finish_hour = models.DateTimeField()
+
+    

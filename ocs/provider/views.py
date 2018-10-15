@@ -11,7 +11,7 @@ from .forms import RegisterProviderForm
 from accounts.models import OCSUser
 from products.models import Product
 
-from .models import Provider, LinkWithF
+from .models import Provider, LinkWithF, Days
 
 import string
 import random
@@ -65,3 +65,13 @@ def link_code(request):
             'usuario' : u,
             'code' : code
             })
+
+
+@login_required
+def office(request):
+    u = OCSUser.objects.get(user = request.user)
+    days_list = Days.objects.all()
+    if u.id_provider!=None:
+        return render(request, 'provider/office.html', {'days_list':days_list,})
+    else:
+        return redirect('../')
