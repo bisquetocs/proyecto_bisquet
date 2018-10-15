@@ -81,7 +81,12 @@ def my_providers(request):
             })
 
 
-
+@login_required
+def provider_detail(request, id_provider):
+    u = OCSUser.objects.get(user = request.user)
+    return render(request, 'my_providers/provider_detail.html', {
+            'usuario' : u,
+            })
 
 
 
