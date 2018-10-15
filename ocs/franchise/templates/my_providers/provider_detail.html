@@ -1,8 +1,10 @@
 {% extends "franchise/home.html" %}
 
 {% block extras %}
+
+{% if success %}
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-  <h1 class="h2">[Nombre del proveedor]</h1>
+  <h1 class="h2">{{ provider.nombre }}</h1>
 </div>
 
 <div class="container">
@@ -13,7 +15,7 @@
         <b>Razón social</b>
       </div>
       <div class="col">
-        Razón Social Proveedor
+        {{ provider.razon_social }}
       </div>
     </div>
 
@@ -22,16 +24,7 @@
         <b>RFC</b>
       </div>
       <div class="col">
-        RFC Proveedor
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <b>Nombre</b>
-      </div>
-      <div class="col">
-        Nombre Proveedor
+        {{ provider.rfc }}
       </div>
     </div>
 
@@ -40,7 +33,7 @@
         <b>Domicilio</b>
       </div>
       <div class="col">
-        Domicilio Proveedor
+        {{ provider.domicilio }}
       </div>
     </div>
 
@@ -49,7 +42,7 @@
         <b>Misión</b>
       </div>
       <div class="col">
-        Misión Proveedor
+        {{ provider.mision }}
       </div>
     </div>
 
@@ -58,7 +51,7 @@
         <b>Visión</b>
       </div>
       <div class="col">
-        Visión Proveedor
+        {{ provider.vision }}
       </div>
     </div>
 
@@ -67,11 +60,16 @@
         <b>Responsable</b>
       </div>
       <div class="col">
-        Responsable Proveedor
+        {{ provider.id_usuario.first_name }} {{ provider.id_usuario.last_name }}
       </div>
     </div>
+{% endif %}
 
-
+{% if success == False %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">ERROR 404: No encontramos el proveedor que estás buscando</h1>
+</div>
+{% endif %}
 
   </div>
 </div>

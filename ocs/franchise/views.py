@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterFranchiseForm
-from provider.models import LinkWithF
+from provider.models import LinkWithF, Provider
 from accounts.models import OCSUser
 
 from .models import Franchise
@@ -83,9 +83,21 @@ def my_providers(request):
 
 @login_required
 def provider_detail(request, id_provider):
+    success = True
     u = OCSUser.objects.get(user = request.user)
+    p = Provider()
+    relation_list = LinkWithF.objects.filter(id_franchise=u.id_franchise, id_provider=id_provider)
+    try:
+        p = Provider.objects.get(id=id_provider)
+        if len(relation_list) == 0:
+            success = False
+    except:
+        success = False
+
     return render(request, 'my_providers/provider_detail.html', {
             'usuario' : u,
+            'success' : success,
+            'provider' : p,
             })
 
 
