@@ -71,6 +71,8 @@ def my_providers(request):
     empty_list = 0
     u = OCSUser.objects.get(user = request.user)
     relation_list = LinkWithF.objects.filter(id_franchise=u.id_franchise.id)
+    if len(relation_list) == 0:
+        empty_list = 1
 
     return render(request, 'my_providers/consult_providers.html', {
             'usuario' : u,
