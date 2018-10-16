@@ -14,8 +14,6 @@ class Provider(models.Model):
     activo = models.BooleanField()
     fecha_registro = models.DateTimeField('date published')
     id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
     def __str__(self):
         return self.rfc
 
