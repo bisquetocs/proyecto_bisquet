@@ -1,11 +1,7 @@
 {% extends "provider/home.html" %}
 
 {% block content %}
-<script>
-$(document).ready( function () {
-    $('#myTable').DataTable();
-} );
-</script>
+
 <!-- AGRGAR Y EDITAR PRODUCTOS -->
 {% if edit %}
 <form action="{% url 'products:edit' producto.id %}" method="post">
@@ -112,13 +108,17 @@ $(document).ready( function () {
         {% endif %}
         <a>
       </td>
-      <td><a href="/products/edit/{{Producto.id}}"><span class="fa fa-edit"></span></a></td>
+      <td><a class="btn btn-dark" role="button" href="/products/edit/{{Producto.id}}"><span class="fa fa-edit"></span></a></td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% block extras %}
-
+<script>
+$(document).ready( function () {
+    $('#myTable').DataTable();
+} );
+</script>
 {% endblock extras %}
 
 {% endblock content %}
