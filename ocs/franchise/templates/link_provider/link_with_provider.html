@@ -1,0 +1,39 @@
+{% extends "franchise/home.html" %}
+
+{% block extras %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Ingresa el código de enlace</h1>
+</div>
+
+<div class="container">
+  <div class='container'>
+    <div class='row'>
+      <div class="col-sm8">
+        <label for="link_code">Ingresa el código de enlace que te proporcionó tu proveedor para que te puedas conectar con ellos y puedas realizar tus pedidos.</label>
+        <form class="col-3" method="post">
+          {% csrf_token %}
+
+          <input class="form-control" type="text" placeholder="" value="" name="link_code">
+          {% if success == 1 %}
+          <p class="text-success">¡EXITO! Te has relacionado con {{ franchise_name }}</p>
+          {% endif %}
+          {% if success == 0 %}
+          <p class="text-danger">El código "{{ code }}" no coincide con ninguno registrado, ingrésalo de nuevo o consulta a tu proveedor.</p>
+          {% endif %}
+          {% if success == 2 %}
+          <p class="text-warning">El código "{{ code }}" ya fue utilizado, por favor, solicita a tu proveedor que te genere un código nuevo.</p>
+          {% endif %}
+          <br>
+          <input class="btn btn-lg btn-primary " type="submit" value="Enlazar">
+        </form>
+
+
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+{% endblock extras %}

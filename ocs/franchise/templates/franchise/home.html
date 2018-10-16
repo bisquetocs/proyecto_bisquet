@@ -1,4 +1,4 @@
-{% extends "provider/base.html" %}
+{% extends "franchise/base.html" %}
 
 {% block title %}OCS - {{usuario.id_franchise.nombre}}{% endblock title %}
 
@@ -14,15 +14,6 @@
 {% endblock navbar %}
 
 {% block sidebar %}
-<ul class="sidebar-nav">
-    <li class="sidebar-brand"></li>
-    <li><a href="#"><span class="fa fa-users"></span> Usuarios</a></li>
-    <li><a href="#"><span class="fa fa-handshake-o"></span> Proveedores</a></li>
-    <!--<li><a href="#">Events</a></li>
-    <li><a href="#">About</a></li>
-    <li><a href="#">Services</a></li>
-    <li><a href="#">Contact</a></li>-->
-</ul>
 {% endblock sidebar %}
 
 {% block content %}
@@ -37,8 +28,14 @@
         Empleados
       </a>
     </div>
+
     <div class="col">
 
+    </div>
+    <div class="col">
+      <a class="btn btn-primary" href="/franchise/my_providers/">
+        Mis proveedores
+      </a>
     </div>
   </div>
   <br><br>

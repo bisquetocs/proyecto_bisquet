@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterFranchiseForm
+from provider.models import LinkWithF
 from accounts.models import OCSUser
 
 from .models import Franchise
@@ -37,7 +38,47 @@ def home(request):
     else:
         return redirect('../')
 
+@login_required
+def link_provider(request):
+    success = ''
+    u = OCSUser.objects.get(user = request.user)
+    code = ''
+    f_name = ''
+    if request.method == 'POST':
+        code = request.POST['link_code']
+        try:
+            l = LinkWithF.objects.get(link_code=code)
+            if l.used:
+                success = 2
+            else:
+                l.id_franchise = u.id_franchise
+                l.active = True
+                l.used = True
+                l.save()
+                f_name = l.id_provider.nombre
+                success = 1
+        except:
+            success = 0
+    return render(request, 'link_provider/link_with_provider.html', {
+            'usuario' : u,
+            'success' : success,
+            'code' : code,
+            'franchise_name' : f_name
+            })
 
+@login_required
+def my_providers(request):
+    empty_list = 0
+    u = OCSUser.objects.get(user = request.user)
+    relation_list = LinkWithF.objects.filter(id_franchise=u.id_franchise.id)
+    if len(relation_list) == 0:
+        empty_list = 1
+
+    return render(request, 'my_providers/consult_providers.html', {
+            'usuario' : u,
+            'relation_list' : relation_list,
+            'empty_list' : empty_list
+            })
 
 
 
