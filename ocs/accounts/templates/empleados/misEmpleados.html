@@ -1,8 +1,7 @@
 {% extends aux %}
+{% block content %}
 
-{% block extras %}
-<h2>Empleados</h2>
-
+<h2>Usuarios</h2>
 <table class="table table-striped" id="table_id">
   <thead class="thead-dark">
     <tr>
@@ -16,7 +15,7 @@
     {% for OCSUser in empleados_list %}
     <tr>
       <td>{{ OCSUser.user.id }}</td>
-      <td>{{ OCSUser.user.username }}</td>
+      <tH>{{ OCSUser.user.username }}</th>
       <td>{{ OCSUser.user.email }}</td>
       <td>{{ OCSUser.user.last_login }}</td>
     </tr>
@@ -46,4 +45,4 @@ $(document).ready( function () {
   $('#table_id').DataTable();
 } );
 </script>
-{% endblock extras %}
+{% endblock content %}
