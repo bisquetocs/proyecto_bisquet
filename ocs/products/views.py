@@ -9,7 +9,6 @@ from django.utils import timezone
 from django.contrib import messages
 
 from accounts.models import OCSUser
-from .forms import RegisterProductForm
 from provider.models import Provider
 from .models import Product
 
@@ -21,23 +20,45 @@ def my_products(request):
 
 def registerProduct(request):
     u = OCSUser.objects.get(user = request.user)
-    if request.method == 'POST':
-        register_form = RegisterProductForm(request.POST)
-        if register_form.is_valid():
-            result = register_form.process_registration(u.id_provider)
-            messages.info(request, 'Producto registrado')
-            return redirect(reverse('provider:home'))
+    if request.POST['nombre'] == '' or request.POST['descripcion'] == '' or request.POST['codigo'] == '':
+        messages.warning(request, 'Necesitas llenar todos los campos!')
     else:
-        register_form = RegisterProductForm()
-    return render(request, 'products/register.html', {'register_form': register_form, 'usuario':u,})
+        if request.POST.get('activo', '') == 'on':
+            aux = True
+        else:
+            aux = False
+        p = Product(id_provider=u.id_provider,
+                        nombre=request.POST['nombre'],
+                        descripcion=request.POST['descripcion'],
+                        codigo=request.POST['codigo'],
+                        activo= aux,
+                        fecha_registro=timezone.now())
+        p.save()
+        messages.success(request, 'Producto registrado!')
+    return redirect(reverse('products:myProducts'))
 
 def editProduct(request, id_product):
     u = OCSUser.objects.get(user = request.user)
     p = Product.objects.get(id = id_product)
     prov = Provider.objects.get(id = u.id_provider.id)
     prod = Product.objects.filter(id_provider = prov.id)
-    return render(request, 'products/edit.html', {'usuario':u,'producto':p,'productos':prod,})
-
+    if request.method == 'POST':
+        if request.POST['nombre'] == '' or request.POST['descripcion'] == '' or request.POST['codigo'] == '':
+            messages.warning(request, 'Necesitas llenar todos los campos!')
+        else:
+            if request.POST.get('activo', '') == 'on':
+                aux = True
+            else:
+                aux = False
+            p = Product.objects.get(id=id_product)
+            p.nombre=request.POST['nombre']
+            p.descripcion=request.POST['descripcion']
+            p.codigo=request.POST['codigo']
+            p.activo= aux
+            p.save()
+            messages.success(request, 'La información se actualizó con éxito!')
+            return redirect(reverse('products:myProducts'))
+    return render(request, 'products/my_products.html', {'usuario':u,'producto':p,'productos':prod,'edit':True})
 def ableUnableProduct(request, id_product):
     p = Product.objects.get(id = id_product)
     if p.activo:
@@ -45,4 +66,4 @@ def ableUnableProduct(request, id_product):
     else:
         p.activo = True
     p.save()
-    return editProduct(request, id_product)
+    return redirect('products:myProducts')
