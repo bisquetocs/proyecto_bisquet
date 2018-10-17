@@ -34,7 +34,5 @@ class Days(models.Model):
 class OfficeHours(models.Model):
     id_provider = models.ForeignKey(Provider, on_delete=models.CASCADE, blank=True, null=True)
     day = models.ForeignKey(Days, on_delete=models.CASCADE, blank=True, null=True)
-    start_hour = models.DateTimeField()
-    finish_hour = models.DateTimeField()
-
-    
+    start_hour = models.TimeField()
+    finish_hour = models.TimeField()

@@ -11,7 +11,7 @@ from .forms import RegisterProviderForm
 from accounts.models import OCSUser
 from products.models import Product
 
-from .models import Provider, LinkWithF, Days
+from .models import Provider, LinkWithF, Days, OfficeHours
 
 import string
 import random
@@ -71,7 +71,17 @@ def link_code(request):
 def office(request):
     u = OCSUser.objects.get(user = request.user)
     days_list = Days.objects.all()
-    if u.id_provider!=None:
-        return render(request, 'provider/office.html', {'days_list':days_list,})
-    else:
-        return redirect('../')
+
+    if request.method == 'POST':
+        prov = u.id_provider_id
+        provider = Provider.objects.get(id = prov)
+
+        for item in days_list:
+            i = item.id
+
+            s_hour = "start_hour_" + str(i)
+            f_hour = "finish_hour_" + str(i)
+            insert = OfficeHours(start_hour = request.POST[s_hour], finish_hour = "12:50", day = item, id_provider = provider)
+            insert.save()
+
+    return render(request, 'provider/office.html', {'days_list':days_list,})
