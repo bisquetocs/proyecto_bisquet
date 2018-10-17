@@ -1,0 +1,52 @@
+
+{% extends "provider/home.html" %}
+
+
+{% block extras %}
+
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Horario de oficina</h1>
+  </div>
+
+  <div class="container">
+    <p>Asigna las horas en las que tu empresa va a operar</p><br>
+    <div class='container'>
+      <div class='row'>
+        <div class="col">
+          <form method="post">
+          {% csrf_token %}
+          {% for days in days_list %}
+          <div class="form-group row">
+            <div class="col-sm-2">
+            <strong>{{ days.nombre }}</strong>
+            </div>
+            <div class="col-sm-4">
+              <label for="start_hour_{{ days.id }}">Hora inicio</label>
+              <input class="form-control" type="time" placeholder="12:00" name="start_hour_{{ days.id }}">
+            </div>
+            <div class="col-sm-4">
+              <label for="finish_hour_{{ days.id }}">Hora fin</label>
+              <input class="form-control" type="time" placeholder="12:00" name="finish_hour_{{ days.id }}">
+            </div>
+          </div>
+          <br><hr>
+
+
+          {% endfor %}
+          <div class="form-group row pull-right">
+            <div class="col-sm-5">
+              <button type="submit" class="btn btn-md btn-primary">Registrar horas</button>
+            </div>
+          </div>
+          </form>
+          <br><br><br>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+
+{% endblock extras%}
