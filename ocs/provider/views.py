@@ -26,6 +26,12 @@ def registerProvider(request):
         register_form = RegisterProviderForm(request.POST)
         if register_form.is_valid():
             result = register_form.process_registration(request.user)
+            days_list = Days.objects.all()
+            ##Inicia - Asigna horas de oficina por default
+            for item in days_list:
+                insert = OfficeHours(start_hour = "8:00", finish_hour = "18:00", day = item, id_provider = provider)
+                insert.save()
+            ##Termina
             return render(request, 'provider/home.html')
     else:
         u = OCSUser.objects.get(user = request.user)
@@ -70,18 +76,21 @@ def link_code(request):
 @login_required
 def office(request):
     u = OCSUser.objects.get(user = request.user)
+    prov = u.id_provider_id
+    provider = Provider.objects.get(id = prov)
+
     days_list = Days.objects.all()
+    hours_list = OfficeHours.objects.filter(id_provider = provider)
 
     if request.method == 'POST':
-        prov = u.id_provider_id
-        provider = Provider.objects.get(id = prov)
 
         for item in days_list:
             i = item.id
-
             s_hour = "start_hour_" + str(i)
             f_hour = "finish_hour_" + str(i)
-            insert = OfficeHours(start_hour = request.POST[s_hour], finish_hour = "12:50", day = item, id_provider = provider)
-            insert.save()
+            edit_object = OfficeHours.objects.get(day = item, id_provider = provider)
+            edit_object.start_hour = request.POST[s_hour]
+            edit_object.finish_hour = request.POST[f_hour]
+            edit_object.save()
 
-    return render(request, 'provider/office.html', {'days_list':days_list,})
+    return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list})
