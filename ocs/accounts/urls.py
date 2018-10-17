@@ -10,6 +10,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('locate/', views.locate, name='locate'),
     path('myEmployees/', views.misEmpleados, name='myEmployees'),
+    path('myEmployees/delete/<int:emp_id>', views.borrarEmpleado, name='delete'),
     path('linkEmployee/', views.registrarEmpleado, name='linkEmployee'),
 
 ]

@@ -12,6 +12,7 @@ class OCSUser(models.Model):
     rfc = models.CharField(max_length=12)
     num_ss = models.CharField(max_length=12)
     direccion = models.CharField(max_length=200)
+    active = models.BooleanField(null = False, default = True)
 
 class IsProviderOrFranchise(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)

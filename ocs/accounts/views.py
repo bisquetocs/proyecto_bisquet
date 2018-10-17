@@ -77,11 +77,11 @@ def misEmpleados(request):
     if ocs_user.id_provider is None:
         #Es franchise
         aux = "franchise/home.html"
-        empleados_list = OCSUser.objects.filter(id_franchise=ocs_user.id_franchise)
+        empleados_list = OCSUser.objects.filter(id_franchise=ocs_user.id_franchise, active = 1)
     elif ocs_user.id_franchise is None:
         #Es provider
         aux = "provider/home.html"
-        empleados_list = OCSUser.objects.filter(id_provider=ocs_user.id_provider)
+        empleados_list = OCSUser.objects.filter(id_provider=ocs_user.id_provider, active = 1)
     else:
         #Somos nosotros viendo a todos los que están registrados
         empleados_list = OCSUser.objects.all()
@@ -122,8 +122,23 @@ def registrarEmpleado(request):
             empleados_list = OCSUser.objects.filter(id_provider=ocs_user.id_provider)
         return render(request, 'empleados/registrarEmpleado.html', {'usuario':ocs_user,'empleados_list':empleados_list,'groups_list':roles,'aux':aux,})
 
+@login_required
+def borrarEmpleado(request, emp_id):
+    ocs_user = OCSUser.objects.get(user = request.user)
 
+    ##Descativa permisos de inicio de sesión de Django sin borrar
+    del_object = User.objects.get(id = emp_id)
+    del_object.is_active = 0
+    del_object.save()
 
+    #Desactiva usuario, cambia estado
+    del_user = OCSUser.objects.get(user = emp_id)
+    del_user.active = 0;
+    del_user.save()
+
+    messages.info(request, 'Borrado exitoso!')
+
+    return redirect('../')
 
 
 #

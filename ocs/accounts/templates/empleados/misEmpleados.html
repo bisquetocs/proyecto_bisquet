@@ -9,6 +9,7 @@
       <th>Usuario</th>
       <th>Email</th>
       <th>Último inicio de sesión</th>
+      <th>Opciones</th>
     </tr>
   </thead>
   <tbody>
@@ -18,6 +19,7 @@
       <tH>{{ OCSUser.user.username }}</th>
       <td>{{ OCSUser.user.email }}</td>
       <td>{{ OCSUser.user.last_login }}</td>
+      <td><a href=#><i class="fa fa-info-circle fa-2x" aria-hidden="true"></i></a>&nbsp &nbsp<a href="{% url 'delete' OCSUser.user.id %}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a></td>
     </tr>
     {% endfor %}
 
