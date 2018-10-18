@@ -14,31 +14,20 @@
 {% endblock navbar %}
 
 {% block sidebar %}
+<ul class="sidebar-nav">
+    <li class="sidebar-brand"></li>
+    <li><a href="/franchise/home/"><span class="fa fa-home"></span> Inicio</a></li>
+    <li><a href="/accounts/myEmployees/"><span class="fa fa-users"></span> Usuarios</a></li>
+    <li><a href="/franchise/my_providers/"><span class="fa fa-handshake-o"></span> Mis proveedores</a></li>
+    <!--<li><a href="#">Events</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Contact</a></li>-->
+</ul>
 {% endblock sidebar %}
 
 {% block content %}
-<div class="container text-center">
-  <h5>Perteneces a la franquicia: </h5>
-  <h4>{{usuario.id_franchise.nombre}}</h4>
-</div>
 <div class="container">
-  <div class="row">
-    <div class="col">
-      <a class="btn btn-primary" href="/accounts/myEmployees/">
-        Empleados
-      </a>
-    </div>
-
-    <div class="col">
-
-    </div>
-    <div class="col">
-      <a class="btn btn-primary" href="/franchise/my_providers/">
-        Mis proveedores
-      </a>
-    </div>
-  </div>
-  <br><br>
   <div class="row">
     <div class="col">
       {% block extras %}

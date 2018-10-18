@@ -9,10 +9,9 @@
   <title>{% block title %}OCS{% endblock title %}</title>
   <link rel="icon" type="image/png" href="{% static 'OCS.png' %}">
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+  <link rel="stylesheet" href="{% static 'franchise/style.css' %}">
 </head>
 
 <body>
@@ -22,14 +21,21 @@
     {% endblock navbar %}
   </div>
 
-  <div id="sidebar">
-    {% block sidebar %}
-    {% endblock sidebar %}
-  </div>
-
-  <div id="content" style="margin-top:70px">
-    {% block content %}
-    {% endblock content %}
+  <div id="wrapper" class="toggled">
+    <div id="sidebar-wrapper">
+      <div id="sidebar">
+        {% block sidebar %}
+        {% endblock sidebar %}
+      </div>
+    </div>
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+          <div id="content" style="margin-top:54px">
+            {% block content %}
+            {% endblock content %}
+          </div>
+        </div>
+    </div>
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>

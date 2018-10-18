@@ -7,56 +7,50 @@
   <h1 class="h2">Mis proveedores</h1>
 </div>
 
-<div class="container">
-  <div class='container'>
-    <div class='row'>
-      {% if empty_list == 1 %}
-      <div class="shadow-lg p-3 mb-5 bg-white rounded">
-        <p>
-          Aún no te has relacionado con proveedores.
-        </p>
-        <p>
-          Da click <a href="/franchise/my_providers/link/">aquí</a>
-          para enlazarte con tus proveedores registrados
-        </p>
-      </div>
-      {% endif %}
-    </div>
-
-      {% if empty_list == 0 %}
-      <div class="col">
-        <a class="btn btn-primary" href="/franchise/my_providers/link/">
-          Enlazarme con un proveedor
-        </a>
-      </div>
-<br>
-      <table  class="table table-striped table-bordered" id="my_providers">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Domicilio</th>
-            <th>Responsable</th>
-            <th>Detalles</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {% for provider in relation_list %}
-          <tr>
-            <td>{{ provider.id_provider.nombre }}</td>
-            <td>{{ provider.id_provider.domicilio }}</td>
-            <td>{{ provider.id_provider.id_usuario.first_name }} {{provider.id_provider.id_usuario.last_name}}</td>
-            <td><a href="/franchise/my_providers/{{ provider.id_provider.id }}" style="color: inherit;"><i class="fa fa-info-circle" style="font-size:24px"></i></a></td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-
-      {% endif %}
-
+<div class='row'>
+  {% if empty_list == 1 %}
+  <div class="shadow-lg p-3 mb-5 bg-white rounded">
+    <p>
+      Aún no te has relacionado con proveedores.
+    </p>
+    <p>
+      Da click <a href="/franchise/my_providers/link/">aquí</a>
+      para enlazarte con tus proveedores registrados
+    </p>
   </div>
-
+  {% endif %}
 </div>
+
+{% if empty_list == 0 %}
+<table  class="table table-striped table-bordered" id="my_providers">
+  <thead class="thead-dark">
+    <tr>
+      <th>Nombre</th>
+      <th>Domicilio</th>
+      <th>Responsable</th>
+      <th>Detalles</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for provider in relation_list %}
+    <tr>
+      <td>{{ provider.id_provider.nombre }}</td>
+      <td>{{ provider.id_provider.domicilio }}</td>
+      <td>{{ provider.id_provider.id_usuario.first_name }} {{provider.id_provider.id_usuario.last_name}}</td>
+      <td><a href="/franchise/my_providers/{{ provider.id_provider.id }}" style="color: inherit;"><i class="fa fa-info-circle" style="font-size:24px"></i></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
+<a class="btn btn-primary" href="/franchise/my_providers/link/">
+  Enlazarme con un proveedor
+</a>
+
+
+{% endif %}
+
 
 <script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
 
