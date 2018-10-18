@@ -19,7 +19,6 @@ import random
 def code_generator(size=12, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
-
 @login_required
 def registerProvider(request):
     if request.method == 'POST':
@@ -46,7 +45,6 @@ def registerProvider(request):
 @login_required
 def home(request):
     u = OCSUser.objects.get(user = request.user)
-
     if u.id_provider!=None:
         return render(request, 'provider/home.html', {'usuario':u,})
     else:
@@ -70,7 +68,6 @@ def link_code(request):
             'usuario' : u,
             'code' : code
             })
-
 
 @login_required
 def office(request):

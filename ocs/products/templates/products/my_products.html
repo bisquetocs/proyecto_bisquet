@@ -21,25 +21,25 @@
     <div class="col-12 col-sm-4 col-md-4 col-lg-2 col-xl-2 form-group">
       <label for="nombre">Nombre</label>
       {% if edit %}
-      <input id="nombre" name="nombre" type="text" class="form-control" placeholder="producto" max_length=100 value="{{producto.nombre}}">
+      <input required id="nombre" name="nombre" type="text" class="form-control" placeholder="producto" max_length=100 value="{{producto.nombre}}">
       {% else %}
-      <input id="nombre" name="nombre" type="text" class="form-control" placeholder="producto" max_length=100>
+      <input required id="nombre" name="nombre" type="text" class="form-control" placeholder="producto" max_length=100>
       {% endif %}
     </div>
     <div class="col-12 col-sm-8 col-md-8 col-lg-5 col-xl-5 form-group">
       <label for="descripcion">Descripción</label>
       {% if edit %}
-      <input id="descripcion" name="descripcion" type="text" class="form-control" placeholder="descripción del producto" max_length=200 value="{{producto.descripcion}}">
+      <input required id="descripcion" name="descripcion" type="text" class="form-control" placeholder="descripción del producto" max_length=200 value="{{producto.descripcion}}">
       {% else %}
-      <input id="descripcion" name="descripcion" type="text" class="form-control" placeholder="descripción del producto" max_length=200>
+      <input required id="descripcion" name="descripcion" type="text" class="form-control" placeholder="descripción del producto" max_length=200>
       {% endif %}
     </div>
     <div class="col-12 col-sm-7 col-md-7 col-lg-3 col-xl-3 form-group">
       <label for="codigo">Código</label>
       {% if edit %}
-      <input id="codigo" name="codigo" type="text" class="form-control" placeholder="CODIG123" max_length=10 value="{{producto.codigo}}">
+      <input required id="codigo" name="codigo" type="text" class="form-control" placeholder="CODIG123" max_length=10 value="{{producto.codigo}}">
       {% else %}
-      <input id="codigo" name="codigo" type="text" class="form-control" placeholder="CODIG123" max_length=10>
+      <input required id="codigo" name="codigo" type="text" class="form-control" placeholder="CODIG123" max_length=10>
       {% endif %}
     </div>
     <div class="col-12 col-sm-5 col-md-5 col-lg-2 col-xl-2 form-group">
@@ -81,7 +81,7 @@
 </form>
 <br>
 <!-- TABLA DE PRODUCTOS -->
-<table id="myTable" class="table">
+<table id="myTable" class="table table-hover">
   <thead class="thead-dark">
     <tr>
       <th scope="col">#</th>
@@ -89,7 +89,7 @@
       <th scope="col">Descripción</th>
       <th scope="col">Código</th>
       <th scope="col">Activo</th>
-      <th scope="col"></th>
+      <th scope="col">Editar</th>
     </tr>
   </thead>
   <tbody>
@@ -100,15 +100,17 @@
       <td>{{ Producto.descripcion }}</td>
       <td>{{ Producto.codigo }}</td>
       <td>
-        <a href="/products/ableUnable/{{Producto.id}}">
         {% if Producto.activo %}
-        <span class="fa fa-eye" style="color:green"></span>
+        <a href="/products/ableUnable/{{Producto.id}}" style="color:green">
+          <span class="fa fa-eye"></span> Activo
+        </a>
         {% else %}
-        <span class="fa fa-eye-slash" style="color:red"></span>
+        <a href="/products/ableUnable/{{Producto.id}}" style="color:red">
+          <span class="fa fa-eye-slash"></span> Inactivo
+        </a>
         {% endif %}
-        <a>
       </td>
-      <td><a class="btn btn-dark" role="button" href="/products/edit/{{Producto.id}}"><span class="fa fa-edit"></span></a></td>
+      <td><a class="btn btn-dark" role="button" href="/products/edit/{{Producto.id}}" data-toggle="tooltip" data-placement="left" title="Editar información de {{ Producto.nombre }}"><span class="fa fa-edit"></span></a></td>
     </tr>
     {% endfor %}
   </tbody>

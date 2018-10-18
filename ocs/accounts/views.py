@@ -18,7 +18,7 @@ def home(request):
     if request.user.is_authenticated:
         return redirect('../accounts/locate')
     else:
-        return render(request, 'home/index.html')
+        return render(request, 'accounts/landing.html')
 
 def registerUser(request):
     if request.method == 'POST':
@@ -65,7 +65,7 @@ def registerUser(request):
 def locate(request):
     ocs_user = OCSUser.objects.get(user = request.user)
     if ocs_user.id_provider == None and ocs_user.id_franchise == None:
-        return render(request, 'accounts/base.html', {'usuario':request.user})
+        return render(request, 'home/index.html', {'usuario':request.user})
     elif ocs_user.id_provider != None:
         return redirect(reverse('provider:home'))
     elif ocs_user.id_franchise != None:

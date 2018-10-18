@@ -1,54 +1,71 @@
-{% load static %}
-<!DOCTYPE html>
-<head lang="es">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+{% extends "accounts/base.html" %}
+{% block title %}OCS{% endblock title %}
 
-  <title>{% block title %}OCS{% endblock title %}</title>
-  <link rel="icon" type="image/png" href="{% static 'OCS.png' %}">
+{% block navbar %}
+<nav class="navbar navbar-dark fixed-top bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'locate' %}">Order Control System</a>
+    <ul class="navbar-nav px-3">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout' %}" style="color:rgb(243,156,18)">
+          <span class="fa fa-sign-out"></span> Cerrar sesión
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+{% endblock navbar %}
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% block sidebar %}
+{% endblock sidebar %}
 
-</head>
-
-<body>
-  <div id="navbar">
-    {% block navbar %}
-    <div class="container">
-      <br><br>
-      <p>HOME</p>
-      <a href="{% url 'login' %}">Iniciar sesion</a>
-      <a href="{% url 'registerUser' %}">Registrarse</a>
-      <br>
-      {% if messages %}
-      <ul class="messages">
-          {% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-          {% endfor %}
-      </ul>
-      {% endif %}
+{% block content %}
+<div class="container text-center" style="margin-top:">
+  <div class="row" style="padding-top:30px">
+    <div class="col">
+      <h3><strong>{{ usuario.username }}</strong> al parecer aún no cuentas con un rol definido</h3>
     </div>
-    {% endblock navbar %}
   </div>
-
-  <div id="sidebar">
-    {% block sidebar %}
-    {% endblock sidebar %}
+  <div class="row" style="padding-top:10px">
+    <div class="col">
+      <h2>¿Qué es lo que eres?</h2>
+    </div>
   </div>
-
-  <div id="content" style="margin-top:70px">
-    {% block content %}
-    {% endblock content %}
+  <div class="row justify-content-center text-center" style="padding-top:10px">
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+      <div class="jumbotron">
+        <h3 class="display-4">Proveedor</h3>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" href="{% url 'provider:register' %}">
+          Registrar proveedor
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+      <div class="jumbotron">
+        <h3 class="display-4">Franquicia</h3>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" href="{% url 'franchise:register' %}">
+          Registrar franquicia
+        </a>
+      </div>
+    </div>
+    <div class="col-12 col-sm-12 col-md-6 col-lg-6 col-xl-6">
+      <div class="jumbotron">
+        <h1 class="display-4">Empleado</h1>
+        <hr class="my-4">
+        <a class="btn btn-primary btn-lg" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+          Soy empleado
+        </a>
+        <div class="collapse" id="collapseExample" style="padding-top:10px">
+          <p>Por favor espera en lo que tu cuenta es activada.</p>
+          <p>Si no sucede, pídele a tu contratador que active tu cuenta.</p>
+        </div>
+      </div>
+    </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-</body>
+</div>
+{% endblock content %}
 
-<footer>
-  {% block footer %}
-  {% endblock footer %}
-</footer>
+{% block footer %}
+{% endblock footer %}

@@ -27,24 +27,8 @@
 {% endblock sidebar %}
 
 {% block content %}
-<div class="container text-center">
-  <h5>Perteneces a la compañia: </h5>
-  <h4>{{usuario.id_provider.nombre}}</h4>
-</div>
 <div class="container">
   <div class="row">
-    <div class="col">
-      <a class="btn btn-primary" href="{% url 'products:register' %}">
-        Registrar producto
-      </a>
-
-      {% for Producto in productos %}
-      <li><a href="/products/{{Producto.id}}/edit">
-        <span class="fa fa-edit"></span> {{ Producto.nombre }}
-      </a></li>
-      {% endfor %}
-    </div>
-
     <div class="col">
       <a class="btn btn-primary" href="/accounts/myEmployees/">
         Empleados
@@ -55,7 +39,6 @@
         Código de enlace
       </a>
     </div>
-
     <div class="col">
       <a class="btn btn-primary" href="/provider/office">
         Horas de oficina
@@ -81,7 +64,6 @@
     </div>
   </div>
 </div>
-
 {% endblock content %}
 
 {% block footer %}
