@@ -3,12 +3,18 @@
 {% block title %}OCS - {{usuario.id_provider.nombre}}{% endblock title %}
 
 {% block navbar %}
-<nav class="">
+<nav class="navbar navbar-dark fixed-top" style="background-color:rgb(53,108,153)">
   <a class="navbar-brand" href="{% url 'home' %}">{{usuario.id_provider.nombre}}</a>
   <ul class="navbar-nav px-3">
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'logout' %}"><span class="fa fa-sign-out"></span> Cerrar sesión</a>
-    </li>
+    <div class="row">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout' %}"><span class="fa fa-user-circle" style="font-size:20px"></span>&emsp;{{usuario.user}}</a>
+      </li>
+      &emsp;&emsp;&emsp;&emsp;&emsp;
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'logout' %}"><span class="fa fa-sign-out"></span> Cerrar sesión</a>
+      </li>
+    </div>
   </ul>
 </nav>
 {% endblock navbar %}
@@ -16,8 +22,9 @@
 {% block sidebar %}
 <ul class="sidebar-nav">
     <li class="sidebar-brand"></li>
+    <li><a href="/provider/home/"><span class="fa fa-home"></span> Inicio</a></li>
     <li><a href="/accounts/myEmployees/"><span class="fa fa-users"></span> Usuarios</a></li>
-    <li><a href="/products/myProducts"><span class="fa fa-book"></span> Catálogo</a></li>
+    <li><a href="/products/myProducts/"><span class="fa fa-book"></span> Catálogo</a></li>
     <li><a href="#"><span class="fa fa-handshake-o"></span> Clientes</a></li>
     <!--<li><a href="#">Events</a></li>
     <li><a href="#">About</a></li>
@@ -29,11 +36,6 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="col">
-      <a class="btn btn-primary" href="/accounts/myEmployees/">
-        Empleados
-      </a>
-    </div>
     <div class="col">
       <a class="btn btn-primary" href="/provider/my_clients/link_code">
         Código de enlace
