@@ -140,11 +140,11 @@
     <div class="modal-content" style="background-color:rgba(216,221,227,0.7);border-color:rgba(216,221,227,0.7);padding-top:10px">
       <form class="form-signin" method="post" action="{% url 'login' %}">
         {% csrf_token %}
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>&emsp;
-        </button>
-        <div class="modal-body" style="padding:60px">
 
+        <div class="modal-body" style="padding:60px">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
           <div class="text-center">
             <img class="mb-4" src="{% static 'OCS.png' %}" alt="OCS" style="width:auto;height:50px">
           </div>
