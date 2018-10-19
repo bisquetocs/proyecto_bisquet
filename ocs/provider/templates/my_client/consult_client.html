@@ -1,0 +1,57 @@
+{% extends "franchise/home.html" %}
+{% load static %}
+{% block extras %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Mis clientes</h1>
+</div>
+
+<div class='row'>
+  {% if empty_list == 1 %}
+  <div class="shadow-lg p-3 mb-5 bg-white rounded">
+    <p>
+      Aún no te has relacionado con clientes.
+    </p>
+    <p>
+      Da click <a href="/provider/my_client/link_code/">aquí</a>
+      para enlazarte con tus proveedores registrados
+    </p>
+  </div>
+  {% endif %}
+</div>
+
+{% if empty_list == 0 %}
+<table  class="table table-striped table-bordered" id="my_client">
+  <thead class="thead-dark">
+    <tr>
+      <th>Nombre</th>
+      <th>Domicilio</th>
+      <th>Responsable</th>
+      <th>Detalles</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for franchise in relation_list %}
+    <tr>
+      <td>{{ franchise.id_franchise.nombre }}</td>
+      <td>{{ franchise.id_franchise.domicilio }}</td>
+      <td>{{ franchise.id_franchise.id_usuario.first_name }} {{franchise.id_franchise.id_usuario.last_name}}</td>
+      <td><a href="/provider/my_client/{{ franchise.id_franchise.id }}" style="color: inherit;"><i class="fa fa-info-circle" style="font-size:24px"></i></a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
+<a class="btn btn-primary" href="/provider/my_client/link_code/">
+  Enlazarme con un cliente
+</a>
+
+
+{% endif %}
+
+
+<script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
+
+
+{% endblock extras %}

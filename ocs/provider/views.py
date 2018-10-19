@@ -90,3 +90,17 @@ def office(request):
             edit_object.save()
 
     return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list})
+
+    @login_required
+    def my_client(request):
+        empty_list = 0
+        u = OCSUser.objects.get(user = request.user)
+        relation_list = LinkWithF.objects.filter(id_provider=u.id_provider.id)
+        if len(relation_list) == 0:
+            empty_list = 1
+
+        return render(request, 'my_client/consult_client.html', {
+                'usuario' : u,
+                'relation_list' : relation_list,
+                'empty_list' : empty_list
+                })
