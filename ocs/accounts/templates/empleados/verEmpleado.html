@@ -1,0 +1,37 @@
+{% extends aux %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Detalle de usuario</h1>
+</div>
+
+<div class="container">
+    <div class='row'>
+      <div class="col-lg-12">
+        <form method="post">
+        {% csrf_token %}
+        <div class="form-group row">
+          <div class="col-sm-4">
+            <label for="role">Rol</label>
+          </div>
+          <div class="col-sm-4">
+            <select id="role" name="role" class="form-control">
+              <option selected>{{ group.name }}</option>
+              {% for g in role_list %}
+                  <option>{{ g.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <button type="submit" class="btn btn-md btn-primary">Cambiar Rol</button>
+          </div>
+        </div>
+        </form>
+
+        <br><br><br>
+      </div>
+    </div>
+</div>
+
+<p></p>
+
+{% endblock content %}
