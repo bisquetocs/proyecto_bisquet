@@ -11,6 +11,7 @@ urlpatterns = [
     path('locate/', views.locate, name='locate'),
     path('myEmployees/', views.misEmpleados, name='myEmployees'),
     path('myEmployees/delete/<int:emp_id>', views.borrarEmpleado, name='delete'),
+    path('myEmployees/verEmpleado/<int:emp_id>', views.verEmpleado, name='verEmpleado'),
     path('linkEmployee/', views.registrarEmpleado, name='linkEmployee'),
 
 ]

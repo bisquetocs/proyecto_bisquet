@@ -85,7 +85,7 @@ def misEmpleados(request):
     else:
         #Somos nosotros viendo a todos los que están registrados
         empleados_list = OCSUser.objects.all()
-    return render(request, 'empleados/misEmpleados.html', {'usuario':ocs_user,'empleados_list':empleados_list,'aux':aux,})
+    return render(request, 'empleados/misEmpleados.html', {'usuario':ocs_user,'empleados_list':empleados_list,'aux':aux})
 
 @login_required
 def registrarEmpleado(request):
@@ -114,13 +114,13 @@ def registrarEmpleado(request):
             aux = "franchise/home.html"
             rolesf = IsProviderOrFranchise.objects.exclude(is_franchise=True)
             roles = Group.objects.filter(~Q(id__in=rolesf))
-            empleados_list = OCSUser.objects.filter(id_franchise=ocs_user.id_franchise)
+            empleados_list = OCSUser.objects.filter(id_franchise=ocs_user.id_franchise, active = 1)
         elif ocs_user.id_franchise is None: #Es provider
             aux = "provider/home.html"
             rolesp = IsProviderOrFranchise.objects.exclude(is_provider=True)
             roles = Group.objects.filter(~Q(id__in=rolesp))
-            empleados_list = OCSUser.objects.filter(id_provider=ocs_user.id_provider)
-        return render(request, 'empleados/registrarEmpleado.html', {'usuario':ocs_user,'empleados_list':empleados_list,'groups_list':roles,'aux':aux,})
+            empleados_list = OCSUser.objects.filter(id_provider=ocs_user.id_provider, active = 1)
+        return render(request, 'empleados/registrarEmpleado.html', {'usuario':ocs_user,'empleados_list':empleados_list,'groups_list':roles,'aux':aux})
 
 @login_required
 def borrarEmpleado(request, emp_id):
@@ -140,5 +140,30 @@ def borrarEmpleado(request, emp_id):
 
     return redirect('../')
 
+@login_required
+def verEmpleado(request, emp_id):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    ocs_group = User.groups.through.objects.get(user = emp_id)
+    id_group = ocs_group.group
+    group = Group.objects.get(name = id_group)
+    if request.method == 'POST':
+        grp = request.POST['role']
+        ocs_group.group = Group.objects.get(name = grp)
+        ocs_group.save()
+        url = '../verEmpleado/' + str(emp_id)
+        return redirect(url)
+
+    else:
+        if ocs_user.id_provider is None: #Es franchise
+            aux = "franchise/home.html"
+            rolesf = IsProviderOrFranchise.objects.exclude(is_franchise=True)
+            roles = Group.objects.filter(~Q(id__in=rolesf))
+
+        elif ocs_user.id_franchise is None: #Es provider
+            aux = "provider/home.html"
+            rolesp = IsProviderOrFranchise.objects.exclude(is_provider=True)
+            roles = Group.objects.filter(~Q(id__in=rolesp))
+
+    return render(request, 'empleados/verEmpleado.html',{'aux':aux, 'group':group, 'role_list':roles})
 
 #

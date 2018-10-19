@@ -19,7 +19,7 @@
       <tH>{{ OCSUser.user.username }}</th>
       <td>{{ OCSUser.user.email }}</td>
       <td>{{ OCSUser.user.last_login }}</td>
-      <td><a href=#><i class="fa fa-info-circle fa-2x" aria-hidden="true"></i></a>&nbsp &nbsp<a href="{% url 'delete' OCSUser.user.id %}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a></td>
+      <td><a href="{% url 'verEmpleado' OCSUser.user.id %}"><i class="fa fa-info-circle fa-2x" aria-hidden="true"></i></a>&nbsp &nbsp<a href="{% url 'delete' OCSUser.user.id %}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a></td>
     </tr>
     {% endfor %}
 
@@ -38,6 +38,11 @@
 {% block registrarEmpleado %}
 
 {% endblock registrarEmpleado %}
+
+{% block verEmpleado %}
+
+{% endblock verEmpleado %}
+
 
 <!-- Graphs -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
