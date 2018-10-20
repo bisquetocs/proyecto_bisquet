@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterProviderForm
 from accounts.models import OCSUser
 from products.models import Product
+from franchise.models import Franchise
 
 from .models import Provider, LinkWithF, Days, OfficeHours
 
@@ -90,3 +91,36 @@ def office(request):
             edit_object.save()
 
     return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list})
+
+@login_required
+def my_clients(request):
+    empty_list = 0
+    u = OCSUser.objects.get(user = request.user)
+    relation_list = LinkWithF.objects.filter(id_provider=u.id_provider.id)
+    if len(relation_list) == 0:
+        empty_list = 1
+
+    return render(request, 'my_clients/consult_clients.html', {
+            'usuario' : u,
+            'relation_list' : relation_list,
+            'empty_list' : empty_list
+            })
+
+@login_required
+def client_detail(request, id_franchise):
+    success = True
+    u = OCSUser.objects.get(user = request.user)
+    F = Franchise()
+    relation_list = LinkWithF.objects.filter(id_provider=u.id_provider, id_franchise=id_franchise)
+    try:
+        f = Franchise.objects.get(id=id_franchise)
+        if len(relation_list) == 0:
+            success = False
+    except:
+        success = False
+
+    return render(request, 'my_clients/client_detail.html', {
+            'usuario' : u,
+            'success' : success,
+            'franchise' : f,
+            })

@@ -1,0 +1,78 @@
+{% extends "provider/home.html" %}
+
+{% block extras %}
+
+{% if success %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">{{ franchise.nombre }}</h1>
+</div>
+
+<div class="container">
+  <div class='container'>
+
+    <div class="row">
+      <div class="col">
+        <b>Razón social</b>
+      </div>
+      <div class="col">
+        {{ franchise.razon_social }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <b>RFC</b>
+      </div>
+      <div class="col">
+        {{ franchise.rfc }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <b>Domicilio</b>
+      </div>
+      <div class="col">
+        {{ franchise.domicilio }}
+      </div>
+    </div>
+
+    <!--<div class="row">
+      <div class="col">
+        <b>Misión</b>
+      </div>
+      <div class="col">
+        {{ franchise.mision }}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <b>Visión</b>
+      </div>
+      <div class="col">
+        {{ franchise.vision }}
+      </div>
+    </div>-->
+
+    <div class="row">
+      <div class="col">
+        <b>Responsable</b>
+      </div>
+      <div class="col">
+        {{ franchise.id_usuario.first_name }} {{ franchise.id_usuario.last_name }}
+      </div>
+    </div>
+{% endif %}
+
+{% if success == False %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">ERROR 404: No encontramos el cliente que estás buscando</h1>
+</div>
+{% endif %}
+
+  </div>
+</div>
+
+
+{% endblock extras %}
