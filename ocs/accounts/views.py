@@ -143,6 +143,7 @@ def borrarEmpleado(request, emp_id):
 @login_required
 def verEmpleado(request, emp_id):
     ocs_user = OCSUser.objects.get(user = request.user)
+    request_user = OCSUser.objects.get(user = emp_id)
     ocs_group = User.groups.through.objects.get(user = emp_id)
     id_group = ocs_group.group
     group = Group.objects.get(name = id_group)
@@ -164,6 +165,6 @@ def verEmpleado(request, emp_id):
             rolesp = IsProviderOrFranchise.objects.exclude(is_provider=True)
             roles = Group.objects.filter(~Q(id__in=rolesp))
 
-    return render(request, 'empleados/verEmpleado.html',{'aux':aux, 'group':group, 'role_list':roles})
+    return render(request, 'empleados/verEmpleado.html',{'aux':aux, 'group':group, 'role_list':roles, 'employee':request_user})
 
 #
