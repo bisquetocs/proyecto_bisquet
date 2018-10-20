@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterProviderForm
 from accounts.models import OCSUser
 from products.models import Product
+from franchise.models import Franchise
 
 from .models import Provider, LinkWithF, Days, OfficeHours
 
