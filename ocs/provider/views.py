@@ -10,8 +10,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegisterProviderForm
 from accounts.models import OCSUser
 from products.models import Product
+from franchise.models import Franchise
 
-from .models import Provider, LinkWithF, Days, OfficeHours
+from .models import Provider, LinkWithF, Days, OfficeHours, DailyClients
 
 import string
 import random
@@ -69,6 +70,7 @@ def link_code(request):
             'code' : code
             })
 
+#Función para asignar horas de oficina a la empresa de lado proveedor
 @login_required
 def office(request):
     u = OCSUser.objects.get(user = request.user)
@@ -79,14 +81,48 @@ def office(request):
     hours_list = OfficeHours.objects.filter(id_provider = provider)
 
     if request.method == 'POST':
-
+        #La asignación se hace dentro de un ciclo for pues se asigna a cada día
         for item in days_list:
             i = item.id
             s_hour = "start_hour_" + str(i)
             f_hour = "finish_hour_" + str(i)
+            #En lugar de añadir más filas a la tabla, sólo se editan las ya existentes
             edit_object = OfficeHours.objects.get(day = item, id_provider = provider)
             edit_object.start_hour = request.POST[s_hour]
             edit_object.finish_hour = request.POST[f_hour]
             edit_object.save()
 
-    return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list})
+    return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list, 'usuario':u})
+
+@login_required
+def clients(request):
+    u = OCSUser.objects.get(user = request.user)
+    prov = u.id_provider_id
+    provider = Provider.objects.get(id = prov)
+
+
+    return render(request, 'clients/main.html', {'usuario':u})
+
+#Función para desplegar y añadir los clientes diarios de una empresa del lado de proveedor
+@login_required
+def daily_clients(request):
+    u = OCSUser.objects.get(user = request.user)
+    prov = u.id_provider_id
+    provider = Provider.objects.get(id = prov)
+    #Selecciona la lista de los días
+    days_list = Days.objects.all()
+    #Se hace un filtro para desplegar solo los clientes ligados con ese usuario proveedor
+    fran_prov = LinkWithF.objects.values_list('id_franchise', flat=True).filter(id_provider = prov)
+    clients_list = Franchise.objects.filter(id__in = fran_prov)
+
+    if request.method == 'POST':
+        #Hace el registro
+        obj_fran =  Franchise.objects.get( nombre = request.POST['client'])
+        obj_day = Days.objects.get(nombre = request.POST['day'])
+
+        register = DailyClients(franchise = obj_fran, day = obj_day, status = 'Sin pedido')
+        register.save()
+        #Fin de registro
+
+
+    return render(request, 'clients/daily_clients.html', {'usuario':u, 'clients_list': clients_list, 'days_list':days_list})

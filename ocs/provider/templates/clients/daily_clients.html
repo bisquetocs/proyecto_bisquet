@@ -1,0 +1,51 @@
+
+{% extends "provider/home.html" %}
+{% block title %}OCS - Clientes{% endblock title %}
+
+
+{% block content %}
+
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Clientes Diarios</h1>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+      <form method="post">
+      {% csrf_token %}
+      <div class="form-group row">
+        <div class="col-sm-4">
+          <label for="day">Día</label>
+          <select id="day" name="day" class="form-control">
+            <option selected>Selecciona un día</option>
+            {% for day in days_list %}
+                <option>{{ day.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <label for="client">Cliente</label>
+          <select id="client" name="client" class="form-control">
+            <option selected>Selecciona un cliente</option>
+            {% for client in clients_list %}
+                <option>{{ client.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-sm-4">
+          <br>
+          <button type="submit" class="btn btn-md btn-primary">Registrar</button>
+        </div>
+      </div>
+      <br><hr>
+      </form>
+    </div>
+    </div>
+
+  </div>
+
+
+
+{% endblock content %}
