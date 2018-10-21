@@ -165,6 +165,6 @@ def verEmpleado(request, emp_id):
             rolesp = IsProviderOrFranchise.objects.exclude(is_provider=True)
             roles = Group.objects.filter(~Q(id__in=rolesp))
 
-    return render(request, 'empleados/verEmpleado.html',{'aux':aux, 'group':group, 'role_list':roles, 'employee':request_user})
+    return render(request, 'empleados/verEmpleado.html',{'aux':aux, 'group':group, 'role_list':roles, 'employee':request_user, 'usuario':ocs_user})
 
 #
