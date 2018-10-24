@@ -101,8 +101,15 @@ def provider_detail(request, id_provider):
             })
 
 
-
-
+# function that displays the table of the franchise inventory
+# Input: the request method with the values of the session
+# Output: the inventory of the franchise
+@login_required
+def show_inventory(request):
+    u = OCSUser.objects.get(user = request.user)
+    return render(request, 'inventory/show_inventory.html', {
+            'usuario' : u,
+            })
 
 
 
