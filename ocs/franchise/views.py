@@ -11,7 +11,7 @@ from .forms import RegisterFranchiseForm
 from provider.models import LinkWithF, Provider
 from accounts.models import OCSUser
 
-from .models import Franchise
+from .models import Franchise, PrivateProduct
 
 @login_required
 def registerFranchise(request):
@@ -106,15 +106,59 @@ def provider_detail(request, id_provider):
 # Output: the inventory of the franchise
 @login_required
 def show_inventory(request):
+    empty_field = 0
+    amount_error = 0
+    product_already_exists = 0
+    registration_success = 0
+
     u = OCSUser.objects.get(user = request.user)
+    product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise.id)
+
+
+    if request.method == 'POST':
+        p_name = request.POST['product_name']
+        p_desc = request.POST['product_desc']
+        p_amount = int(request.POST['product_amount'])
+
+        if (p_name=='' or p_desc=='' or p_amount==''):
+            empty_field = 1
+            return render(request, 'inventory/show_inventory.html', {
+                    'usuario' : u,
+                    'product_list' : product_list,
+                    'empty_field' : empty_field,
+                    'amount_error' : amount_error,
+                    'product_already_exists' : product_already_exists,
+                    'registration_success' : registration_success
+                    })
+        if (p_amount < 0):
+            amount_error = 1
+            return render(request, 'inventory/show_inventory.html', {
+                    'usuario' : u,
+                    'product_list' : product_list,
+                    'empty_field' : empty_field,
+                    'amount_error' : amount_error,
+                    'product_already_exists' : product_already_exists,
+                    'registration_success' : registration_success
+                    })
+        # Check if product name already exist
+        new_product = PrivateProduct(id_franchise=u.id_franchise, name=p_name, description=p_desc, amount=p_amount)
+        try:
+            product_test = PrivateProduct.objects.get(name=p_name)
+        except:
+            new_product.save()
+            registration_success = 1
+        else:
+            product_already_exists = 1
+
+
     return render(request, 'inventory/show_inventory.html', {
             'usuario' : u,
+            'product_list' : product_list,
+            'empty_field' : empty_field,
+            'amount_error' : amount_error,
+            'product_already_exists' : product_already_exists,
+            'registration_success' : registration_success
             })
-
-
-
-
-
 
 
 

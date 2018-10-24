@@ -3,6 +3,49 @@
 
 {% block extras %}
 
+<!------------------- ALERTAS ----------------------------------------------------------->
+{% if empty_field == 1 %}
+<!-- Empty fields -->
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>Ocurrió un error!</strong> Es necesario llenar todos los campos del registro.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endif %}
+
+{% if amount_error == 1 %}
+<!-- Invalid amount -->
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>Ocurrió un error!</strong> La cantidad del producto debe ser mayor a 0.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endif %}
+
+{% if product_already_exists == 1 %}
+<!-- Already exists -->
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <strong>Ocurrió un error!</strong> Ya existe un producto con ese nombre.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endif %}
+
+{% if registration_success == 1 %}
+<!-- SUCCESS -->
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+  <strong>EXITO!</strong> Tu producto se ha registrado exitosamente.
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endif %}
+<!-------------------------------------------------------------------------------------->
+
+
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">Mi Inventario</h1>
 </div>
@@ -18,32 +61,81 @@
     </tr>
   </thead>
   <tbody>
+    {% for product in product_list %}
     <tr>
-      <td>NAA01</td>
-      <td>Naranja</td>
-      <td>Naranja acida</td>
-      <td>112</td>
-      <td>kg</td>
+      <td> </td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.description }}</td>
+      <td>{{ product.amount }}</td>
+      <td> </td>
     </tr>
-
-    <tr>
-      <td>---</td>
-      <td>Jitomate en bola</td>
-      <td>El mejor jitomate en bola</td>
-      <td>5</td>
-      <td>pzas.</td>
-    </tr>
+    {% endfor %}
   </tbody>
 </table>
 
+<br />
+<!--Modal Button -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#register_modal" title="Agrega un producto que no sea de un proveedor registrado">
+  <span class="fa fa-plus"></span>
+</button>
+
+{% if post %}
+<p>
+  SE HIZO UN POST
+</p>
+{% endif %}
 
 
+<!-- Modal -->
+<div class="modal fade" id="register_modal" tabindex="-1" role="dialog" aria-labelledby="register_modalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="register_modalLabel">Registrar producto</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <p>
+          Agrega un producto que no sea de un provedor registrado
+        </p>
+
+        <form method="POST">
+        {% csrf_token %}
+
+        <div class="col mb-3">
+          <label for="product_name">Nombre</label>
+          <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Papas"  required>
+        </div>
+
+        <div class="col mb-3">
+          <label for="product_desc">Descripción</label>
+          <input type="text" class="form-control" id="product_desc" name="product_desc" placeholder="Papas cambray"  required>
+        </div>
+
+        <div class="col mb-3">
+          <label for="product_amount">Cantidad</label>
+          <input type="number" class="form-control" id="product_amount" name="product_amount" required>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
 <script>
 $(document).ready(function(){
     $('[data-toggle="help_code"]').tooltip();
+    $('[data-toggle="modal"]').tooltip();
 });
 </script>
 {% endblock extras %}
