@@ -15,3 +15,11 @@ class Franchise(models.Model):
 
     def __str__(self):
         return self.rfc
+
+
+
+class PrivateProduct(models.Model):
+    id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    description = models.CharField(max_length=200)
+    amount = models.IntegerField()
