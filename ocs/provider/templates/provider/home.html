@@ -8,7 +8,19 @@
   <ul class="navbar-nav px-3">
     <div class="row">
       <li class="nav-item">
-        <a class="nav-link" href="{% url 'logout' %}"><span class="fa fa-user-circle" style="font-size:20px"></span>&emsp;{{usuario.user}}</a>
+        <div class="popup" onclick="popUP()">
+          <a class="nav-link"><span class="fa fa-user-circle" style="font-size:20px"></span>&emsp;{{usuario.user}}</a>
+          <div class="popuptext shadow" id="myPopup">
+            <div class="list-group">
+              <a href="/accounts/profile/" class="list-group-item list-group-item-action">
+                <span class="fa fa-user"></span> Mi perfil
+              </a>
+              <a href="/provider/profile/" class="list-group-item list-group-item-action">
+                <span class="fa fa-industry"></span> {{usuario.id_provider.nombre}}
+              </a>
+            </div>
+          </div>
+        </div>
       </li>
       &emsp;&emsp;&emsp;&emsp;&emsp;
       <li class="nav-item">
@@ -56,17 +68,16 @@
   </div>
   <div class="row">
     <div class="col">
-      {% if messages %}
-      <ul class="messages">
-          {% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-          {% endfor %}
-      </ul>
-      {% endif %}
     </div>
   </div>
 </div>
 {% endblock content %}
 
 {% block footer %}
+<script>
+function popUP() {
+    var popup = document.getElementById("myPopup");
+    popup.classList.toggle("show");
+}
+</script>
 {% endblock footer %}

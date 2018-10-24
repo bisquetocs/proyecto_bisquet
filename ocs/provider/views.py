@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterProviderForm
@@ -74,12 +75,9 @@ def office(request):
     u = OCSUser.objects.get(user = request.user)
     prov = u.id_provider_id
     provider = Provider.objects.get(id = prov)
-
     days_list = Days.objects.all()
     hours_list = OfficeHours.objects.filter(id_provider = provider)
-
     if request.method == 'POST':
-
         for item in days_list:
             i = item.id
             s_hour = "start_hour_" + str(i)
@@ -88,5 +86,45 @@ def office(request):
             edit_object.start_hour = request.POST[s_hour]
             edit_object.finish_hour = request.POST[f_hour]
             edit_object.save()
-
     return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list})
+
+
+@login_required
+def profile (request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    return render(request, 'provider/profile.html', {'usuario':ocs_user,})
+
+@login_required
+def edit_provider (request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    if request.method == 'POST':
+        p = Provider.objects.get(id=ocs_user.id_provider.id)
+        p.nombre=request.POST['nombre']
+        p.razon_social=request.POST['razon_social']
+        p.rfc=request.POST['rfc']
+        p.domicilio=request.POST['domicilio']
+        p.mision=request.POST['mision']
+        p.vision=request.POST['vision']
+        p.save()
+        messages.success(request, 'La información se actualizó con éxito!')
+        return redirect(reverse('provider:profile'))
+    else:
+        return render(request, 'provider/profile.html', {'usuario':ocs_user, 'edit':True,})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#

@@ -65,7 +65,7 @@ def registerUser(request):
 def locate(request):
     ocs_user = OCSUser.objects.get(user = request.user)
     if ocs_user.id_provider == None and ocs_user.id_franchise == None:
-        return render(request, 'home/index.html', {'usuario':request.user})
+        return render(request, 'home/index.html', {'usuario':ocs_user})
     elif ocs_user.id_provider != None:
         return redirect(reverse('provider:home'))
     elif ocs_user.id_franchise != None:
@@ -125,20 +125,80 @@ def registrarEmpleado(request):
 @login_required
 def borrarEmpleado(request, emp_id):
     ocs_user = OCSUser.objects.get(user = request.user)
-
     ##Descativa permisos de inicio de sesión de Django sin borrar
     del_object = User.objects.get(id = emp_id)
     del_object.is_active = 0
     del_object.save()
-
     #Desactiva usuario, cambia estado
     del_user = OCSUser.objects.get(user = emp_id)
     del_user.active = 0;
     del_user.save()
-
     messages.info(request, 'Borrado exitoso!')
-
     return redirect('../')
+
+
+@login_required
+def profile (request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    if ocs_user.id_provider is None:
+        #Es franchise
+        aux = "franchise/home.html"
+    elif ocs_user.id_franchise is None:
+        #Es provider
+        aux = "provider/home.html"
+    else:
+        aux = "home/index.html"
+    return render(request, 'accounts/profile.html', {'usuario':ocs_user,'aux':aux,})
+
+
+
+@login_required
+def edit_profile (request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    if ocs_user.id_provider is None:
+        #Es franchise
+        aux = "franchise/home.html"
+    elif ocs_user.id_franchise is None:
+        #Es provider
+        aux = "provider/home.html"
+    else:
+        aux = "home/index.html"
+    u = request.user
+    if request.method == 'POST':
+        u.first_name = request.POST['first_name']
+        u.last_name = request.POST['last_name']
+        u.email = request.POST['email']
+        ocs_user.phone = request.POST['phone']
+        ocs_user.direccion = request.POST['domicilio']
+        ocs_user.num_ss = request.POST['num_ss']
+        ocs_user.rfc = request.POST['rfc']
+
+        ocs_user.save()
+        u.save()
+        messages.success(request, 'La información se actualizó con éxito!')
+        return redirect(reverse('profile'))
+    else:
+        return render(request, 'accounts/profile.html', {'usuario':ocs_user, 'edit':True, 'aux':aux,})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #

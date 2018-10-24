@@ -96,7 +96,7 @@
     {% for Producto in productos %}
     <tr>
       <td scope="row">{{ Producto.id }}</td>
-      <th>{{ Producto.nombre }}</th>
+      <th>{{ Producto.nombre.capitalize }}</th>
       <td>{{ Producto.descripcion }}</td>
       <td>{{ Producto.codigo }}</td>
       <td>
