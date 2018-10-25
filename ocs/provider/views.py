@@ -53,6 +53,14 @@ def home(request):
 
 @login_required
 def link_code(request):
+    """
+     Function used to generate a random code to link with a franchise
+     INPUT
+        - Request method with the values of the session & the values
+          sended by a POST method
+     OUTPUT
+        - A random code already saved in the database
+    """
     u = OCSUser.objects.get(user = request.user)
     code = ''
     if request.method == 'POST':

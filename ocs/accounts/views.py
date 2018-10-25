@@ -21,6 +21,14 @@ def home(request):
         return render(request, 'accounts/landing.html')
 
 def registerUser(request):
+    """
+     Function used to register a user to the database
+     INPUT
+        - Request method with the values of the session and the
+          values sended by POST
+     OUTPUT
+        - A response with the status of the registration
+    """
     if request.method == 'POST':
         uname = request.POST['username']
         fName = request.POST['firstName']

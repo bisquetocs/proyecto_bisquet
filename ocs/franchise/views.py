@@ -40,6 +40,14 @@ def home(request):
 
 @login_required
 def link_provider(request):
+    """
+     Function used to link a franchise with a provider using a link code
+     INPUT
+        - Request method with the values of the session
+        - A post method with the link code inserted by the user
+     OUTPUT
+        - A reload of the same page and a response of the status of the process
+    """
     success = ''
     u = OCSUser.objects.get(user = request.user)
     code = ''
@@ -68,6 +76,13 @@ def link_provider(request):
 
 @login_required
 def my_providers(request):
+    """
+     Function used to display the providers linked with the user using the system
+     INPUT
+        - Request method with the values of the session
+     OUTPUT
+        - Query set with the list of providers
+    """
     empty_list = 0
     u = OCSUser.objects.get(user = request.user)
     relation_list = LinkWithF.objects.filter(id_franchise=u.id_franchise.id)
@@ -83,6 +98,14 @@ def my_providers(request):
 
 @login_required
 def provider_detail(request, id_provider):
+    """
+     Function that displays the details of the provider selected in the provider table
+     INPUT
+        - Request method with the values of the session
+        - Id of the provider to consult_providers
+     OUTPUT
+        - Detailed information of each attribute from the provider
+    """
     success = True
     u = OCSUser.objects.get(user = request.user)
     p = Provider()
@@ -101,11 +124,15 @@ def provider_detail(request, id_provider):
             })
 
 
-# function that displays the table of the franchise inventory
-# Input: the request method with the values of the session
-# Output: the inventory of the franchise
 @login_required
 def show_inventory(request):
+    """
+    Function used to display a table of the private products od a franchise
+    INPUT
+        - Request method with the values of the session
+    OUTPUT
+        - Query set of the inventory
+    """
     empty_field = 0
     amount_error = 0
     product_already_exists = 0
