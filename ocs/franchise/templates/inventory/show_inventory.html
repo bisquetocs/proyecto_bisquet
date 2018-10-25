@@ -53,21 +53,21 @@
 <table class="table table-striped table-bordered" id="my_providers">
   <thead class="thead-dark">
     <tr>
-      <th>Código   <span data-toggle="help_code" title="Sólo los productos registrados de un proveedor tendrán código" class="fa fa-question-circle"></span></th>
+       <!-- <th>Código   <span data-toggle="help_code" title="Sólo los productos registrados de un proveedor tendrán código" class="fa fa-question-circle"></span></th> -->
       <th>Producto</th>
       <th>Descripción</th>
       <th>Cantidad</th>
-      <th>Unidad</th>
+      <!-- <th>Unidad</th> -->
     </tr>
   </thead>
   <tbody>
     {% for product in product_list %}
     <tr>
-      <td> </td>
+      <!-- <td> </td> -->
       <td>{{ product.name }}</td>
       <td>{{ product.description }}</td>
       <td>{{ product.amount }}</td>
-      <td> </td>
+      <!-- <td> </td> -->
     </tr>
     {% endfor %}
   </tbody>
