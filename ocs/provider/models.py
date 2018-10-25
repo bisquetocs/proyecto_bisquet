@@ -23,7 +23,10 @@ class LinkWithF(models.Model):
     link_code = models.CharField(max_length=12)
     active = models.BooleanField()
     used = models.BooleanField()
-
+    date_of_creation = models.DateTimeField(default=timezone.now, blank=True)
+    def check_timeout(self):
+        now = timezone.now()
+        return now - datetime.timedelta(days=5) <= self.date_of_creation <= now
 class Days(models.Model):
     nombre = models.CharField(max_length = 100)
     def __str__(self):
@@ -39,5 +42,3 @@ class DailyClients(models.Model):
     franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE, blank = True, null = True)
     day = models.ForeignKey(Days, on_delete = models.CASCADE, blank = True, null = True)
     status = models.CharField(max_length=12)
-
-    
