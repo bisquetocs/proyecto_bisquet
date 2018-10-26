@@ -9,7 +9,7 @@ from django.utils import timezone
 
 
 
-def create_user_provider():
+def create_user_franchise():
     """
         Function for creating a user in case it is needed
         in the test cases
@@ -38,7 +38,7 @@ class ProviderViewTest(TestCase):
             any request to that view will be a 404
         """
         # non_existing_provider_id = 4
-        user = create_user_provider()
+        user = create_user_franchise()
         self.client.login(username="uname", password="testpasswd123")
         response = self.client.get('/franchise/my_providers/4')
         self.assertEqual(response.status_code, 404)
@@ -49,7 +49,7 @@ class ProviderViewTest(TestCase):
             results in returning a variable that represents that the list is
             empty
         """
-        user = create_user_provider()
+        user = create_user_franchise()
         self.client.login(username="uname", password="testpasswd123")
         response = self.client.get('/franchise/my_providers/')
         self.assertEqual(response.context['empty_list'], 1)
