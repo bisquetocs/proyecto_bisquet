@@ -40,6 +40,14 @@ def create_user_franchise():
     nf = Franchise(id=1, id_usuario=nu, activo=True, fecha_registro=timezone.now())
     nf.save()
 
+def create_group():
+    """
+        Function for creating a group for a generic employee in case it is
+        needed in the test cases
+    """
+    ng = Group(name='Empleado generico')
+    ng.save()
+
 class UserLoginTest(TestCase):
 
     def test_provider_logged_with_incorrect_user_pass(self):
@@ -116,3 +124,23 @@ class UserLogoutTest(TestCase):
         self.client.login(username="uname", password="testpasswd123")
         response = self.client.get('/accounts/accounts/logout/')
         self.assertRedirects(response, '/', status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+
+class CreateUserTest(TestCase):
+
+    def test_user_register_new_account(self):
+        """
+            An unregistered user will be redirected to the landing page of the OCS
+            system once the user insert the correct data in the registration form. Also
+            a new user will be registered.
+        """
+        group = create_group()
+        response = self.client.post('/accounts/registerUser/', {'first_name': 'contact',
+                                                                                'username': 'testuname',
+                                                                                'firstName': 'testFirstName',
+                                                                                'lastName': 'testLN',
+                                                                                'email': 'mail@test.com',
+                                                                                'password': 'passTest',
+                                                                                'confpass': 'passTest',
+                                                                             })
+
+        self.assertRedirects(response, '/accounts/', status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
