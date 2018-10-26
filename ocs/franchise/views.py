@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegisterFranchiseForm
@@ -188,7 +189,25 @@ def show_inventory(request):
             })
 
 
+@login_required
+def profile (request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    return render(request, 'franchise/profile.html', {'usuario':ocs_user,})
 
+@login_required
+def edit_franchise (request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    if request.method == 'POST':
+        f = Franchise.objects.get(id=ocs_user.id_franchise.id)
+        f.nombre=request.POST['nombre']
+        f.razon_social=request.POST['razon_social']
+        f.rfc=request.POST['rfc']
+        f.domicilio=request.POST['domicilio']
+        f.save()
+        messages.success(request, 'La información se actualizó con éxito!')
+        return redirect(reverse('franchise:profile'))
+    else:
+        return render(request, 'franchise/profile.html', {'usuario':ocs_user, 'edit':True,})
 
 
 

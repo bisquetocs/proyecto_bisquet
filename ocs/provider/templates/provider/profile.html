@@ -1,11 +1,9 @@
 {% extends "provider/home.html" %}
 {% block content %}
-
 <br>
 <div class="row">
   <div class="col">
     <div class="jumbotron">
-
       {% if edit %}
       <form method="post" action="{% url 'provider:editProfile' %}">
         {% csrf_token %}
@@ -54,12 +52,9 @@
         </a>
       </div>
       {% endif %}
-
-
     </div>
   </div>
   <div class="col" style="max-width:200px">
   </div>
 </div>
-
 {% endblock content %}

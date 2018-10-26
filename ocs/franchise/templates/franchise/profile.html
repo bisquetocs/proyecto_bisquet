@@ -1,0 +1,50 @@
+{% extends "franchise/home.html" %}
+{% block content %}
+<br>
+<div class="row">
+  <div class="col">
+    <div class="jumbotron">
+      {% if edit %}
+      <form method="post" action="{% url 'franchise:editProfile' %}">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="nombre">Nombre:</label>
+          <input id="nombre" name="nombre" type="text" class="form-control" max_length=100 required value="{{ usuario.id_franchise.nombre }}">
+        </div>
+        <div class="form-group">
+          <label for="razon_social">Razón social:</label>
+          <input id="razon_social" name="razon_social" type="text" class="form-control" max_length=200 required value="{{ usuario.id_franchise.razon_social }}">
+        </div>
+        <div class="form-group">
+          <label for="rfc">RFC:</label>
+          <input id="rfc" name="rfc" type="text" class="form-control" max_length=13 required value="{{ usuario.id_franchise.rfc }}">
+        </div>
+        <div class="form-group">
+          <label for="domicilio">Domicilio:</label>
+          <input id="domicilio" name="domicilio" type="text" class="form-control" max_length=200 required value="{{ usuario.id_franchise.domicilio }}">
+        </div>
+        <center>
+          <div class="btn-group btn-lg" role="group" aria-label="Basic example">
+            <a class="btn btn-danger" href="{% url 'franchise:profile' %}" role="button">Cancelar</a>
+            <button type="submit" class="btn btn-success">Actualizar información!</button>
+          </div>
+        </center>
+      </form>
+      {% else %}
+      <div class="text-center">
+        <h1>{{ usuario.id_franchise.nombre }}</h1>
+        <h4>{{ usuario.id_franchise.razon_social }}</h4>
+        <h4>{{ usuario.id_franchise.rfc }}</h4>
+        <h4>{{ usuario.id_franchise.domicilio }}</h4>
+        <h4>{{ usuario.id_franchise.activo }}</h4>
+        <a class="btn btn-warning" href="{% url 'franchise:editProfile' %}" role="button">
+          <span class="fa fa-edit"></span> Editar
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col" style="max-width:200px">
+  </div>
+</div>
+{% endblock content %}

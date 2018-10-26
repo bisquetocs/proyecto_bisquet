@@ -10,5 +10,7 @@ urlpatterns = [
     path('my_providers/', views.my_providers, name='my_providers'),
     path('my_providers/link/', views.link_provider, name='link_provider'),
     path('my_providers/<int:id_provider>', views.provider_detail, name='provider_detail'),
+    path('profile/', views.profile, name="profile"),
+    path('profile/edit/', views.edit_franchise, name="editProfile"),
 
 ]

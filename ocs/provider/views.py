@@ -162,25 +162,25 @@ def daily_clients(request):
 
 @login_required
 def profile (request):
-ocs_user = OCSUser.objects.get(user = request.user)
-return render(request, 'provider/profile.html', {'usuario':ocs_user,})
+    ocs_user = OCSUser.objects.get(user = request.user)
+    return render(request, 'provider/profile.html', {'usuario':ocs_user,})
 
 @login_required
 def edit_provider (request):
-ocs_user = OCSUser.objects.get(user = request.user)
-if request.method == 'POST':
-    p = Provider.objects.get(id=ocs_user.id_provider.id)
-    p.nombre=request.POST['nombre']
-    p.razon_social=request.POST['razon_social']
-    p.rfc=request.POST['rfc']
-    p.domicilio=request.POST['domicilio']
-    p.mision=request.POST['mision']
-    p.vision=request.POST['vision']
-    p.save()
-    messages.success(request, 'La información se actualizó con éxito!')
-    return redirect(reverse('provider:profile'))
-else:
-    return render(request, 'provider/profile.html', {'usuario':ocs_user, 'edit':True,})
+    ocs_user = OCSUser.objects.get(user = request.user)
+    if request.method == 'POST':
+        p = Provider.objects.get(id=ocs_user.id_provider.id)
+        p.nombre=request.POST['nombre']
+        p.razon_social=request.POST['razon_social']
+        p.rfc=request.POST['rfc']
+        p.domicilio=request.POST['domicilio']
+        p.mision=request.POST['mision']
+        p.vision=request.POST['vision']
+        p.save()
+        messages.success(request, 'La información se actualizó con éxito!')
+        return redirect(reverse('provider:profile'))
+    else:
+        return render(request, 'provider/profile.html', {'usuario':ocs_user, 'edit':True,})
 
 
 

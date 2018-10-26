@@ -46,31 +46,8 @@
 {% endblock sidebar %}
 
 {% block content %}
-<div class="container">
-  <div class="row">
-    <div class="col">
-      <a class="btn btn-primary" href="/provider/my_clients/link_code">
-        Código de enlace
-      </a>
-    </div>
-    <div class="col">
-      <a class="btn btn-primary" href="/provider/office">
-        Horas de oficina
-      </a>
-    </div>
-  </div>
-  <br><br>
-  <div class="row">
-    <div class="col">
-      {% block extras %}
-      {% endblock extras %}
-    </div>
-  </div>
-  <div class="row">
-    <div class="col">
-    </div>
-  </div>
-</div>
+  {% block extras %}
+  {% endblock extras %}
 {% endblock content %}
 
 {% block footer %}
