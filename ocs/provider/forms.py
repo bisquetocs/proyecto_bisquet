@@ -10,6 +10,7 @@ from accounts.models import OCSUser
 from django.contrib.auth.models import User, Group
 
 class RegisterProviderForm(forms.Form):
+
     razon_social = forms.CharField(label='Razón social',max_length=200,
         widget=forms.Textarea(
             attrs={

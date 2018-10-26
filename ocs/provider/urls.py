@@ -10,5 +10,6 @@ urlpatterns = [
     path('office/', views.office, name='office'),
     path('my_clients/<int:id_franchise>', views.client_detail, name='client_detail'),
     path('my_clients/daily_clients', views.daily_clients, name='daily_clients')
-
+    path('profile/', views.profile, name="profile"),
+    path('profile/edit/', views.edit_provider, name="editProfile"),
 ]

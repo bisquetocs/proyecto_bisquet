@@ -1,0 +1,70 @@
+{% extends aux %}
+{% block content %}
+<br>
+<div class="row">
+  <div class="col">
+    <div class="jumbotron">
+
+      {% if edit %}
+      <form method="post" action="/accounts/profile/edit/">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="first_name">Nombre:</label>
+          <input id="first_name" name="first_name" type="text" class="form-control" maxlength=100 required value="{{ usuario.user.first_name }}">
+        </div>
+        <div class="form-group">
+          <label for="last_name">Apellidos:</label>
+          <input id="last_name" name="last_name" type="text" class="form-control" maxlength=100 required value="{{ usuario.user.last_name }}">
+        </div>
+        <div class="form-group">
+          <label for="email">Correo electrónico:</label>
+          <input id="email" name="email" type="email" class="form-control" required value="{{ usuario.user.email }}">
+        </div>
+        <div class="form-group">
+          <label for="phone">Telefono:</label>
+          <input id="phone" name="phone" type="text" class="form-control" maxlength=20 required value="{{ usuario.phone }}">
+        </div>
+        <div class="form-group">
+          <label for="domicilio">Domicilio:</label>
+          <input id="domicilio" name="domicilio" type="text" class="form-control" maxlength=200 required value="{{ usuario.direccion }}">
+        </div>
+        <div class="form-group">
+          <label for="num_ss">Número de seguro social:</label>
+          <input id="num_ss" name="num_ss" type="text" class="form-control" maxlength=20 required value="{{ usuario.num_ss }}">
+        </div>
+        <div class="form-group">
+          <label for="rfc">RFC:</label>
+          <input id="rfc" name="rfc" type="text" class="form-control" maxlength=12 required value="{{ usuario.rfc }}">
+        </div>
+        <center>
+          <div class="btn-group btn-lg" role="group" aria-label="Basic example">
+            <a class="btn btn-danger" href="/accounts/profile/" role="button">Cancelar</a>
+            <button type="submit" class="btn btn-success">Actualizar información!</button>
+          </div>
+        </center>
+      </form>
+      {% else %}
+      <div class="text-center">
+        <h1>{{ usuario.user.username }}</h1>
+        <h4>{{ usuario.user.first_name }} {{ usuario.user.last_name }}</h4>
+        <h4>{{ usuario.user.emal }}</h4>
+        <h4>{{ usuario.user.date_joined }}</h4>
+        <h4>{{ usuario.phone }}</h4>
+        <h4>{{ usuario.direccion }}</h4>
+        <h4>{{ usuario.num_ss }}</h4>
+        <h4>{{ usuario.rfc }}</h4>
+        <a class="btn btn-warning" href="/accounts/profile/edit/" role="button">
+          <span class="fa fa-edit"></span> Editar
+        </a>
+      </div>
+      {% endif %}
+
+
+    </div>
+  </div>
+  <div class="col" style="max-width:200px">
+  </div>
+</div>
+
+
+{% endblock content %}

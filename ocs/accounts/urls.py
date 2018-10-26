@@ -13,5 +13,8 @@ urlpatterns = [
     path('myEmployees/delete/<int:emp_id>', views.borrarEmpleado, name='delete'),
     path('myEmployees/verEmpleado/<int:emp_id>', views.verEmpleado, name='verEmpleado'),
     path('linkEmployee/', views.registrarEmpleado, name='linkEmployee'),
+    path('profile/', views.profile, name="profile"),
+    path('profile/edit/', views.edit_profile, name="editProfile"),
+
 
 ]
