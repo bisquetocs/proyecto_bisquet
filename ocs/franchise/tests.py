@@ -1,15 +1,18 @@
 from django.contrib.auth.models import User, Group
 from accounts.models import OCSUser
+from .models import Franchise
 from django.test import TestCase
 from django.urls import reverse
 from django.test.client import RequestFactory
 from . import views
+from django.utils import timezone
 
 
-def create_user():
+
+def create_user_provider():
     """
-    Function for creating a user in case it is needed
-    in the test cases
+        Function for creating a user in case it is needed
+        in the test cases
     """
     ng = Group(name='Dueño de franquicia')
     ng.save()
@@ -21,20 +24,32 @@ def create_user():
     g.save()
     ocsUser = OCSUser(user=nu)
     ocsUser.save()
+    nf = Franchise(id=1, id_usuario=nu, activo=True, fecha_registro=timezone.now())
+    nf.save()
 
 # Create your tests here.
-class ProviderDetailViewTest(TestCase):
+class ProviderViewTest(TestCase):
 
-    def test_non_existing_provider_high_number(self):
+    def test_non_existing_provider_detail(self):
         """
-        The detail view of a non existing provider id returns
-        a 404 not found
-        Since there is no provider registered in the database test,
-        any request to that view will be a 404
+            The detail view of a non existing provider id returns
+            a 404 not found
+            Since there is no provider registered in the database test,
+            any request to that view will be a 404
         """
         # non_existing_provider_id = 4
-        user = create_user()
+        user = create_user_provider()
         self.client.login(username="uname", password="testpasswd123")
         response = self.client.get('/franchise/my_providers/4')
-        print("The response code obtained is: "+str(response.status_code))
         self.assertEqual(response.status_code, 404)
+
+    def test_empty_provider_catalog(self):
+        """
+            The return of an empty query set when consulting the providers catalog
+            results in returning a variable that represents that the list is
+            empty
+        """
+        user = create_user_provider()
+        self.client.login(username="uname", password="testpasswd123")
+        response = self.client.get('/franchise/my_providers/')
+        self.assertEqual(response.context['empty_list'], 1)
