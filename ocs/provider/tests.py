@@ -1,13 +1,18 @@
+import datetime
+
 from django.test import TestCase
+from django.utils import timezone
+
 from .models import LinkWithF
+
 
 # Create your tests here.
 class LinkWithFTests(TestCase):
 
-    def code_has_already_expired(self):
+    def test_code_has_already_expired(self):
         """
-            A test case function checking that the code used to link
-            has already expired
+            Test case for check_timeout() which returns False for codes that
+            had already expired
             INPUT
                 - Self
             OUTPUT
