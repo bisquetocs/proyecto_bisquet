@@ -33,7 +33,7 @@ def registerProvider(request):
                 insert = OfficeHours(start_hour = "8:00", finish_hour = "18:00", day = item, id_provider = provider)
                 insert.save()
             ##Termina
-            return render(request, 'provider/home.html')
+            return redirect('../provider/home')
     else:
         u = OCSUser.objects.get(user = request.user)
         if u.id_provider!=None:
@@ -105,7 +105,8 @@ def office(request):
 def my_clients(request):
     empty_list = 0
     u = OCSUser.objects.get(user = request.user)
-    relation_list = LinkWithF.objects.filter(id_provider=u.id_provider.id)
+
+    relation_list = LinkWithF.objects.filter(id_provider=u.id_provider.id, active=True)
     if len(relation_list) == 0:
         empty_list = 1
 

@@ -20,7 +20,7 @@ def registerFranchise(request):
         register_form = RegisterFranchiseForm(request.POST)
         if register_form.is_valid():
             result = register_form.process_registration(request.user)
-            return render(request, 'franchise/home.html')
+            return redirect('../franchise/home')
     else:
         u = OCSUser.objects.get(user = request.user)
         if u.id_franchise!=None:
@@ -49,7 +49,6 @@ def link_provider(request):
      OUTPUT
         - A reload of the same page and a response of the status of the process
     """
-    success = ''
     u = OCSUser.objects.get(user = request.user)
     code = ''
     f_name = ''
@@ -58,19 +57,18 @@ def link_provider(request):
         try:
             l = LinkWithF.objects.get(link_code=code)
             if l.used:
-                success = 2
+                messages.warning(request, 'El código ya fue utilizado, por favor, solicita a tu proveedor que te genere un código nuevo.')
             else:
                 l.id_franchise = u.id_franchise
                 l.active = True
                 l.used = True
                 l.save()
                 f_name = l.id_provider.nombre
-                success = 1
+                messages.success(request, '¡EXITO! Te has relacionado con '+f_name)
         except:
-            success = 0
+            messages.error(request, 'El código no coincide con ninguno registrado, ingrésalo de nuevo o consulta a tu proveedor..')
     return render(request, 'link_provider/link_with_provider.html', {
             'usuario' : u,
-            'success' : success,
             'code' : code,
             'franchise_name' : f_name
             })

@@ -39,6 +39,7 @@
       <td>{{ provider.id_provider.domicilio }}</td>
       <td>{{ provider.id_provider.id_usuario.first_name }} {{provider.id_provider.id_usuario.last_name}}</td>
       <td><a href="/franchise/my_providers/{{ provider.id_provider.id }}" style="color: inherit;"><i class="fa fa-info-circle" style="font-size:24px"></i></a></td>
+
     </tr>
     {% endfor %}
   </tbody>
@@ -50,6 +51,7 @@
 
 
 {% endif %}
+
 
 
 <script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>

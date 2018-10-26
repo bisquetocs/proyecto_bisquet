@@ -59,7 +59,8 @@ def registerUser(request):
             ocsUser = OCSUser(user=nu)
             ocsUser.save()
             # Redirect to home
-            messages.info(request, 'Registro exitoso')
+            messages.info(request, 'Registro exitoso! Ahora puedes iniciar sesión.')
+
             return redirect('../')
         else:
             # Reload the form if the user already exists
@@ -109,7 +110,10 @@ def registrarEmpleado(request):
             if ocs_employee.id_provider == None and ocs_employee.id_franchise == None:
                 employee_group = User.groups.through.objects.get(user = employee)
                 grp = request.POST['inputRol']
-                ocs_employee.id_provider = ocs_user.id_provider
+                if ocs_user.id_provider is None: #Es franchise
+                    ocs_employee.id_franchise = ocs_user.id_franchise
+                elif ocs_user.id_franchise is None: #Es provider
+                    ocs_employee.id_provider = ocs_user.id_provider
                 ocs_employee.save()
                 employee_group.group = Group.objects.get(name = grp)
                 employee_group.save()
