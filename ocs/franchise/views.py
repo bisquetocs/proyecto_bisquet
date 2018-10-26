@@ -139,7 +139,7 @@ def show_inventory(request):
     registration_success = 0
 
     u = OCSUser.objects.get(user = request.user)
-    product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise.id)
+    product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
 
 
     if request.method == 'POST':

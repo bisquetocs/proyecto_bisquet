@@ -53,3 +53,16 @@ class ProviderViewTest(TestCase):
         self.client.login(username="uname", password="testpasswd123")
         response = self.client.get('/franchise/my_providers/')
         self.assertEqual(response.context['empty_list'], 1)
+
+class InventoryTests(TestCase):
+
+    def test_check_inventory_empty(self):
+        """
+            If the user consults the franchise inventory, and the inventory is
+            empty, the system will return a queryset with a len() of 0
+        """
+        user = create_user_franchise()
+        self.client.login(username="uname", password="testpasswd123")
+        response = self.client.get('/franchise/my_inventory/')
+
+        self.assertEqual(len(response.context['product_list']), 0)
