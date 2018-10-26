@@ -1,3 +1,9 @@
+"""
+Description: Tests file for the accounts module
+Modified by: Fátima
+Modify date: 26-10-18
+"""
+
 import datetime
 from django.contrib.auth.models import User, Group
 from accounts.models import OCSUser
@@ -5,6 +11,7 @@ from django.test import TestCase
 from django.utils import timezone
 from django.urls import reverse
 from franchise.models import Franchise
+
 
 def create_user_provider():
     """
@@ -47,6 +54,23 @@ def create_group():
     """
     ng = Group(name='Empleado generico')
     ng.save()
+
+
+def create_user_generic():
+        """
+            Function for creating a generic employee in case it is
+            needed in the test cases
+        """
+        ng = Group(name='Empleado generico')
+        ng.save()
+        nu = User(username='uname3')
+        nu.set_password('testpasswd123')
+        nu.save()
+        g = Group.objects.get(name='Empleado generico')
+        g.user_set.add(nu)
+        g.save()
+        ocsUser = OCSUser(user=nu)
+        ocsUser.save()
 
 class UserLoginTest(TestCase):
 
@@ -144,3 +168,66 @@ class CreateUserTest(TestCase):
                                                                              })
 
         self.assertRedirects(response, '/accounts/', status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+
+class EmployeesModuleTest(TestCase):
+
+    def test_employee_provider(self):
+        """
+            An employee without a group will be assigned the group of Almacenista
+            that belongs to the providers group
+        """
+        employee = create_user_generic()
+        group = Group(name='Almacenista')
+        response = self.client.post('/accounts/linkEmployee/', {'inputUser': 'uname3', 'inputRol': 'Almacenista'})
+        self.assertEqual(response.status_code, 302)
+
+    def test_employee_franchise(self):
+        """
+            An employee without a group will be assigned the group of Gerente de compras
+            that belongs to the franchises group
+        """
+        employee = create_user_generic()
+        group = Group(name='Gerente de compras')
+        response = self.client.post('/accounts/linkEmployee/', {'inputUser': 'uname3', 'inputRol': 'Gerente de compras'})
+        self.assertEqual(response.status_code, 302)
+
+    def test_view_detail_provider(self):
+        """
+            A owner will be able to consult its employees information
+        """
+        user = create_user_provider()
+        response = self.client.get('/accounts/myEmployees/verEmpleado/1')
+        self.assertNotEqual(response.content, '')
+
+    def test_view_detail_franchise(self):
+        """
+            A franchise manager will be able to consult its employees information
+        """
+        user = create_user_franchise()
+        response = self.client.get('/accounts/myEmployees/verEmpleado/1')
+        self.assertNotEqual(response.content, '')
+
+    def test_view_employee(self):
+        """
+            A franchise manager or owner will be able to consult its employees catalog
+        """
+        user = create_user_franchise() #this can be changed to provider
+        response = self.client.get('/accounts/myEmployees/')
+        self.assertNotEqual(response.content, '')
+
+    def test_unable_employee(self):
+        """
+            A franchise manager or owner will be able to unable their employees
+        """
+        user = create_user_provider() #this caan be changed to franchises
+        response = self.client.get('/accounts/myEmployees/delete/1/')
+        self.assertNotEqual(response.content, '')
+
+    def test_change_role(self):
+        """
+            A franchise manager or owner will be able to update their employees role
+            in the view their employees information detail
+        """
+        user = create_user_provider() #this can be changed to franchises
+        group = Group(name='Almacenista')
+        response = self.client.post('/accounts/myEmployees/verEmpleado/1/', {'role': 'Almacenista'})

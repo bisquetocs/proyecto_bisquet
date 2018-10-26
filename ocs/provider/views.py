@@ -99,9 +99,9 @@ def office(request):
             edit_object.start_hour = request.POST[s_hour]
             edit_object.finish_hour = request.POST[f_hour]
             edit_object.save()
+            return redirect('/provider/office/')
 
     return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list, 'usuario':u})
-
 
 @login_required
 def my_clients(request):
