@@ -41,12 +41,13 @@ class LinkWithFTests(TestCase):
 
 class LinkCodeTest(TestCase):
 
-    def test_user_redirected_after_creating_code(self):
+    def test_user_creates_random_code(self):
         """
-            The user is going to be redirected to the same page with a 302 code,
-            after it creates a link Code
+            The user is going to get a random link code whenever it makes a post
+            to the same page.
         """
         user = create_user_provider()
-        self.client.login(username="test", password="testpassword")
+        self.client.login(username="uname", password="testpasswd123")
         response = self.client.post('/provider/my_clients/link_code/')
-        self.assertEqual(response.status_code, 302)
+        print(response.context['code'])
+        self.assertNotEqual(response.context['code'], '')
