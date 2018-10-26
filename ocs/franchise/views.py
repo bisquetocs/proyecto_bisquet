@@ -116,7 +116,7 @@ def provider_detail(request, id_provider):
             success = False
     except:
         success = False
-
+        raise Http404("Provider does not exist")
     return render(request, 'my_providers/provider_detail.html', {
             'usuario' : u,
             'success' : success,
