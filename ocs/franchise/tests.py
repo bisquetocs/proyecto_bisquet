@@ -1,3 +1,9 @@
+"""
+Description: Test file for the Franchise module
+Modified by: Dante F
+Modify date: 26-10-18
+"""
+
 from django.contrib.auth.models import User, Group
 from accounts.models import OCSUser
 from .models import Franchise

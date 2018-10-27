@@ -1,3 +1,10 @@
+"""
+Description: Models file used to design and create entitites on the database
+             for the Franchise module
+Modified by: Dante F
+Modify date: 26-10-18
+"""
+
 import datetime
 from django.db import models
 from django.utils import timezone

@@ -1,3 +1,9 @@
+"""
+Description: Views file for the Franchise module
+Modified by: Dante F
+Modify date: 26-10-18
+"""
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.http import Http404

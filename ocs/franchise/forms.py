@@ -1,3 +1,9 @@
+"""
+Description: Views file for the Franchise module
+Modified by: Dante F
+Modify date: 26-10-18
+"""
+
 from django import forms
 from django.utils import timezone
 
