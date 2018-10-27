@@ -1,10 +1,16 @@
+"""
+Description: Account models file
+Modified by:
+Modify date:
+"""
+
 
 from django.db import models
 from django.contrib.auth.models import User, Group
 from provider.models import Provider
 from franchise.models import Franchise
 
-# Create your models here.
+# OCSUSer model, model used to represent the user of the system
 class OCSUser(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     id_provider = models.ForeignKey(Provider, on_delete=models.CASCADE, null=True)
@@ -15,6 +21,7 @@ class OCSUser(models.Model):
     direccion = models.CharField(max_length=200)
     active = models.BooleanField(null = False, default = True)
 
+# Model used to represent the relationship between a group and a provider or franchise
 class IsProviderOrFranchise(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     is_provider = models.BooleanField(null=False, default=False)

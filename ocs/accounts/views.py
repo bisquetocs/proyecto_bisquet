@@ -1,3 +1,9 @@
+"""
+Description: Views file
+Modified by: Fátima
+Modify date: 18-10-18
+"""
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.urls import *
 from django.http import HttpResponse, HttpResponseRedirect
