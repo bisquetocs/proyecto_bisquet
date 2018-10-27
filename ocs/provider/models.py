@@ -1,3 +1,10 @@
+"""
+created by:     Django
+description:    This are our models (db tables) that help us with data control
+modify by:      Alberto
+modify date:    26/10/18
+"""
+
 import datetime
 from django.db import models
 from django.utils import timezone

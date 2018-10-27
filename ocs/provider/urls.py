@@ -1,3 +1,11 @@
+"""
+created by:     Django
+description:    This are the paths of the providers app to show in the browser
+                This paths lead to our views
+modify by:      Alberto
+modify date:    25/10/18
+"""
+
 from django.urls import path, include
 from . import views
 
