@@ -1,4 +1,5 @@
 """
+Created by : Django
 Description: Models file used to design and create entitites on the database
              for the Franchise module
 Modified by: Dante F

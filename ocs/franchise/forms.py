@@ -1,4 +1,5 @@
 """
+Created by : Alberto
 Description: Views file for the Franchise module
 Modified by: Dante F
 Modify date: 26-10-18

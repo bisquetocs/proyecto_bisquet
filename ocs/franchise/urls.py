@@ -1,4 +1,5 @@
 """
+Created by : Django
 Description: URL patterns for the different path on the franchise module
 Modified by: Dante F
 Modify date: 26-10-18
