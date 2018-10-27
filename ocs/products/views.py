@@ -1,3 +1,9 @@
+"""
+created by:     Django
+description:    This are the views used to work with products
+modify by:      Alberto
+modify date:    26/10/18
+"""
 # Create your views here.
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
@@ -12,12 +18,14 @@ from accounts.models import OCSUser
 from provider.models import Provider
 from .models import Product
 
+# Function that shows the provider its products
 def my_products(request):
     u = OCSUser.objects.get(user = request.user)
     prov = Provider.objects.get(id = u.id_provider.id)
     prod = Product.objects.filter(id_provider = prov.id)
     return render(request, 'products/my_products.html', {'usuario':u, 'productos':prod,})
 
+# Function that let the provider register a new product
 def registerProduct(request):
     u = OCSUser.objects.get(user = request.user)
     if request.POST['nombre'] == '' or request.POST['descripcion'] == '' or request.POST['codigo'] == '':
@@ -47,11 +55,13 @@ def registerProduct(request):
                 messages.warning(request, 'El nombre asignado ya existe')
     return redirect(reverse('products:myProducts'))
 
+# Function that lest the provider to edit its products
 def editProduct(request, id_product):
     u = OCSUser.objects.get(user = request.user)
     p = Product.objects.get(id = id_product)
     prov = Provider.objects.get(id = u.id_provider.id)
     prod = Product.objects.filter(id_provider = prov.id)
+    # If POST then make validations and save product info
     if request.method == 'POST':
         if request.POST['nombre'] == '' or request.POST['descripcion'] == '' or request.POST['codigo'] == '':
             messages.warning(request, 'Necesitas llenar todos los campos!')
@@ -89,6 +99,7 @@ def editProduct(request, id_product):
                 return render(request, 'products/my_products.html', {'usuario':u,'producto':auxp,'productos':prod,'edit':True})
     return render(request, 'products/my_products.html', {'usuario':u,'producto':p,'productos':prod,'edit':True})
 
+# Function that lets the provider rapidly unable a product
 def ableUnableProduct(request, id_product):
     p = Product.objects.get(id = id_product)
     if p.activo:

@@ -1,3 +1,10 @@
+"""
+created by:     Django
+description:    This are the models of the db
+modify by:      Alberto
+modify date:    26/10/18
+"""
+
 # Create your models here.
 import datetime
 

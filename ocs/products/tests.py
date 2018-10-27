@@ -1,3 +1,10 @@
+"""
+created by:     Django
+description:    This are the test of products
+modify by:      Alberto
+modify date:    26/10/18
+"""
+
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from products.models import Product

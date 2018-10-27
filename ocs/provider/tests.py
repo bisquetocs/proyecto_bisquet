@@ -1,3 +1,10 @@
+"""
+created by:     Django
+description:    This are the tests to ensure that our functionalities works fine
+modify by:      Alberto
+modify date:    26/10/18
+"""
+
 import datetime
 from django.contrib.auth.models import User, Group
 from accounts.models import OCSUser
