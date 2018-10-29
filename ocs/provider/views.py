@@ -15,6 +15,8 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User, Group
+
 
 from .forms import RegisterProviderForm
 from accounts.models import OCSUser
@@ -102,7 +104,9 @@ def office(request):
     provider = Provider.objects.get(id = prov)
     days_list = Days.objects.all()
     hours_list = OfficeHours.objects.filter(id_provider = provider)
-    if request.method == 'POST':
+    prov = Group.objects.get(name = "Administrador de empresa")
+    user = request.user
+    if request.method == 'POST' and (prov in user.groups.all()):
         #La asignación se hace dentro de un ciclo for pues se asigna a cada día
         for item in days_list:
             i = item.id
@@ -113,8 +117,13 @@ def office(request):
             edit_object.start_hour = request.POST[s_hour]
             edit_object.finish_hour = request.POST[f_hour]
             edit_object.save()
-            return redirect('/provider/office/')
-    return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list, 'usuario':u})
+
+    #Only owners can perform the action
+    if (prov in user.groups.all()):
+        return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list, 'usuario':u})
+    else :
+        return redirect('../')
+
 
 @login_required
 def my_clients(request):
@@ -146,12 +155,15 @@ def daily_clients(request):
     u = OCSUser.objects.get(user = request.user)
     prov = u.id_provider_id
     provider = Provider.objects.get(id = prov)
+    group_prov = Group.objects.get(name = "Administrador de empresa")
+    user = request.user
+
     #Selecciona la lista de los días
     days_list = Days.objects.all()
     #Se hace un filtro para desplegar solo los clientes ligados con ese usuario proveedor
     fran_prov = LinkWithF.objects.values_list('id_franchise', flat=True).filter(id_provider = prov)
     clients_list = Franchise.objects.filter(id__in = fran_prov)
-    if request.method == 'POST':
+    if request.method == 'POST' and (group_prov in user.groups.all()):
         #Hace el registro
         obj_fran =  Franchise.objects.get( nombre = request.POST['client'])
         obj_day = Days.objects.get(nombre = request.POST['day'])
@@ -159,7 +171,11 @@ def daily_clients(request):
         register = DailyClients(franchise = obj_fran, day = obj_day, status = 'Sin pedido')
         register.save()
         #Fin de registro
-    return render(request, 'my_clients/daily_clients.html', {'usuario':u, 'clients_list': clients_list, 'days_list':days_list})
+    if (group_prov in user.groups.all()):
+        return render(request, 'my_clients/daily_clients.html', {'usuario':u, 'clients_list': clients_list, 'days_list':days_list})
+    else:
+        return redirect('../')
+
 
 # Function that shows the Provider comppany profile
 @login_required
