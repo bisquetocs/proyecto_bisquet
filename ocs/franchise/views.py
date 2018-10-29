@@ -14,6 +14,7 @@ from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 from .forms import RegisterFranchiseForm
 from provider.models import LinkWithF, Provider
@@ -49,6 +50,7 @@ def home(request):
 @login_required
 def link_provider(request):
     """
+    By: DanteMaxF
      Function used to link a franchise with a provider using a link code
      INPUT
         - Request method with the values of the session
@@ -63,8 +65,8 @@ def link_provider(request):
         code = request.POST['link_code']
         try:
             l = LinkWithF.objects.get(link_code=code)
-            if l.used:
-                messages.warning(request, 'El código ya fue utilizado, por favor, solicita a tu proveedor que te genere un código nuevo.')
+            if l.used or l.check_timeout():
+                messages.warning(request, 'El código ya fue utilizado o caducado, por favor, solicita a tu proveedor que te genere un código nuevo.')
             else:
                 l.id_franchise = u.id_franchise
                 l.active = True
@@ -83,6 +85,7 @@ def link_provider(request):
 @login_required
 def my_providers(request):
     """
+    By: DanteMaxF
      Function used to display the providers linked with the user using the system
      INPUT
         - Request method with the values of the session
@@ -105,6 +108,7 @@ def my_providers(request):
 @login_required
 def provider_detail(request, id_provider):
     """
+    By: DanteMaxF
      Function that displays the details of the provider selected in the provider table
      INPUT
         - Request method with the values of the session
@@ -133,65 +137,50 @@ def provider_detail(request, id_provider):
 @login_required
 def show_inventory(request):
     """
-    Function used to display a table of the private products od a franchise
+    By: DanteMaxF
+    Function used to display a table of the private products of a franchise
     INPUT
         - Request method with the values of the session
     OUTPUT
         - Query set of the inventory
     """
-    empty_field = 0
-    amount_error = 0
-    product_already_exists = 0
-    registration_success = 0
-
     u = OCSUser.objects.get(user = request.user)
     product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
 
 
+    return render(request, 'inventory/show_inventory.html', {
+            'usuario' : u,
+            'product_list' : product_list,
+            })
+
+
+@login_required
+def register_private_product(request):
+    u = OCSUser.objects.get(user = request.user)
     if request.method == 'POST':
         p_name = request.POST['product_name']
         p_desc = request.POST['product_desc']
         p_amount = int(request.POST['product_amount'])
 
         if (p_name=='' or p_desc=='' or p_amount==''):
-            empty_field = 1
-            return render(request, 'inventory/show_inventory.html', {
-                    'usuario' : u,
-                    'product_list' : product_list,
-                    'empty_field' : empty_field,
-                    'amount_error' : amount_error,
-                    'product_already_exists' : product_already_exists,
-                    'registration_success' : registration_success
-                    })
+            messages.warning(request, 'ERROR: Por favor llena todos los campos')
+            return redirect(reverse('franchise:show_inventory'))
+
         if (p_amount < 0):
-            amount_error = 1
-            return render(request, 'inventory/show_inventory.html', {
-                    'usuario' : u,
-                    'product_list' : product_list,
-                    'empty_field' : empty_field,
-                    'amount_error' : amount_error,
-                    'product_already_exists' : product_already_exists,
-                    'registration_success' : registration_success
-                    })
+            messages.warning(request, 'ERROR: No puedes ingresar números menores a cero')
+            return redirect(reverse('franchise:show_inventory'))
+
         # Check if product name already exist
         new_product = PrivateProduct(id_franchise=u.id_franchise, name=p_name, description=p_desc, amount=p_amount)
         try:
             product_test = PrivateProduct.objects.get(name=p_name)
         except:
             new_product.save()
-            registration_success = 1
+            messages.success(request, 'Producto registrado!')
         else:
-            product_already_exists = 1
-
-
-    return render(request, 'inventory/show_inventory.html', {
-            'usuario' : u,
-            'product_list' : product_list,
-            'empty_field' : empty_field,
-            'amount_error' : amount_error,
-            'product_already_exists' : product_already_exists,
-            'registration_success' : registration_success
-            })
+            messages.warning(request, 'ERROR: Ya existe un producto con este nombre')
+            return redirect(reverse('franchise:show_inventory'))
+    return redirect(reverse('franchise:show_inventory'))
 
 
 @login_required

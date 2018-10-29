@@ -31,12 +31,13 @@ def create_user_provider():
 
 def create_user_franchise():
     """
+        By: DanteMaxF
         Function for creating a user in case it is needed
         in the test cases
     """
     ng = Group(name='Dueño de franquicia')
     ng.save()
-    nu = User(username='uname2')
+    nu = User(username='uname')
     nu.set_password('testpasswd123')
     nu.save()
     g = Group.objects.get(name='Dueño de franquicia')
@@ -44,8 +45,17 @@ def create_user_franchise():
     g.save()
     ocsUser = OCSUser(user=nu)
     ocsUser.save()
-    nf = Franchise(id=1, id_usuario=nu, activo=True, fecha_registro=timezone.now())
+    nf = Franchise( id_usuario=nu,
+                    activo=True,
+                    fecha_registro=timezone.now(),
+                    razon_social='razon_social_test',
+                    rfc = 'rfc_test',
+                    nombre = 'Los bisquets de obregon',
+                    domicilio = 'domicilio test'
+                    )
     nf.save()
+    ocsUser.id_franchise = nf
+    ocsUser.save()
 
 def create_group():
     """

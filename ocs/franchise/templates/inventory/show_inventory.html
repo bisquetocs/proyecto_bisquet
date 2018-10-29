@@ -3,48 +3,6 @@
 
 {% block extras %}
 
-<!------------------- ALERTAS ----------------------------------------------------------->
-{% if empty_field == 1 %}
-<!-- Empty fields -->
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-  <strong>Ocurrió un error!</strong> Es necesario llenar todos los campos del registro.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-{% endif %}
-
-{% if amount_error == 1 %}
-<!-- Invalid amount -->
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-  <strong>Ocurrió un error!</strong> La cantidad del producto debe ser mayor a 0.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-{% endif %}
-
-{% if product_already_exists == 1 %}
-<!-- Already exists -->
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-  <strong>Ocurrió un error!</strong> Ya existe un producto con ese nombre.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-{% endif %}
-
-{% if registration_success == 1 %}
-<!-- SUCCESS -->
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-  <strong>EXITO!</strong> Tu producto se ha registrado exitosamente.
-  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-{% endif %}
-<!-------------------------------------------------------------------------------------->
-
 
 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
   <h1 class="h2">Mi Inventario</h1>
@@ -102,7 +60,7 @@
           Agrega un producto que no sea de un provedor registrado
         </p>
 
-        <form method="POST">
+        <form method="POST" action="/franchise/my_inventory/register/">
         {% csrf_token %}
 
         <div class="col mb-3">

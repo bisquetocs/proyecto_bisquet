@@ -14,6 +14,7 @@ urlpatterns = [
     path('register', views.registerFranchise, name='register'),
     path('home/', views.home, name='home'),
     path('my_inventory/', views.show_inventory, name='show_inventory'),
+    path('my_inventory/register/', views.register_private_product, name='register_private_product'),
     path('my_providers/', views.my_providers, name='my_providers'),
     path('my_providers/link/', views.link_provider, name='link_provider'),
     path('my_providers/<int:id_provider>', views.provider_detail, name='provider_detail'),
