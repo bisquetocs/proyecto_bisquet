@@ -14,7 +14,21 @@ from django.test.client import RequestFactory
 from . import views
 from django.utils import timezone
 
-
+def create_user_provider():
+    """
+    Function for creating a user in case it is needed
+    in the test cases
+    """
+    ng = Group(name='Administrador de empresa')
+    ng.save()
+    nu = User(username='uname')
+    nu.set_password('testpasswd123')
+    nu.save()
+    g = Group.objects.get(name='Administrador de empresa')
+    g.user_set.add(nu)
+    g.save()
+    ocsUser = OCSUser(user=nu)
+    ocsUser.save()
 
 def create_user_franchise():
     """
