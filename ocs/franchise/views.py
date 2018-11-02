@@ -20,7 +20,7 @@ from .forms import RegisterFranchiseForm
 from provider.models import LinkWithF, Provider
 from accounts.models import OCSUser
 
-from .models import Franchise, PrivateProduct
+from .models import Franchise
 
 @login_required
 def registerFranchise(request):
@@ -132,56 +132,7 @@ def provider_detail(request, id_provider):
             'success' : success,
             'provider' : p,
             })
-
-
-@login_required
-def show_inventory(request):
-    """
-    By: DanteMaxF
-    Function used to display a table of the private products of a franchise
-    INPUT
-        - Request method with the values of the session
-    OUTPUT
-        - Query set of the inventory
-    """
-    u = OCSUser.objects.get(user = request.user)
-    product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
-
-
-    return render(request, 'inventory/show_inventory.html', {
-            'usuario' : u,
-            'product_list' : product_list,
-            })
-
-
-@login_required
-def register_private_product(request):
-    u = OCSUser.objects.get(user = request.user)
-    if request.method == 'POST':
-        p_name = request.POST['product_name']
-        p_desc = request.POST['product_desc']
-        p_amount = int(request.POST['product_amount'])
-
-        if (p_name=='' or p_desc=='' or p_amount==''):
-            messages.warning(request, 'ERROR: Por favor llena todos los campos')
-            return redirect(reverse('franchise:show_inventory'))
-
-        if (p_amount < 0):
-            messages.warning(request, 'ERROR: No puedes ingresar números menores a cero')
-            return redirect(reverse('franchise:show_inventory'))
-
-        # Check if product name already exist
-        new_product = PrivateProduct(id_franchise=u.id_franchise, name=p_name, description=p_desc, amount=p_amount)
-        try:
-            product_test = PrivateProduct.objects.get(name=p_name)
-        except:
-            new_product.save()
-            messages.success(request, 'Producto registrado!')
-        else:
-            messages.warning(request, 'ERROR: Ya existe un producto con este nombre')
-            return redirect(reverse('franchise:show_inventory'))
-    return redirect(reverse('franchise:show_inventory'))
-
+                
 
 @login_required
 def profile (request):
