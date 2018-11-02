@@ -60,7 +60,7 @@
           Agrega un producto que no sea de un provedor registrado
         </p>
 
-        <form method="POST" action="/franchise/my_inventory/register/">
+        <form method="POST" action="{% url 'franchise:inventory:register_private_product' %}">
         {% csrf_token %}
 
         <div class="col mb-3">

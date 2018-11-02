@@ -23,9 +23,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.nombre
-
-
-class LinkedInventory(models.Model):
-    id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
-    id_product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    amount = models.IntegerField()
