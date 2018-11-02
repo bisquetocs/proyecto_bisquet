@@ -32,16 +32,26 @@
 </table>
 
 <br />
-<!--Modal Button -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#register_modal" title="Agrega un producto que no sea de un proveedor registrado">
-  <span class="fa fa-plus"></span>
-</button>
 
-{% if post %}
-<p>
-  SE HIZO UN POST
-</p>
-{% endif %}
+<div class="row">
+    <div class="col-1">
+      <!--Modal Button -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#register_modal" title="Agrega un producto que no sea de un proveedor registrado">
+        <span class="fa fa-plus"></span>
+      </button>
+    </div>
+    <div class="col-6">
+      <!-- PDF Button -->
+      <form action="{% url 'franchise:inventory:create_pdf' %}" method='POST' data-toggle="pdf" title="Genera un PDF de tu inventario">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i></button>
+      </form>
+    </div>
+</div>
+
+
+
+
 
 
 <!-- Modal -->
@@ -94,6 +104,7 @@
 $(document).ready(function(){
     $('[data-toggle="help_code"]').tooltip();
     $('[data-toggle="modal"]').tooltip();
+    $('[data-toggle="pdf"]').tooltip();
 });
 </script>
 {% endblock extras %}

@@ -12,4 +12,5 @@ app_name = 'my_inventory'
 urlpatterns = [
     path('', views.show_inventory, name='show_inventory'),
     path('register/', views.register_private_product, name='register_private_product'),
+    path('create_pdf/', views.create_pdf, name='create_pdf')
 ]

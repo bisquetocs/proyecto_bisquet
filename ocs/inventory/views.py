@@ -36,6 +36,16 @@ def show_inventory(request):
 
 @login_required
 def register_private_product(request):
+    """
+    By: DanteMaxF
+    Function used to register the new product a franchise wants to register
+    INPUT
+        - Request method with the values of the session
+        - Context variables throug a post of the new product
+    OUTPUT
+        - Redirect to the inventory table
+        - Update of the inventory database
+    """
     u = OCSUser.objects.get(user = request.user)
     if request.method == 'POST':
         p_name = request.POST['product_name']
@@ -60,4 +70,21 @@ def register_private_product(request):
         else:
             messages.warning(request, 'ERROR: Ya existe un producto con este nombre')
             return redirect(reverse('franchise:inventory:show_inventory'))
+    return redirect(reverse('franchise:inventory:show_inventory'))
+
+@login_required
+def create_pdf(request):
+    """
+    By: DanteMaxF
+    Function used to generate a PDF document
+    INPUT
+        - Request method with the values of the session
+    OUTPUT
+        - Redirect to the inventory table
+        - A  PDF document to be downloaded
+    """
+    u = OCSUser.objects.get(user = request.user)
+    if request.method == 'POST':
+        product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
+        return HttpResponse('CREATE PDF')
     return redirect(reverse('franchise:inventory:show_inventory'))
