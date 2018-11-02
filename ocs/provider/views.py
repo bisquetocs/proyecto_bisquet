@@ -44,7 +44,7 @@ def registerProvider(request):
                 insert = OfficeHours(start_hour = "8:00", finish_hour = "18:00", day = item, id_provider = provider)
                 insert.save()
             ##Termina
-            return redirect('../provider/home')
+            return redirect('/accounts/locate/')
     # If not POST then show registration form
     else:
         u = OCSUser.objects.get(user = request.user)
