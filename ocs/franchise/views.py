@@ -27,7 +27,7 @@ def registerFranchise(request):
         register_form = RegisterFranchiseForm(request.POST)
         if register_form.is_valid():
             result = register_form.process_registration(request.user)
-            return redirect('../franchise/home')
+            return redirect('/accounts/locate/')
     else:
         u = OCSUser.objects.get(user = request.user)
         if u.id_franchise!=None:

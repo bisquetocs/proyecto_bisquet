@@ -7,10 +7,14 @@ Modify date: 26-10-18
 import datetime
 from django.contrib.auth.models import User, Group
 from accounts.models import OCSUser
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.utils import timezone
 from django.urls import reverse
 from franchise.models import Franchise
+from provider.models import Provider
+from products.models import Product
+
+
 
 
 def create_user_provider():
@@ -231,3 +235,369 @@ class EmployeesModuleTest(TestCase):
         user = create_user_provider() #this can be changed to franchises
         group = Group(name='Almacenista')
         response = self.client.post('/accounts/myEmployees/verEmpleado/1/', {'role': 'Almacenista'})
+
+
+
+
+# ---------------TESTS DE BETO ------------------------ #
+class BetoTestProduct(TestCase):
+    def test_new_product(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        prov = Provider.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre",
+                                                domicilio= "domicilio",
+                                                mision = "Mision",
+                                                vision = "Vision",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_provider=prov)
+        myuser.save()
+        prov.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        response = self.client.post('/products/register/', {'nombre': 'Producto Nuevo',
+                                                                'descripcion': 'Este es un nuevo producto',
+                                                                'codigo': 'pRod',
+                                                                'activo': 'on'
+                                                             })
+        num_results = Product.objects.filter(nombre = "producto nuevo").count()
+        if num_results > 0:
+            exists = True
+        self.assertEqual(exists, True)
+        prod = Product.objects.get(nombre = "producto nuevo")
+        prod2 = Product(nombre= 'producto nuevo',descripcion= 'Este es un nuevo producto',codigo= 'PROD',activo= True)
+        prod3 = Product(nombre= 'Producto Nuevo',descripcion= 'Este es un nuevo Producto',codigo= 'pRod',activo= False)
+        self.assertRedirects(response, '/products/myProducts/')
+        # asi debe de estar
+        self.assertEqual(prod.nombre, prod2.nombre)
+        self.assertEqual(prod.descripcion, prod2.descripcion)
+        self.assertEqual(prod.codigo, prod2.codigo)
+        self.assertEqual(prod.activo, prod2.activo)
+        # asi NO debe de estar
+        self.assertNotEqual(prod.nombre, prod3.nombre)
+        self.assertNotEqual(prod.descripcion, prod3.descripcion)
+        self.assertNotEqual(prod.codigo, prod3.codigo)
+        self.assertNotEqual(prod.activo, prod3.activo)
+        # debe tener el Id de provider al que pertenece
+        self.assertEqual(prod.id_provider, prov)
+        # en el siguiente post el producto NO se debe de registrarse
+        response = self.client.post('/products/register/', {'nombre': 'Producto Nuevo',
+                                                            'descripcion': 'Este es un nuevo producto con nombre y codigo igual a uno anterior',
+                                                            'codigo': 'pRod',
+                                                            'activo': 'on'})
+        count = Product.objects.all().count()
+        self.assertEqual(count, 1)
+
+    def test_ableUnable_product(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        prov = Provider.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre",
+                                                domicilio= "domicilio",
+                                                mision = "Mision",
+                                                vision = "Vision",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_provider=prov)
+        myuser.save()
+        prov.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        response = self.client.post('/products/register/', {'nombre': 'Producto Nuevo',
+                                                                'descripcion': 'Este es un nuevo producto',
+                                                                'codigo': 'pRod',
+                                                                'activo': 'on'})
+        count = Product.objects.all().count()
+        self.assertEqual(count, 1)
+        prod = Product.objects.get(nombre = "producto nuevo")
+        self.assertEqual(prod.activo, True)
+        response = self.client.get('/products/ableUnable/1/')
+        prod = Product.objects.get(nombre = "producto nuevo")
+        self.assertEqual(prod.activo, True)
+        self.assertRedirects(response, '/products/myProducts/')
+
+    def test_edit_product(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        prov = Provider.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre",
+                                                domicilio= "domicilio",
+                                                mision = "Mision",
+                                                vision = "Vision",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_provider=prov)
+        myuser.save()
+        prov.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        response0 = self.client.post('/products/register/', {'nombre': 'Producto Nuevo',
+                                                                'descripcion': 'Este es un nuevo producto',
+                                                                'codigo': 'pRod',
+                                                                'activo': 'on'})
+        response1 = self.client.post('/products/register/', {'nombre': 'Producto Nuevo 2',
+                                                                'descripcion': 'Este es un nuevo producto 2',
+                                                                'codigo': 'pRod2',
+                                                                'activo': 'on'})
+        self.assertRedirects(response0, '/products/myProducts/')
+        self.assertRedirects(response1, '/products/myProducts/')
+        count = Product.objects.all().count()
+        self.assertEqual(count, 2)
+        # se va a editar
+        response2 = self.client.post('/products/edit/2/', {'nombre': 'Producto Nuevo EDITADO',
+                                                            'descripcion': 'Este es el mismo nuevo producto EDITADO',
+                                                            'codigo': 'pRod',
+                                                            'activo': 'on'})
+        prod = Product.objects.get(nombre = "producto nuevo editado")
+        self.assertRedirects(response2, '/products/myProducts/')
+        self.assertEqual(prod.descripcion, 'Este es el mismo nuevo producto EDITADO')
+        self.assertEqual(prod.nombre, 'Producto nuevo editado')
+        self.assertNotEqual(prod.nombre, 'Producto Nuevo EDITADO')
+        # no se podra editar
+        response3 = self.client.post('/products/edit/2/', {'nombre': 'PRODUCTO NUEVO 2',
+                                                            'descripcion': 'Este es el mismo nuevo producto',
+                                                            'codigo': 'pRod',
+                                                            'activo': 'on'})
+        prod = Product.objects.get(codigo = "PROD")
+        self.assertEqual(response3.context['edit'], True)
+        self.assertNotEqual(prod.nombre, 'Producto nuevo 2')
+        self.assertEqual(prod.nombre, 'Producto nuevo editado')
+        self.assertEqual(prod.descripcion, 'Este es el mismo nuevo producto EDITADO')
+        self.assertNotEqual(prod.descripcion, 'Este es el mismo nuevo producto')
+
+class BetoTestLandignPage(TestCase):
+    def test_check_landing_page(self):
+        self.client = Client()
+        landing_response = self.client.get('')
+        self.assertContains(landing_response, "OCS - Order Control System", count=1, status_code=200, msg_prefix='', html=True)
+        landing_response1 = self.client.get('/accounts/')
+        self.assertContains(landing_response1, "OCS - Order Control System", count=1, status_code=200, msg_prefix='', html=True)
+        landing_response2 = self.client.get('/accounts/registerUser/')
+        self.assertContains(landing_response2, "OCS - Registro", count=1, status_code=200, msg_prefix='', html=True)
+
+    def if_login_and_lannding_page_then_locate_provider(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        prov = Provider.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre de proveedor",
+                                                domicilio= "domicilio",
+                                                mision = "Mision",
+                                                vision = "Vision",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_provider=prov)
+        myuser.save()
+        prov.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        # entrar a homepage
+        landing_response = self.client.get('')
+        self.assertRedirects(landing_response, '/ppppppppp/home/', status_code=200, target_status_code=302, msg_prefix='', fetch_redirect_response=True)
+        #contiene el nombre del proveedor en el titulo
+        self.assertContains(landing_response, "OCS - nombre proveedor", count=1, status_code=200, msg_prefix='', html=True)
+
+    def if_login_and_lannding_page_then_locate_franchise(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        fran = Franchise.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre de franquicia",
+                                                domicilio= "domicilio",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_franchise=fran)
+        myuser.save()
+        fran.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        # entrar a homepage
+        landing_response = self.client.get('')
+        self.assertRedirects(landing_response, '/fffffffff/home/', status_code=200, target_status_code=302, msg_prefix='', fetch_redirect_response=True)
+        #contiene el nombre de la franquicia en el titulo
+        self.assertContains(landing_response, "OCS - nome de franquicia", count=1, status_code=200, msg_prefix='', html=True)
+
+class BetoTestProvider(TestCase):
+    def test_new_provider(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        ocs_user = OCSUser.objects.create(user=myuser, active=True)
+        group = Group.objects.create(name="Administrador de empresa")
+        myuser.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        response = self.client.post('/provider/register/', {'razon_social': 'razon social',
+                                                            'rfc': 'rfc',
+                                                            'nombre': 'Proveedor nuevo',
+                                                            'domicilio': 'domicilio',
+                                                            'mision': 'mision',
+                                                            'vision': 'vision'})
+        prov = Provider.objects.get(nombre = 'Proveedor nuevo')
+        ocs_user = OCSUser.objects.get(user=myuser)
+        count = Provider.objects.all().count()
+        self.assertEqual(count, 1)
+        self.assertEqual(myuser.id, prov.id_usuario.id)
+        self.assertEqual(ocs_user.id_franchise, None)
+        self.assertEqual(ocs_user.id_provider, prov)
+        self.assertRedirects(response, '/accounts/locate/', status_code=302, target_status_code=302, msg_prefix='', fetch_redirect_response=True)
+
+    def test_edit_provider_info(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        prov = Provider.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre proveedor",
+                                                domicilio= "domicilio",
+                                                mision = "Mision",
+                                                vision = "Vision",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_provider=prov)
+        myuser.save()
+        prov.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        count = Provider.objects.all().count()
+        self.assertEqual(count, 1)
+        response = self.client.post('/provider/profile/edit/', {'razon_social': 'razon social',
+                                                            'rfc': 'rfc',
+                                                            'nombre': 'Proveedor nuevo EDITADO',
+                                                            'domicilio': 'domicilio',
+                                                            'mision': 'mision EDITADA',
+                                                            'vision': 'vision'})
+        count = Provider.objects.all().count()
+        self.assertEqual(count, 1)
+        prov = Provider.objects.get(nombre = 'Proveedor nuevo EDITADO')
+        self.assertNotEqual(prov, None)
+        self.assertEqual(prov.mision, 'mision EDITADA')
+        self.assertRedirects(response, '/provider/profile/', status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+
+class BetoTestFranchise(TestCase):
+    def test_new_franchise(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        ocs_user = OCSUser.objects.create(user=myuser, active=True)
+        group = Group.objects.create(name="Dueño de franquicia")
+        myuser.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        response = self.client.post('/franchise/register/', {'razon_social': 'razon social',
+                                                            'rfc': 'rfc',
+                                                            'nombre': 'Franquicia nueva',
+                                                            'domicilio': 'domicilio'})
+        fran = Franchise.objects.get(nombre = 'Franquicia nueva')
+        ocs_user = OCSUser.objects.get(user=myuser)
+        count = Franchise.objects.all().count()
+        self.assertEqual(count, 1)
+        self.assertEqual(myuser.id, fran.id_usuario.id)
+        self.assertEqual(ocs_user.id_provider, None)
+        self.assertEqual(ocs_user.id_franchise, fran)
+        self.assertRedirects(response, '/accounts/locate/', status_code=302, target_status_code=302, msg_prefix='', fetch_redirect_response=True)
+
+    def test_edit_franchise_info(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        fran = Franchise.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre proveedor",
+                                                domicilio= "domicilio",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_franchise=fran)
+        myuser.save()
+        fran.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        count = Franchise.objects.all().count()
+        self.assertEqual(count, 1)
+        response = self.client.post('/franchise/profile/edit/', {'razon_social': 'razon social',
+                                                            'rfc': 'rfc',
+                                                            'nombre': 'Franquicia nueva EDITADA',
+                                                            'domicilio': 'domicilio EDITADO'})
+        count = Franchise.objects.all().count()
+        self.assertEqual(count, 1)
+        fran = Franchise.objects.get(nombre = 'Franquicia nueva EDITADA')
+        self.assertNotEqual(fran, None)
+        self.assertEqual(fran.domicilio, 'domicilio EDITADO')
+        self.assertRedirects(response, '/franchise/profile/', status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+
+class BetoTestAccounts(TestCase):
+    def test_edit_personal_info_provider(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        prov = Provider.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre proveedor",
+                                                domicilio= "domicilio",
+                                                mision = "Mision",
+                                                vision = "Vision",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_provider=prov)
+        myuser.save()
+        prov.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        response = self.client.post('/accounts/profile/edit/', {'first_name': 'Alberto',
+                                                            'last_name': 'Martin',
+                                                            'email': 'alberttomarvel@gmail.com',
+                                                            'phone': '4422822317',
+                                                            'domicilio': 'mi domicilio',
+                                                            'num_ss': 'numero de ss',
+                                                            'rfc':'rfc'})
+        myuser = User.objects.get(email='alberttomarvel@gmail.com')
+        ocs_user = OCSUser.objects.get(user = myuser)
+        self.assertNotEqual(ocs_user, None)
+        self.assertEqual(myuser.first_name, 'Alberto')
+        self.assertEqual(myuser.last_name, 'Martin')
+        self.assertEqual(ocs_user.direccion, 'mi domicilio')
+        self.assertEqual(ocs_user.phone, '4422822317')
+        self.assertRedirects(response, '/accounts/profile/', status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+
+    def test_edit_personal_info_franchise(self):
+        myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
+        fran = Franchise.objects.create(razon_social="Razon social",
+                                                rfc= "rfc",
+                                                nombre= "nombre proveedor",
+                                                domicilio= "domicilio",
+                                                activo = True,
+                                                fecha_registro = timezone.now(),
+                                                id_usuario = myuser)
+        ocs_user = OCSUser.objects.create(user=myuser, active=True, id_franchise=fran)
+        myuser.save()
+        fran.save()
+        ocs_user.save()
+        self.client = Client()
+        self.client.login(username="user", password="testpassword")
+        response = self.client.post('/accounts/profile/edit/', {'first_name': 'Alberto',
+                                                            'last_name': 'Martin',
+                                                            'email': 'alberttomarvel@gmail.com',
+                                                            'phone': '4422822317',
+                                                            'domicilio': 'mi domicilio',
+                                                            'num_ss': 'numero de ss',
+                                                            'rfc':'rfc'})
+        myuser = User.objects.get(email='alberttomarvel@gmail.com')
+        ocs_user = OCSUser.objects.get(user = myuser)
+        self.assertNotEqual(ocs_user, None)
+        self.assertEqual(myuser.first_name, 'Alberto')
+        self.assertEqual(myuser.last_name, 'Martin')
+        self.assertEqual(ocs_user.direccion, 'mi domicilio')
+        self.assertEqual(ocs_user.phone, '4422822317')
+        self.assertRedirects(response, '/accounts/profile/', status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
+
+
+
+
+#
