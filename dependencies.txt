@@ -1,0 +1,4 @@
+- Django 2.1.2
+- Python 3.6.6
+- MySQL Server 8.0.12 (or later)
+- pymysql 0.9.2
