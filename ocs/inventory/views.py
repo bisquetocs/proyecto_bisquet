@@ -13,6 +13,9 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views import generic
+import xlwt
+from django.contrib.auth.models import User
+
 
 # Create your views here.
 @login_required
@@ -73,7 +76,7 @@ def register_private_product(request):
     return redirect(reverse('franchise:inventory:show_inventory'))
 
 @login_required
-def create_pdf(request):
+def create_excel(request):
     """
     By: DanteMaxF
     Function used to generate a PDF document
@@ -86,5 +89,34 @@ def create_pdf(request):
     u = OCSUser.objects.get(user = request.user)
     if request.method == 'POST':
         product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
-        return HttpResponse('CREATE PDF')
+        # Generate XLS
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="'+u.id_franchise.nombre+'".xls"'
+
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('Inventory')
+
+        # Sheet header, first row
+        row_num = 0
+
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+
+        columns = ['Producto', 'Descripción', 'Cantidad']
+
+        for col_num in range(len(columns)):
+            ws.write(row_num, col_num, columns[col_num], font_style)
+
+        # Sheet body, remaining rows
+        font_style = xlwt.XFStyle()
+
+        rows = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
+        for row in rows:
+            row_num += 1
+            ws.write(row_num, 0, row.name, font_style)
+            ws.write(row_num, 1, row.description, font_style)
+            ws.write(row_num, 2, row.amount, font_style)
+
+        wb.save(response)
+        return response
     return redirect(reverse('franchise:inventory:show_inventory'))

@@ -40,11 +40,11 @@
         <span class="fa fa-plus"></span>
       </button>
     </div>
-    <div class="col-6">
+    <div class="col-1">
       <!-- PDF Button -->
-      <form action="{% url 'franchise:inventory:create_pdf' %}" method='POST' data-toggle="pdf" title="Genera un PDF de tu inventario">
+      <form action="{% url 'franchise:inventory:create_excel' %}" method='POST'>
         {% csrf_token %}
-        <button type="submit" class="btn btn-primary"><i class="fa fa-file-pdf-o"></i></button>
+        <button type="submit" class="btn btn-primary"  data-toggle="excel" title="Genera un archivo EXCEL de tu inventario"><i class="fa fa-file-excel-o"></i></button>
       </form>
     </div>
 </div>
@@ -104,7 +104,7 @@
 $(document).ready(function(){
     $('[data-toggle="help_code"]').tooltip();
     $('[data-toggle="modal"]').tooltip();
-    $('[data-toggle="pdf"]').tooltip();
+    $('[data-toggle="excel"]').tooltip();
 });
 </script>
 {% endblock extras %}
