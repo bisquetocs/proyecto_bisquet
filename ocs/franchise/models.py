@@ -19,13 +19,11 @@ class Franchise(models.Model):
     activo = models.BooleanField()
     fecha_registro = models.DateTimeField('date published')
     id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-
-
     def __str__(self):
         return self.rfc
 
 
-
+# esta debe estar en products... IMPORTANTE
 class PrivateProduct(models.Model):
     id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)

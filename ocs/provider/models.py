@@ -34,6 +34,7 @@ class LinkWithF(models.Model):
     def check_timeout(self):
         now = timezone.now()
         return now - datetime.timedelta(days=5) <= self.date_of_creation <= now
+
 class Days(models.Model):
     nombre = models.CharField(max_length = 100)
     def __str__(self):

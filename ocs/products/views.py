@@ -2,7 +2,7 @@
 created by:     Django
 description:    This are the views used to work with products
 modify by:      Alberto
-modify date:    26/10/18
+modify date:    04/11/18
 """
 # Create your views here.
 from django.http import HttpResponse, HttpResponseRedirect
@@ -17,13 +17,23 @@ from django.contrib import messages
 from accounts.models import OCSUser
 from provider.models import Provider
 from .models import Product
+from .models import UnidadDeMedida
+from .models import Price
+from .models import CompleteProduct
 
+from django.http import JsonResponse
+import json
+
+
+# INPUT
+# OUTPUT
 # Function that shows the provider its products
 def my_products(request):
     u = OCSUser.objects.get(user = request.user)
     prov = Provider.objects.get(id = u.id_provider.id)
-    prod = Product.objects.filter(id_provider = prov.id)
-    return render(request, 'products/my_products.html', {'usuario':u, 'productos':prod,})
+    prod = Product.objects.filter(id_provider = prov.id).order_by('-id')
+    unidad = UnidadDeMedida.objects.all()
+    return render(request, 'products/my_products.html', {'usuario':u, 'productos':prod,'unidad':unidad,})
 
 # Function that let the provider register a new product
 def registerProduct(request):
@@ -45,6 +55,12 @@ def registerProduct(request):
         prod2 = Product.objects.filter(codigo=p.codigo, id_provider=p.id_provider)
         if not prod1 and not prod2:
             p.save()
+            if request.POST['precio']!=0 and request.POST.get('unidad_medida',0)!=0:
+                unidad = UnidadDeMedida.objects.get(id=request.POST['unidad_medida'])
+                price = Price(id_product = p,fecha_inicio = timezone.now(), cantidad = request.POST['precio'], activo = True)
+                price.save()
+                complete = CompleteProduct(id_product=p, id_unidad=unidad, id_price=price, activo=True)
+                complete.save()
             messages.success(request, 'Producto registrado!')
         else:
             if prod1 and prod2:
@@ -55,10 +71,32 @@ def registerProduct(request):
                 messages.warning(request, 'El nombre asignado ya existe')
     return redirect(reverse('products:myProducts'))
 
-# Function that lest the provider to edit its products
-def editProduct(request, id_product):
-    u = OCSUser.objects.get(user = request.user)
+
+# Function that lets the provider rapidly unable a product
+def ableUnableProduct(request, id_product):
     p = Product.objects.get(id = id_product)
+    if p.activo:
+        p.activo = False
+    else:
+        p.activo = True
+    p.save()
+    return redirect('products:myProducts')
+
+# AJAX FUNCTIONS
+def get_product_info(request):
+    id_product = request.GET.get('id_product', None)
+    product = Product.objects.get(id=id_product)
+    data = {
+        'id_product': product.id,
+        'nombre': product.nombre,
+        'descripcion': product.descripcion,
+        'codigo': product.codigo,
+        'activo': product.activo,
+    }
+    return JsonResponse(data)
+def edit_product(request):
+    u = OCSUser.objects.get(user = request.user)
+    p = Product.objects.get(id = request.POST['id_product'])
     prov = Provider.objects.get(id = u.id_provider.id)
     prod = Product.objects.filter(id_provider = prov.id)
     # If POST then make validations and save product info
@@ -68,11 +106,11 @@ def editProduct(request, id_product):
         else:
             if request.POST.get('activo', '') == 'on':aux = True
             else:aux = False
-            p = Product.objects.get(id=id_product)
-            prod1 = Product.objects.filter(nombre=request.POST['nombre'].lower(), id_provider=p.id_provider).exclude(id=id_product)
-            prod2 = Product.objects.filter(codigo=request.POST['codigo'].upper(), id_provider=p.id_provider).exclude(id=id_product)
+            p = Product.objects.get(id=request.POST['id_product'])
+            prod1 = Product.objects.filter(nombre=request.POST['nombre'].lower(), id_provider=p.id_provider).exclude(id=request.POST['id_product'])
+            prod2 = Product.objects.filter(codigo=request.POST['codigo'].upper(), id_provider=p.id_provider).exclude(id=request.POST['id_product'])
             if not prod1 and not prod2:
-                p.nombre=request.POST['nombre'].capitalize()
+                p.nombre=request.POST['nombre'].lower()
                 p.descripcion=request.POST['descripcion']
                 p.codigo=request.POST['codigo'].upper()
                 p.activo= aux
@@ -98,13 +136,85 @@ def editProduct(request, id_product):
                     auxp.nombre = ''
                 return render(request, 'products/my_products.html', {'usuario':u,'producto':auxp,'productos':prod,'edit':True})
     return render(request, 'products/my_products.html', {'usuario':u,'producto':p,'productos':prod,'edit':True})
+def get_product_price(request):
+    id_product = request.GET.get('id_product', None)
+    product = Product.objects.get(id=id_product)
+    complete = CompleteProduct.objects.filter(id_product = product, activo=True, id_price__in = Price.objects.filter(id_product=product,activo=True))
+    complete = complete.order_by('id_unidad')
+    data = {
+        'id_product': id_product,
+        'id_unidad': [],
+        'id_precio': [],
+        'unidad': [],
+        'precio': [],
+    }
+    for comp in complete:
+        data['id_unidad'].append(comp.id_unidad.id)
+        data['id_precio'].append(comp.id_price.id)
+        data['unidad'].append(UnidadDeMedida.objects.get(id=comp.id_unidad.id).abreviacion + ' - ' + UnidadDeMedida.objects.get(id=comp.id_unidad.id).nombre)
+        data['precio'].append(Price.objects.get(id=comp.id_price.id).cantidad)
 
-# Function that lets the provider rapidly unable a product
-def ableUnableProduct(request, id_product):
-    p = Product.objects.get(id = id_product)
-    if p.activo:
-        p.activo = False
-    else:
-        p.activo = True
-    p.save()
-    return redirect('products:myProducts')
+    return JsonResponse(data)
+def check_unidad(request):
+    id_product = request.GET.get('id_product', None)
+    product = Product.objects.get(id=id_product)
+    unidadesTotal = UnidadDeMedida.objects.all()
+    unidades = CompleteProduct.objects.filter(id_product=product, activo = True)
+    data = {
+        'id_product': id_product,
+        'unidadesTotal': [],
+        'unidades': [],
+    }
+    for uni in unidadesTotal:
+        data['unidadesTotal'].append(uni.id)
+    for uni in unidades:
+        data['unidades'].append(uni.id_unidad.id)
+    print(data)
+    return JsonResponse(data)
+def add_price(request):
+    id_product = request.GET.get('id_product', None)
+    id_unidad = request.GET.get('id_unidad', None)
+    cantidad = request.GET.get('cantidad', None)
+    product = Product.objects.get(id=id_product)
+    unidad = UnidadDeMedida.objects.get(id=id_unidad)
+    price = Price(id_product=product, fecha_inicio = timezone.now(),cantidad = cantidad, activo=True)
+    price.save()
+    complete = CompleteProduct(id_product=product,id_unidad=unidad,id_price=price,activo=True)
+    complete.save()
+    data = { 'success': True,}
+    return JsonResponse(data)
+def save_price(request):
+    id_product = request.GET.get('id_product', None)
+    id_unidad = request.GET.get('id_unidad', None)
+    cantidad = request.GET.get('cantidad', None)
+    product = Product.objects.get(id=id_product)
+    unidad = UnidadDeMedida.objects.get(id=id_unidad)
+    complete = CompleteProduct.objects.get(id_product=product,id_unidad=unidad,activo=True)
+    price = Price.objects.get(id = complete.id_price.id)
+    price.fecha_final = timezone.now()
+    price.activo = False
+    price.save()
+    newPrice = Price(id_product=product, fecha_inicio=timezone.now(), cantidad=cantidad, activo=True)
+    newPrice.save()
+    complete.id_price = newPrice
+    complete.save()
+    data = { 'success': True,}
+    return JsonResponse(data)
+def delete_price(request):
+    id_product = request.GET.get('id_product', None)
+    id_unidad = request.GET.get('id_unidad', None)
+    product = Product.objects.get(id=id_product)
+    unidad = UnidadDeMedida.objects.get(id=id_unidad)
+    complete = CompleteProduct.objects.get(id_product=product,id_unidad=unidad,activo=True)
+    price = Price.objects.get(id = complete.id_price.id)
+    price.fecha_final = timezone.now()
+    price.activo = False
+    complete.activo = False
+    price.save()
+    complete.save()
+    data = { 'success': True,}
+    return JsonResponse(data)
+
+
+
+#
