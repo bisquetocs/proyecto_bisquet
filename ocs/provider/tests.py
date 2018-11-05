@@ -168,7 +168,7 @@ class OfficeHoursTest(TestCase):
         """
 
         login = self.client.login(username="uname", password="testpasswd123") #login as owner
-        response = self.client.post('/provider/office/', {'start_hour_1': '12:00',
+        response = self.client.post('/provider/office/', {'start_hour_1': '11:00',
                                                             'finish_hour_1': '18:00',
                                                             'start_hour_2': '12:00',
                                                             'finish_hour_2': '18:00',
@@ -187,6 +187,8 @@ class OfficeHoursTest(TestCase):
         hour = OfficeHours.objects.get(day = 1, id_provider = 1)
         if (hour.start_hour == "12:00" and hour.finish_hour == "18:00"):
             self.assertTrue(True)
+        else:
+            self.assertTrue(False)
 
 
 class DailyClientsTest(TestCase):

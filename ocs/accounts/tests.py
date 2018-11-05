@@ -239,6 +239,8 @@ class EmployeesModuleTest(TestCase):
         almacenista = Group.objects.get(name = "Almacenista")
         if almacenista in user.groups.all():
             self.assertTrue(True)
+        else:
+            self.assertTrue(False)
 
 
     def test_register_employee_false(self):
@@ -263,6 +265,8 @@ class EmployeesModuleTest(TestCase):
         almacenista = Group.objects.get(name = "Almacenista")
         if almacenista in user.groups.all():
             self.assertTrue(True)
+        else:
+            self.assertTrue(False)
 
     def test_change_role_false(self):
         """
