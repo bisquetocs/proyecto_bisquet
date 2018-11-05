@@ -40,10 +40,13 @@ class CompleteProduct(models.Model):
     id_price = models.ForeignKey(Price, on_delete=models.CASCADE)
     activo = models.BooleanField()
 
-
-
-
-
+class Equivalencias(models.Model):
+    id_product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    id_unidad_origen = models.ForeignKey(UnidadDeMedida, on_delete=models.CASCADE, related_name='id_unidad_origen')
+    cantidad_origen = models.DecimalField(max_digits=6 ,decimal_places=2, default=1)
+    id_unidad_destino = models.ForeignKey(UnidadDeMedida, on_delete=models.CASCADE, related_name='id_unidad_destino')
+    cantidad_destino = models.DecimalField(max_digits=6 ,decimal_places=2)
+    activo = models.BooleanField()
 
 
 

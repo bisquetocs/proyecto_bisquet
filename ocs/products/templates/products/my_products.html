@@ -12,7 +12,7 @@
 <hr />
 <!-- TABLA DE PRODUCTOS -->
 <div class="row">
-  <div class="col">
+  <div class="col-5">
     <div class="card">
       <div class="container">
         <table id="myTable" class="table table-hover">
@@ -31,19 +31,19 @@
               <td scope="row">{{ Producto.id }}</td>
               <th>{{ Producto.nombre.capitalize }}</th>
               <td>{{ Producto.codigo }}</td>
-              <td class="text-center">
+              <td class="text-center" id="ableUnable{{ Producto.id }}">
                 {% if Producto.activo %}
-                <a href="/products/ableUnable/{{Producto.id}}" style="color:green">
+                <div style="color:green" onclick="ableUnable({{ Producto.id }})">
                   <span class="fa fa-eye"></span>
-                </a>
+                </div>
                 {% else %}
-                <a href="/products/ableUnable/{{Producto.id}}" style="color:red">
+                <div style="color:red" onclick="ableUnable({{ Producto.id }})">
                   <span class="fa fa-eye-slash"></span>
-                </a>
+                </div>
                 {% endif %}
               </td>
               <td class="text-center">
-                <button type="button" class="btn btn-warning" name="button" onclick="editProduct({{Producto.id}})" data-toggle="tooltip" data-placement="left" title="Editar información de {{ Producto.nombre }}">
+                <button type="button" class="btn" name="button" onclick="editProduct({{Producto.id}})" data-toggle="tooltip" data-placement="left" title="Editar información de {{ Producto.nombre }}">
                   <span class="fa fa-edit"></span>
                 </button>
 
@@ -127,8 +127,8 @@
             <div class="row pb-2">
               <div class="col-6">
                 <label for="unidad_medida">Unidad de medida inicial:</label>
-                <select required class="form-control" id="unidad_medida" name="unidad_medida">
-                  <option value="None" disabled selected>Selecciona una unidad</option>
+                <select required class="form-control" id="unidad_medida" name="unidad_medida" onclick="if (this.value==0){this.value=1;}">
+                  <option value="0" disabled selected>Selecciona una unidad</option>
                   {% for Unidad in unidad %}
                   <option value="{{Unidad.id}}">{{Unidad.abreviacion}} - {{Unidad.nombre}}</option>
                   {% endfor %}
@@ -139,7 +139,6 @@
                 <input required id="precio" name="precio" placeholder="0,00" type="number" class="form-control" min="0" step="0.01">
               </div>
             </div>
-
             <center>
               <div class="btn-group" role="group" aria-label="Basic example">
                 <button type="button" class="btn btn-danger" onclick="cancelAgregar()">Cancelar</button>
@@ -151,6 +150,7 @@
       </div>
     </div>
     <hr />
+    <!-- SECCION DE PRECIOS POR UNIDAD DE MEDIDA -->
     <div class="card">
       <div class="card-body">
         <h6>Precio por unidad de medida: <b class="nombre_producto"></b></h6>
@@ -169,7 +169,6 @@
           <input required id="id_product" name="id_product" type="number" hidden>
           <div id="precios_de_producto" class="row">
           </div>
-
           <div class="row">
             <div class="col-5">
               <select required class="form-control" id="unidad_de_medida" onclick="checaUnidad();">
@@ -179,16 +178,87 @@
                 {% endfor %}
               </select>
             </div>
-            <div class="col-4">
-              <input required id="price" name="price" placeholder="Precio"type="number" class="form-control" min="0" value="0" step="0.01">
+            <div class="col-5">
+              <input required id="price" name="price" placeholder="0.00"type="number" class="form-control" min="0" step="0.01">
             </div>
-            <div class="col-3 align-self-center">
-              <button type="button" class="btn btn-success" name="button" onclick="addPrice()">
+            <div class="col-2 align-self-center">
+              <button type="button" class="btn btn-sm btn-success" name="button" onclick="addPrice()">
                 <span class="fa fa-plus"></span>
               </button>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <!-- SECCION DE EQUIVALENCIAS ENTRE UNIDADES DE MEDIDA -->
+    <div class="card">
+      <div class="card-body">
+        <h6>Equivalencias: <b class="nombre_producto"></b></h6>
+        <hr />
+        <div id="no_selected_equiv" class="text-center" style="color:gray">
+          <br />
+          <span class="fa fa-edit"></span> Selecciona un producto para ver sus equivalencias
+          <br /><br />
+        </div>
+        <div id="adding_equiv" class="text-center" style="color:gray" hidden>
+          <br />
+          <span class="fa fa-plus"></span> Agrega el producto para poder definir sus equivalencias
+          <br /><br />
+        </div>
+        <div id="selected_equiv" class="" hidden>
+          <input required id="id_product" name="id_product" type="number" hidden>
 
+          <div class="row">
+            <div class="col-7 row form-group">
+              <div class="col-4 pt-2" onclick="document.getElementById('cantidad_origen').disabled=false;">
+                <input disabled required id="cantidad_origen" placeholder="0.00" type="number" class="form-control" value="1" min="0" step="0.01">
+              </div>
+              <div class="col-4 pt-2">
+                <select required class="form-control" id="unidad_origen" onchange="checkEquivDestino(this.value)">
+                  <option value="0" disabled selected>Unidad:</option>
+                  {% for Unidad in unidad %}
+                  <option value="{{Unidad.id}}" id="optuni{{Unidad.id}}">{{Unidad.abreviacion}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-4 pt-2">
+                de <b class="nombre_producto"></b> ...
+              </div>
+              <div class="col-4 pt-1">
+                ... equivale a:
+              </div>
+              <div class="col-4 pt-1">
+                <input required id="cantidad_destino" name="" placeholder="0.00" type="number" class="form-control" min="0" step="0.01">
+              </div>
+              <div class="col-4 pt-1">
+                <select disabled required class="form-control" id="unidad_destino">
+                  <option value="0" disabled selected>Unidad:</option>
+                  {% for Unidad in unidad %}
+                  <option value="{{Unidad.id}}" id="optunidest{{Unidad.id}}">{{Unidad.abreviacion}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-12 pt-2">
+                <div class="col text-center">
+                  <button type="button" class="btn btn-sm btn-success" name="button" onclick="registrarEquivalencia()">
+                    Registrar equivalencia
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-5">
+              <div class="card text-center" >
+                <ul id="equivalencias_de_producto" class="list-group list-group-flush">
+                  <br />
+                  <p style="color:gray">
+                    Aún no registras ninguna equivalencia
+                  </p>
+                  <br /><br />
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -196,3 +266,32 @@
 </div>
 
 {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!---->

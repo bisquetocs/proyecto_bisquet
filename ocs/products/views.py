@@ -20,6 +20,7 @@ from .models import Product
 from .models import UnidadDeMedida
 from .models import Price
 from .models import CompleteProduct
+from .models import Equivalencias
 
 from django.http import JsonResponse
 import json
@@ -72,17 +73,19 @@ def registerProduct(request):
     return redirect(reverse('products:myProducts'))
 
 
-# Function that lets the provider rapidly unable a product
-def ableUnableProduct(request, id_product):
+# AJAX FUNCTIONS
+def able_unable_product(request):
+    id_product = request.GET.get('id_product', None)
     p = Product.objects.get(id = id_product)
     if p.activo:
         p.activo = False
     else:
         p.activo = True
     p.save()
-    return redirect('products:myProducts')
-
-# AJAX FUNCTIONS
+    data = {
+        'able': p.activo,
+    }
+    return JsonResponse(data)
 def get_product_info(request):
     id_product = request.GET.get('id_product', None)
     product = Product.objects.get(id=id_product)
@@ -153,8 +156,8 @@ def get_product_price(request):
         data['id_precio'].append(comp.id_price.id)
         data['unidad'].append(UnidadDeMedida.objects.get(id=comp.id_unidad.id).abreviacion + ' - ' + UnidadDeMedida.objects.get(id=comp.id_unidad.id).nombre)
         data['precio'].append(Price.objects.get(id=comp.id_price.id).cantidad)
-
     return JsonResponse(data)
+
 def check_unidad(request):
     id_product = request.GET.get('id_product', None)
     product = Product.objects.get(id=id_product)
@@ -171,6 +174,7 @@ def check_unidad(request):
         data['unidades'].append(uni.id_unidad.id)
     print(data)
     return JsonResponse(data)
+
 def add_price(request):
     id_product = request.GET.get('id_product', None)
     id_unidad = request.GET.get('id_unidad', None)
@@ -214,6 +218,90 @@ def delete_price(request):
     complete.save()
     data = { 'success': True,}
     return JsonResponse(data)
+
+
+
+
+
+
+def get_product_equiv(request):
+    id_product = request.GET.get('id_product', None)
+    product = Product.objects.get(id=id_product)
+    equiv = Equivalencias.objects.filter(id_product = product, activo=True).order_by('id_unidad_origen')
+    data = {
+        'id_equiv': [],
+        'id_unidad_origen': [],
+        'cantidad_origen': [],
+        'id_unidad_destino': [],
+        'cantidad_destino': [],
+    }
+    print(equiv)
+    for equi in equiv:
+        data['id_equiv'].append(equi.id)
+        data['id_unidad_origen'].append(equi.id_unidad_origen.abreviacion)
+        data['cantidad_origen'].append(equi.cantidad_origen)
+        data['id_unidad_destino'].append(equi.id_unidad_destino.abreviacion)
+        data['cantidad_destino'].append(equi.cantidad_destino)
+    return JsonResponse(data)
+
+def add_equivalencia(request):
+    id_product = request.GET.get('id_product', None)
+    id_unidad_origen = request.GET.get('id_unidad_origen', None)
+    cantidad_origen = request.GET.get('cantidad_origen', None)
+    id_unidad_destino = request.GET.get('id_unidad_destino', None)
+    cantidad_destino = request.GET.get('cantidad_destino', None)
+
+    product = Product.objects.get(id=id_product)
+    unidad_origen = UnidadDeMedida.objects.get(id=id_unidad_origen)
+    unidad_destino = UnidadDeMedida.objects.get(id=id_unidad_destino)
+
+    exist = Equivalencias.objects.filter(id_product=product, id_unidad_origen=unidad_origen, id_unidad_destino=unidad_destino, activo=True).exists()
+    if exist:
+        equiv = Equivalencias.objects.get(id_product=product, id_unidad_origen=unidad_origen, id_unidad_destino=unidad_destino, activo=True)
+        equiv.cantidad_origen = cantidad_origen
+        equiv.cantidad_destino = cantidad_destino
+        equiv.save()
+    else:
+        equiv = Equivalencias(id_product=product, id_unidad_origen=unidad_origen, cantidad_origen=cantidad_origen, id_unidad_destino=unidad_destino, cantidad_destino=cantidad_destino, activo=True)
+        equiv.save()
+    data = { 'unidad_origen': unidad_origen.abreviacion,
+                'cantidad_origen': cantidad_origen,
+                'unidad_destino': unidad_destino.abreviacion,
+                'cantidad_destino': cantidad_destino,}
+    return JsonResponse(data)
+
+
+def delete_equiv(request):
+    id_equiv = request.GET.get('id_equiv', None)
+    equiv = Equivalencias.objects.get(id=id_equiv)
+    equiv.activo = False
+    equiv.save()
+    data = { 'success': True,}
+    return JsonResponse(data)
+
+def check_equiv_destino(request):
+    id_product = request.GET.get('id_product', None)
+    id_unidad_origen = request.GET.get('id_unidad_origen', None)
+    product = Product.objects.get(id=id_product)
+
+    uni = UnidadDeMedida.objects.get(id=id_unidad_origen)
+    equivs = Equivalencias.objects.filter(id_product=product, id_unidad_origen=id_unidad_origen, activo = True)
+    unidadesTotal = UnidadDeMedida.objects.all()
+
+    data = {
+        'id_product': id_product,
+        'unidadesTotal': [],
+        'unidades': [],
+    }
+    for uni in unidadesTotal:
+        data['unidadesTotal'].append(uni.id)
+    for equi in equivs:
+        data['unidades'].append(equi.id_unidad_destino.id)
+    print(data)
+    return JsonResponse(data)
+
+
+
 
 
 
