@@ -173,6 +173,7 @@ function editProduct(id_product){
      }
   });
 }
+
 function cancelEdit(){
   //PRICE
   document.getElementById('selected_price').hidden = true;
@@ -200,6 +201,7 @@ function cancelEdit(){
     list[i].innerHTML = '';
   }
 }
+
 function showAgregar(){
   cancelEdit();
   document.getElementById('selected_price').hidden = true;
@@ -213,6 +215,7 @@ function showAgregar(){
   document.getElementById('editar_producto').hidden = true;
   document.getElementById('agregar_producto').hidden = false;
 }
+
 function cancelAgregar(){
   //PRICE
   document.getElementById('selected_price').hidden = true;
@@ -279,6 +282,7 @@ function checaUnidad(){
     });
   }
 }
+
 function addPrice(){
   var id_product = document.getElementById('id_product').value;
   var id_unidad = document.getElementById('unidad_de_medida').value;
@@ -299,12 +303,14 @@ function addPrice(){
     });
   }
 }
+
 function editThisPrice(id_price){
   document.getElementById('pre'+id_price).disabled = false;
   document.getElementById('editThisPrice'+id_price).hidden = true;
   document.getElementById('editThisPriceSection'+id_price).hidden = false;
   document.getElementById('pre'+id_price).name = document.getElementById('pre'+id_price).value;
 }
+
 function deleteThisPrice(id_price){
   var producto = document.getElementById('nombre').value;
   var unidad = document.getElementById('uni'+id_price).value;
@@ -326,6 +332,7 @@ function deleteThisPrice(id_price){
   }
   cancelPrice(id_price);
 }
+
 function savePrice(id_price){
   var id_product = document.getElementById('id_product').value;
   var id_unidad = document.getElementById('uni'+id_price).name;
@@ -352,6 +359,7 @@ function savePrice(id_price){
     cancelPrice(id_price);
   }
 }
+
 function cancelPrice(id_price){
   document.getElementById('pre'+id_price).disabled = true;
   document.getElementById('editThisPrice'+id_price).hidden = false;
@@ -393,6 +401,7 @@ function registrarEquivalencia(){
 function showDeleteEquiv(id_equiv){
   document.getElementById('equiv'+id_equiv).hidden = false;
 }
+
 function hideDeleteEquiv(id_equiv){
   document.getElementById('equiv'+id_equiv).hidden = true;
 }
