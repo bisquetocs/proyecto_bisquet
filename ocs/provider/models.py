@@ -32,8 +32,9 @@ class LinkWithF(models.Model):
     used = models.BooleanField()
     date_of_creation = models.DateTimeField(default=timezone.now, blank=True)
     def check_timeout(self):
-        now = timezone.now()
-        return now - datetime.timedelta(days=5) <= self.date_of_creation <= now
+        if (timezone.now() - self.date_of_creation) > datetime.timedelta(days=5):
+            return True
+        return False
 
 class Days(models.Model):
     nombre = models.CharField(max_length = 100)

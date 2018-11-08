@@ -31,4 +31,7 @@ urlpatterns = [
 
     path('delete_equiv/', views.delete_equiv, name='delete_equiv'),
     path('check_equiv_destino/', views.check_equiv_destino, name='check_equiv_destino'),
+
+    #AJAX FOR ORDERS
+    path('check_available_product/', views.check_available_product, name='check_available_product'),
 ]

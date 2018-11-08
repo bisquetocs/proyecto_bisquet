@@ -3,9 +3,106 @@
 {% block title %}OCS - {{usuario.id_franchise.nombre}}{% endblock title %}
 
 {% block content %}
+{% block headerinfo %}
+{% endblock headerinfo %}
 
-Ya tengo modelos y todo listo... Me falta hacerlo... :$
-Pero estoy en eso
 
+<h2>Realiza un pedido:</h2>
+<hr />
+<div class="row">
+  <div class="col-3">
+    <h5><b>Proveedores</b></h5>
+    <hr />
+    <div style="overflow-y: scroll; max-height:400px;">
+      <div class="card">
+        <ul class="list-group list-group-flush">
+          {% for provi in my_providers %}
+          <a href="/orders/make_order/{{provi.id_provider.id}}/" class="list-group-item list-group-item-action">
+            {{provi.id_provider.nombre}}
+          </a>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-6">
+    <h5><b>Pedido</b></h5>
+    <hr />
+    <div class="card">
+      <nav class="navbar navbar-dark bg-dark rounded-top border-bottom" style="color:white">
+        <div class="row mt-3">
+          <div class="col">
+            <div class="input-group input-group-sm mb-3">
+              <div class="input-group-prepend"><span class="input-group-text"><b>Producto:</b></span></div>
+              <!-- INPUT DEL PRODUCTO CON SU LISTA DE PRODUCTOS -->
+              <input disabled id="add_product" list="list_products" type="text" class="form-control" onclick="select()"onchange="check_product_unidad()">
+              <datalist id="list_products">
+                {% block list_products %}
+                {% endblock list_products %}
+              </datalist>
+            </div>
+          </div>
+          <div class="col-3 px-0">
+            <select disabled class="form-control form-control-sm" name="" id="ud_medida">
+            </select>
+          </div>
+          <div class="col-3">
+            <div class="input-group input-group-sm mb-3">
+              <input disabled onkeyup="activate_add_button()" type="number" id="cantidad_pedida" name="" min="0" step="0.01" class="form-control form-control-sm">
+              <div class="input-group-append">
+                <button disabled id="add_product_button" type="button" class="btn btn-sm btn-success align-bottom" name="button" onclick="add_product_to_order()">
+                  <span class="fa fa-plus"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <table class="table table-responsive-xl table-hover table-sm mx-1">
+        <thead>
+          <tr>
+            <th scope="col">Cantidad</th>
+            <th scope="col">ud. medida</th>
+            <th scope="col">Producto</th>
+            <th scope="col">Precio</th>
+            <th scope="col">TOTAL:</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody id="contenido_pedido">
+          {% block contenido_pedido %}
+          <tr>
+            <td colspan="6"><center class="mt-3 mb-3" style="color:gray">
+              Selecciona un proveedor para hacer, editar o cancelar un pedido o ver tu(s) pedido(s) actual(es)
+            </center></td>
+          </tr>
+          {% endblock contenido_pedido %}
+        </tbody>
+      </table>
+    </div>
+    <hr />
+    <div class="card">
+
+    </div>
+  </div>
+  <div class="col-3">
+    <h5><b>Resumen</b></h5>
+    <hr />
+    <div class="card">
+      <div class="text-center mt-1">
+        {% block resumen %}
+        <small class="mx-4" style="color:gray">
+          <br />
+          Selecciona un proveedor para hacer, editar o cancelar un pedido o ver tu(s) pedido(s) actual(es)
+          <br /><br />
+        </small>
+        {% endblock resumen %}
+      </div>
+
+    </div>
+  </div>
+
+</div>
 
 {% endblock content %}

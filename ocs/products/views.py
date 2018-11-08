@@ -301,6 +301,41 @@ def check_equiv_destino(request):
     return JsonResponse(data)
 
 
+def check_available_product(request):
+    id_provider = request.GET.get('id_provider', None)
+    nombre_product = request.GET.get('nombre_product', None)
+
+    provider = Provider.objects.get(id=id_provider)
+    exists = Product.objects.filter(nombre=nombre_product,id_provider=provider, activo=True).exists()
+    if exists:
+        product = Product.objects.get(nombre=nombre_product,id_provider=provider, activo=True)
+        data = {
+            'id_product': product.id,
+            'id_unidades': [],
+            'unidades': [],
+            'nombres_uni': [],
+        }
+        complete_product = CompleteProduct.objects.filter(id_product=product, activo=True)
+        for uni in complete_product:
+            data['id_unidades'].append(uni.id_unidad.id)
+            data['unidades'].append(uni.id_unidad.abreviacion)
+            data['nombres_uni'].append(uni.id_unidad.nombre)
+    else:
+        data = {
+            'error': True,
+        }
+    return JsonResponse(data)
+
+
+
+
+
+
+
+
+
+
+
 
 
 

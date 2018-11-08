@@ -65,6 +65,7 @@ def link_provider(request):
         code = request.POST['link_code']
         try:
             l = LinkWithF.objects.get(link_code=code)
+            print(l.date_of_creation)
             if l.used or l.check_timeout():
                 messages.warning(request, 'El código ya fue utilizado o caducado, por favor, solicita a tu proveedor que te genere un código nuevo.')
             else:

@@ -14,4 +14,7 @@ from . import views
 app_name = 'orders'
 urlpatterns = [
     path('make_order/', views.make_order, name='make_order'),
+    path('make_order/<int:id_provider>/', views.make_order_to, name='make_order_to'),
+    path('add_product_to_order/', views.add_product_to_order, name='add_product_to_order'),
+    path('delete_product_from_order/', views.delete_product_from_order, name='delete_product_from_order'),
 ]
