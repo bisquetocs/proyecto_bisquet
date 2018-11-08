@@ -80,19 +80,19 @@ def register_private_product(request):
 def create_excel(request):
     """
     By: DanteMaxF
-    Function used to generate a PDF document
+    Function used to generate a excel document
     INPUT
         - Request method with the values of the session
     OUTPUT
         - Redirect to the inventory table
-        - A  PDF document to be downloaded
+        - An  excel document to be downloaded
     """
     u = OCSUser.objects.get(user = request.user)
     if request.method == 'POST':
         product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
         # Generate XLS
         response = HttpResponse(content_type='application/ms-excel')
-        response['Content-Disposition'] = 'attachment; filename="'+u.id_franchise.nombre+'".xls"'
+        response['Content-Disposition'] = 'attachment; filename="'+u.id_franchise.nombre+'"_inventario.xls"'
 
         wb = xlwt.Workbook(encoding='utf-8')
         ws = wb.add_sheet('Inventory')
