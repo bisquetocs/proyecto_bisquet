@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.views import generic
 import xlwt
 from django.contrib.auth.models import User
+import datetime
 
 
 # Create your views here.
@@ -87,6 +88,7 @@ def create_excel(request):
         - Redirect to the inventory table
         - An  excel document to be downloaded
     """
+    today = datetime.date.today()
     u = OCSUser.objects.get(user = request.user)
     if request.method == 'POST':
         product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
@@ -98,12 +100,15 @@ def create_excel(request):
         ws = wb.add_sheet('Inventory')
 
         # Sheet header, first row
-        row_num = 0
+        row_num = 3
 
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
+        ws.write_merge(0, 0, 0, 3, u.id_franchise.nombre, font_style)
+        ws.write_merge(1, 1, 0, 3, 'Inventario de Productos', font_style)
+        ws.write_merge(2, 2, 0, 3, ''+str(today.strftime('%d-%m-%Y')), font_style)
 
-        columns = ['Producto', 'Descripción', 'Cantidad']
+        columns = ['Producto', 'Descripción', 'Cantidad', 'Unidad']
 
         for col_num in range(len(columns)):
             ws.write(row_num, col_num, columns[col_num], font_style)
@@ -117,6 +122,7 @@ def create_excel(request):
             ws.write(row_num, 0, row.name, font_style)
             ws.write(row_num, 1, row.description, font_style)
             ws.write(row_num, 2, row.amount, font_style)
+            ws.write(row_num, 3, row.unit, font_style)
 
         wb.save(response)
         return response
