@@ -21,7 +21,7 @@ class OCSUser(models.Model):
     direccion = models.CharField(max_length=200)
     active = models.BooleanField(null = False, default = True)
 
-# Model used to represent the relationship between a group and a provider or franchise
+# Model used to represent the relationship between a group(LOS ROLES) and a provider or franchise
 class IsProviderOrFranchise(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     is_provider = models.BooleanField(null=False, default=False)

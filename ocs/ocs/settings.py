@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'franchise',
     'products',
     'provider',
+    'orders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,0 +1,257 @@
+{% extends "orders/make_order.html" %}
+
+<!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
+{% block headerinfo %}
+{% if order_to_edit %}
+  {% if too_late %}
+  <input id="orderProvider" type="text" name="{{provider.nombre}}" value="{{provider.id}}"hidden>
+  <input id="edited" type="text" name="" value="1" hidden>
+  <input id="id_pedido" type="number" name="" value="" hidden>
+  {% else %}
+  <input id="orderProvider" type="text" name="{{provider.nombre}}" value="{{provider.id}}"hidden>
+  <input id="edited" type="text" name="" value="1" hidden>
+  <input id="id_pedido" type="number" name="" value="{{ orders.id }}" hidden>
+  {% endif %}
+{% else %}
+<input id="orderProvider" type="text" name="{{provider.nombre}}" value="{{provider.id}}"hidden>
+<input id="edited" type="text" name="" value="0" hidden>
+<input id="id_pedido" type="number" name="" value="" hidden>
+{% endif %}
+{% endblock headerinfo %}
+
+<!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
+{% block list_products %}
+  {% for p in products %}
+  <option id="product{{p.id}}" name="{{p.id}}" value="{{p.nombre.capitalize}}">
+  {% endfor %}
+{% endblock list_products %}
+
+<!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
+{% block contenido_pedido %}
+{% if order_to_edit %}
+  {% if too_late %}
+  <tr>
+    <td colspan="6"><center class="mt-3 mb-3" style="color:gray">
+      Tu pedido está en elstado <b>{{ orders_status }}</b> lo que significa:<br />
+      <small>{{ orders_status_desc }}</small>
+    </center></td>
+  </tr>
+  {% else %}
+  {% if orders_products.count == 0 %}
+  <tr>
+    <td colspan="6"><center class="mt-3 mb-3" style="color:gray">
+      Aún no tienes productos en este pedido
+    </center></td>
+  </tr>
+  {% else %}
+    {% for prod in orders_products %}
+    <tr id="row{{prod.id}}">
+      <td>{{prod.cantidad}}</td>
+      <td>{{prod.id_complete_product.id_unidad.abreviacion}}</td>
+      <td>{{prod.id_complete_product.id_price.cantidad}}</td>
+      <td>{{prod.id_complete_product.id_product.nombre}}</td>
+      <td>$ {{prod.total}}</td>
+      <td>
+        <button type="button" class="btn btn-sm btn-outline-danger" name="button" onclick="delete_product_from_order({{prod.id}})">
+          <span class="fa fa-trash"></span>
+        </button>
+      </td>
+    </tr>
+    {% endfor %}
+  {% endif %}
+
+  {% endif %}
+{% else %}
+<tr>
+  <td colspan="6"><center class="mt-3 mb-3" style="color:gray">
+    Aún no tienes pedidos con <b>{{provider.nombre}}</b><br />
+    <b><span class="fa fa-edit"></span></b><br />Haz un pedido
+  </center></td>
+</tr>
+{% endif %}
+{% endblock contenido_pedido %}
+
+<!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
+{% block resumen %}
+  {% if order_to_edit %}
+    {% if too_late %}
+    <div class="mt-3 mb-3">
+      <small>Tienes un pedido para <b>{{provider.nombre}}</b> en <u>preparación y/o envío</u></small>
+      <button id="realizar_pedido" onclick="start_order()" class="btn btn-sm btn-info" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+          <span class="fa fa-edit"></span><br />Realizar nuevo pedido a <br /><b>{{provider.nombre}}</b>
+      </button>
+    </div>
+    {% else %}
+      {% if just_one %}
+      <div class="container-fluid mt-3">
+        <div class="card">
+          <div class="card-body">
+            <button id="editar_pedido" onclick="edit_order()" class="btn btn-sm btn-block btn-info" type="button">
+                <span class="fa fa-edit"></span> <b>Editar pedido ID. {{ orders.id }}</b>
+            </button>
+            <button id="enviar_pedido" hidden onclick="" class="btn btn-sm btn-block btn-success" type="button">
+                <span class="fa fa-send"></span> <b>Enviar pedido</b>
+            </button>
+          </div>
+        </div>
+        <small>Pedido para:</small>
+        <h5 class="mb-3">{{provider.nombre}}</h5>
+        <div class="row">
+          <div class="col-5 mt-2">
+            <small>Fecha de entrega:</small>
+          </div>
+          <div class="col-7 mt-2">
+            <input disabled id="fecha_ideal" class="form-control" type="text" name="" value="{{ orders_date }}" onchange="calculate_day()">
+          </div>
+          <div class="col-5 mt-2">
+            <small>Entrega el día:</small>
+          </div>
+          <div class="col-7 mt-2">
+            <input disabled id="dia_ideal" class="form-control" type="text" name="" value="{{orders_day}}">
+          </div>
+          <div class="col-5 mt-2">
+            <small>Total de productos:</small>
+          </div>
+          <div class="col-7 mt-2">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">#</span>
+              </div>
+              <input disabled id="total_productos" class="form-control" type="number" name="" value="{{ orders.cantidad_productos }}" step="1">
+            </div>
+          </div>
+          <div class="col-5 mt-2">
+            <small>Total de precio:</small>
+          </div>
+          <div class="col-7 mt-2">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input disabled id="total_precio" class="form-control" type="number" name="" value="{{ orders.precio_total }}" step="0.001">
+            </div>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <small style="color:gray">Estado del pedido:</small> <br />
+            <b>{{ orders_status }}</b><br />
+            <small style="color:gray">{{ orders_status_desc }}</small>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-body">
+            <button onclick="" class="btn btn-sm btn-block btn-outline-danger" type="button">
+                <span class="fa fa-trash"></span> <b>Cancelar pedido</b>
+            </button>
+            <small>Esta acción no se podrá regresar</small>
+          </div>
+        </div>
+      </div>
+
+
+
+
+
+      {% else %}
+      <h5>Tus pedidos con los ID's:</h5>
+      <ul>
+        {% for id in orders_id %}
+        <li>{{ id }}</li>
+        {% endfor %}
+      </ul>
+      <h6>Están activos</h6>
+      {% endif %}
+    {% endif %}
+  {% else %}
+  <div class="mt-3 mb-3">
+    <button id="realizar_pedido" onclick="start_order()" class="btn btn-sm btn-info" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+        <span class="fa fa-edit"></span><br />Realizar pedido a <br /><b>{{provider.nombre}}</b>
+    </button>
+  </div>
+  {% endif %}
+  <div class="collapse container-fluid" id="collapseExample">
+    <div class="card">
+      <div class="card-body">
+        <button id="enviar_pedido" onclick="" class="btn btn-sm btn-block btn-success" type="button">
+            <span class="fa fa-send"></span> <b>Enviar pedido</b>
+        </button>
+      </div>
+    </div>
+    <small>Pedido para:</small>
+    <h5 class="mb-3">{{provider.nombre}}</h5>
+    <div class="row">
+      <div class="col-5 mt-2">
+        <small>Fecha de entrega:</small>
+      </div>
+      <div class="col-7 mt-2">
+        <input id="fecha_ideal" class="form-control" type="date" name="" onchange="calculate_day()">
+      </div>
+      <div class="col-5 mt-2">
+        <small>Entrega el día:</small>
+      </div>
+      <div class="col-7 mt-2">
+        <input disabled id="dia_ideal" class="form-control" type="text" name="">
+      </div>
+      <div class="col-5 mt-2">
+        <small>Total de productos:</small>
+      </div>
+      <div class="col-7 mt-2">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">#</span>
+          </div>
+          <input disabled id="total_productos" class="form-control" type="number" name="" step="1">
+        </div>
+      </div>
+      <div class="col-5 mt-2">
+        <small>Total de precio:</small>
+      </div>
+      <div class="col-7 mt-2">
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">$</span>
+          </div>
+          <input disabled id="total_precio" class="form-control" type="number" name="" step="0.001">
+        </div>
+      </div>
+    </div>
+    <div class="card mb-3">
+      <div class="card-body">
+        <button onclick="" class="btn btn-sm btn-block btn-outline-danger" type="button">
+            <span class="fa fa-trash"></span> <b>Cancelar pedido</b>
+        </button>
+        <small>Esta acción no se podrá regresar</small>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    var today = new Date();
+    var dd = today.getDate()+1;
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+     if(dd<10){
+       dd='0'+dd;
+     }
+     if(mm<10){
+       mm='0'+mm;
+     }
+    today = yyyy+'-'+mm+'-'+dd;
+    document.getElementById("fecha_ideal").setAttribute("min", today);
+  </script>
+{% endblock resumen %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!---->

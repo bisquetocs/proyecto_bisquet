@@ -9,7 +9,7 @@
     <div class="row">
       <li class="nav-item">
         <div class="popup" onclick="popUP()">
-          <a class="nav-link"><span class="fa fa-user-circle" style="font-size:20px"></span>&emsp;{{usuario.user}}</a>
+          <a class="nav-link"><span class="fa fa-user-circle" style="font-size:20px"></span>&emsp;{{usuario.user.first_name}} {{usuario.user.last_name}}</a>
           <div class="popuptext shadow" id="myPopup">
             <div class="list-group">
               <a href="/accounts/profile/" class="list-group-item list-group-item-action">
@@ -38,6 +38,7 @@
     <li><a href="/accounts/myEmployees/"><span class="fa fa-users"></span> Usuarios</a></li>
     <li><a href="/franchise/my_inventory/"><span class="fa fa-book"></span> Mi Inventario</a></li>
     <li><a href="/franchise/my_providers/"><span class="fa fa-handshake-o"></span> Mis proveedores</a></li>
+    <li><a href="/orders/make_order/"><span class="fa fa-fax"></span> Pedidos</a></li>
 <!--<li><a href="#">Events</a></li>
     <li><a href="#">About</a></li>
     <li><a href="#">Services</a></li>

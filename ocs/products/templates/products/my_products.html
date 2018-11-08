@@ -1,139 +1,297 @@
 {% extends "provider/home.html" %}
 
 {% block content %}
+<div class="clearfix">
+  <h3 class="float-left">
+    Catálogo de productos:
+  </h3>
+  <h3 class="float-right nombre_producto">
+  </h3>
+</div>
 
-<!-- AGRGAR Y EDITAR PRODUCTOS -->
-{% if edit %}
-<form action="{% url 'products:edit' producto.id %}" method="post">
-{% else %}
-<form action="{% url 'products:register' %}" method="post">
-{% endif %}
-  {% csrf_token %}
-  <div class="row rounded" style="padding:10px;background-color:gray">
-    <br>
-    <div class="col-12">
-      {% if edit %}
-      <h4>{{producto.nombre}}</h4>
-      {% else %}
-      <h4>Nuevo producto:</h4>
-      {% endif %}
-    </div>
-    <div class="col-12 col-sm-4 col-md-4 col-lg-2 col-xl-2 form-group">
-      <label for="nombre">Nombre</label>
-      {% if edit %}
-      <input required id="nombre" name="nombre" type="text" class="form-control" placeholder="producto" max_length=100 value="{{producto.nombre}}">
-      {% else %}
-      <input required id="nombre" name="nombre" type="text" class="form-control" placeholder="producto" max_length=100>
-      {% endif %}
-    </div>
-    <div class="col-12 col-sm-8 col-md-8 col-lg-5 col-xl-5 form-group">
-      <label for="descripcion">Descripción</label>
-      {% if edit %}
-      <input required id="descripcion" name="descripcion" type="text" class="form-control" placeholder="descripción del producto" max_length=200 value="{{producto.descripcion}}">
-      {% else %}
-      <input required id="descripcion" name="descripcion" type="text" class="form-control" placeholder="descripción del producto" max_length=200>
-      {% endif %}
-    </div>
-    <div class="col-12 col-sm-7 col-md-7 col-lg-3 col-xl-3 form-group">
-      <label for="codigo">Código</label>
-      {% if edit %}
-      <input required id="codigo" name="codigo" type="text" class="form-control" placeholder="CODIG123" max_length=10 value="{{producto.codigo}}">
-      {% else %}
-      <input required id="codigo" name="codigo" type="text" class="form-control" placeholder="CODIG123" max_length=10>
-      {% endif %}
-    </div>
-    <div class="col-12 col-sm-5 col-md-5 col-lg-2 col-xl-2 form-group">
-      <label for="activo">Activo</label>
-      {% if edit %}
-      {% if producto.activo %}
-      <input id="activo" name="activo" type="checkbox" class="form-control" checked>
-      {% else %}
-      <input id="activo" name="activo" type="checkbox" class="form-control">
-      {% endif %}
-      {% else %}
-      <input id="activo" name="activo" type="checkbox" class="form-control" checked>
-      {% endif %}
-    </div>
-    {% if messages %}
-    <div class="col-4 text-center">
-    {% for message in messages %}
-      <strong><p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p></strong>
-    {% endfor %}
-    </div>
-    <div class="col-4 text-center">
-      {% if edit %}
-      <button type="submit" class="btn btn-success">Actualizar información de {{producto.nombre}}</button>
-      {% else %}
-      <button type="submit" class="btn btn-success">Agregar producto</button>
-      {% endif %}
-    </div>
-    <div class="col-4"></div>
-    {% else %}
-    <div class="col-12 text-center">
-      {% if edit %}
-      <button type="submit" class="btn btn-success">Actualizar información de {{producto.nombre}}</button>
-      {% else %}
-      <button type="submit" class="btn btn-success">Agregar producto</button>
-      {% endif %}
-    </div>
-    {% endif %}
-  </div>
-</form>
-<br>
+<hr />
 <!-- TABLA DE PRODUCTOS -->
-<table id="myTable" class="table table-hover">
-  <thead class="thead-dark">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Nombre</th>
-      <th scope="col">Descripción</th>
-      <th scope="col">Código</th>
-      <th scope="col">Activo</th>
-      <th scope="col">Editar</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for Producto in productos %}
-    <tr>
-      <td scope="row">{{ Producto.id }}</td>
-      <th>{{ Producto.nombre.capitalize }}</th>
-      <td>{{ Producto.descripcion }}</td>
-      <td>{{ Producto.codigo }}</td>
-      <td>
-        {% if Producto.activo %}
-        <a href="/products/ableUnable/{{Producto.id}}" style="color:green">
-          <span class="fa fa-eye"></span> Activo
-        </a>
-        {% else %}
-        <a href="/products/ableUnable/{{Producto.id}}" style="color:red">
-          <span class="fa fa-eye-slash"></span> Inactivo
-        </a>
-        {% endif %}
-      </td>
-      <td><a class="btn btn-dark" role="button" href="/products/edit/{{Producto.id}}" data-toggle="tooltip" data-placement="left" title="Editar información de {{ Producto.nombre }}"><span class="fa fa-edit"></span></a></td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<script>
-$(document).ready( function () {
-  $('#myTable').DataTable({
-    "language": {
-          "lengthMenu": "Mostrar _MENU_ elementos por página",
-          "zeroRecords": "No se encontraron resultados",
-          "info": "Página _PAGE_ de _PAGES_",
-          "infoEmpty": "No hay registros disponibles",
-          "infoFiltered": "(filtered from _MAX_ total records)",
-          "search":         "Buscar:",
-          "paginate": {
-              "first":      "Primero",
-              "last":       "Último",
-              "next":       "Siguiente",
-              "previous":   "Anterior"
-          },
-      }
-  });
-});
-</script>
+<div class="row">
+  <div class="col-5">
+    <div class="card">
+      <div class="container">
+        <table id="myTable" class="table table-hover">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Nombre</th>
+              <th scope="col">Código</th>
+              <th scope="col">Activo</th>
+              <th scope="col">Editar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for Producto in productos %}
+            <tr>
+              <td scope="row">{{ Producto.id }}</td>
+              <th>{{ Producto.nombre.capitalize }}</th>
+              <td>{{ Producto.codigo }}</td>
+              <td class="text-center" id="ableUnable{{ Producto.id }}">
+                {% if Producto.activo %}
+                <div style="color:green" onclick="ableUnable({{ Producto.id }})">
+                  <span class="fa fa-eye"></span>
+                </div>
+                {% else %}
+                <div style="color:red" onclick="ableUnable({{ Producto.id }})">
+                  <span class="fa fa-eye-slash"></span>
+                </div>
+                {% endif %}
+              </td>
+              <td class="text-center">
+                <button type="button" class="btn" name="button" onclick="editProduct({{Producto.id}})" data-toggle="tooltip" data-placement="left" title="Editar información de {{ Producto.nombre }}">
+                  <span class="fa fa-edit"></span>
+                </button>
+
+                <a hidden class="btn btn-dark" role="button" href="/products/edit/{{Producto.id}}">
+                  <span class="fa fa-edit"></span>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <!-- SECCION PARA EDITAR Y AGREGAR PRODUCTOS -->
+  <div class="col">
+    <div class="card text-center">
+      <div class="card-body">
+        <div class="clearfix">
+          <h6 class="float-left">Información general: <b class="nombre_producto"></b></h6>
+          <button type="button" class="btn btn-info float-right" onclick="showAgregar()">
+            <span class="fa fa-plus align-middle" style="font-size:18px"></span> Nuevo producto
+          </button>
+        </div>
+        <hr />
+        <div id="editar_producto" class="">
+          <div id="no_selected" class="" style="color:gray">
+            <br />
+            <span class="fa fa-edit"></span> Selecciona un producto para editarlo
+            <br /><br />
+          </div>
+          <div id="selected" class="text-left" hidden>
+            <form action="{% url 'products:edit' %}" method="post">
+              {% csrf_token %}
+              <input required id="id_product" name="id_product" type="number" hidden>
+              <div class="row pb-2">
+                <div class="col-6">
+                  <label for="nombre">Nombre:</label>
+                  <input required id="nombre" name="nombre" type="text" class="form-control" placeholder="producto" max_length=100>
+                  <label for="codigo">Código:</label>
+                  <input required id="codigo" name="codigo" type="text" class="form-control" placeholder="CODIG123" max_length=10>
+                  <div class="" hidden>
+                    <label for="activo">Activo:</label>
+                    <input id="activo" name="activo" type="checkbox" class="form-control" checked>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <label for="descripcion">Descripción:</label>
+                  <textarea required id="descripcion" name="descripcion" type="text" class="form-control" placeholder="descripción del producto" max_length=200 rows="4"></textarea>
+                </div>
+              </div>
+              <center>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <button type="button" class="btn btn-danger" onclick="cancelEdit()">Cancelar</button>
+                  <button type="submit" class="btn btn-success">Actualizar información</button>
+                </div>
+              </center>
+            </form>
+          </div>
+        </div>
+        <div id="agregar_producto" class="text-left" hidden>
+          <form action="{% url 'products:register' %}" method="post">
+            {% csrf_token %}
+            <div class="row pb-2">
+              <div class="col-6">
+                <label for="nombre">Nombre:</label>
+                <input required id="nombre" name="nombre" type="text" class="form-control" placeholder="producto" max_length=100>
+                <label for="codigo">Código:</label>
+                <input required id="codigo" name="codigo" type="text" class="form-control" placeholder="CODIG123" max_length=10>
+                <div class="" hidden>
+                  <label for="activo">Activo:</label>
+                  <input id="activo" name="activo" type="checkbox" class="form-control" checked>
+                </div>
+              </div>
+              <div class="col-6">
+                <label for="descripcion">Descripción:</label>
+                <textarea required id="descripcion" name="descripcion" type="text" class="form-control" placeholder="descripción del producto" max_length=200 rows="4"></textarea>
+              </div>
+            </div>
+            <hr />
+            <div class="row pb-2">
+              <div class="col-6">
+                <label for="unidad_medida">Unidad de medida inicial:</label>
+                <select required class="form-control" id="unidad_medida" name="unidad_medida" onclick="if (this.value==0){this.value=1;}">
+                  <option value="0" disabled selected>Selecciona una unidad</option>
+                  {% for Unidad in unidad %}
+                  <option value="{{Unidad.id}}">{{Unidad.abreviacion}} - {{Unidad.nombre}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-6">
+                <label for="precio">Precio:</label>
+                <input required id="precio" name="precio" placeholder="0,00" type="number" class="form-control" min="0" step="0.01">
+              </div>
+            </div>
+            <center>
+              <div class="btn-group" role="group" aria-label="Basic example">
+                <button type="button" class="btn btn-danger" onclick="cancelAgregar()">Cancelar</button>
+                <button type="submit" class="btn btn-success">Agregar producto</button>
+              </div>
+            </center>
+          </form>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <!-- SECCION DE PRECIOS POR UNIDAD DE MEDIDA -->
+    <div class="card">
+      <div class="card-body">
+        <h6>Precio por unidad de medida: <b class="nombre_producto"></b></h6>
+        <hr />
+        <div id="no_selected_price" class="text-center" style="color:gray">
+          <br />
+          <span class="fa fa-edit"></span> Selecciona un producto para ver sus precios
+          <br /><br />
+        </div>
+        <div id="adding_price" class="text-center" style="color:gray" hidden>
+          <br />
+          <span class="fa fa-plus"></span> Agrega el producto para poder agregar más precios por unidad de medida
+          <br /><br />
+        </div>
+        <div id="selected_price" class="" hidden>
+          <input required id="id_product" name="id_product" type="number" hidden>
+          <div id="precios_de_producto" class="row">
+          </div>
+          <div class="row">
+            <div class="col-5">
+              <select required class="form-control" id="unidad_de_medida" onclick="checaUnidad();">
+                <option value="0" disabled selected>Selecciona una unidad</option>
+                {% for Unidad in unidad %}
+                <option value="{{Unidad.id}}" id="optuni{{Unidad.id}}">{{Unidad.abreviacion}} - {{Unidad.nombre}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-5">
+              <input required id="price" name="price" placeholder="0.00"type="number" class="form-control" min="0" step="0.01">
+            </div>
+            <div class="col-2 align-self-center">
+              <button type="button" class="btn btn-sm btn-success" name="button" onclick="addPrice()">
+                <span class="fa fa-plus"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <!-- SECCION DE EQUIVALENCIAS ENTRE UNIDADES DE MEDIDA -->
+    <div class="card">
+      <div class="card-body">
+        <h6>Equivalencias: <b class="nombre_producto"></b></h6>
+        <hr />
+        <div id="no_selected_equiv" class="text-center" style="color:gray">
+          <br />
+          <span class="fa fa-edit"></span> Selecciona un producto para ver sus equivalencias
+          <br /><br />
+        </div>
+        <div id="adding_equiv" class="text-center" style="color:gray" hidden>
+          <br />
+          <span class="fa fa-plus"></span> Agrega el producto para poder definir sus equivalencias
+          <br /><br />
+        </div>
+        <div id="selected_equiv" class="" hidden>
+          <input required id="id_product" name="id_product" type="number" hidden>
+
+          <div class="row">
+            <div class="col-7 row form-group">
+              <div class="col-4 pt-2" onclick="document.getElementById('cantidad_origen').disabled=false;">
+                <input disabled required id="cantidad_origen" placeholder="0.00" type="number" class="form-control" value="1" min="0" step="0.01">
+              </div>
+              <div class="col-4 pt-2">
+                <select required class="form-control" id="unidad_origen" onchange="checkEquivDestino(this.value)">
+                  <option value="0" disabled selected>Unidad:</option>
+                  {% for Unidad in unidad %}
+                  <option value="{{Unidad.id}}" id="optuni{{Unidad.id}}">{{Unidad.abreviacion}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-4 pt-2">
+                de <b class="nombre_producto"></b> ...
+              </div>
+              <div class="col-4 pt-1">
+                ... equivale a:
+              </div>
+              <div class="col-4 pt-1">
+                <input required id="cantidad_destino" name="" placeholder="0.00" type="number" class="form-control" min="0" step="0.01">
+              </div>
+              <div class="col-4 pt-1">
+                <select disabled required class="form-control" id="unidad_destino">
+                  <option value="0" disabled selected>Unidad:</option>
+                  {% for Unidad in unidad %}
+                  <option value="{{Unidad.id}}" id="optunidest{{Unidad.id}}">{{Unidad.abreviacion}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-12 pt-2">
+                <div class="col text-center">
+                  <button type="button" class="btn btn-sm btn-success" name="button" onclick="registrarEquivalencia()">
+                    Registrar equivalencia
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-5">
+              <div class="card text-center" >
+                <ul id="equivalencias_de_producto" class="list-group list-group-flush">
+                  <br />
+                  <p style="color:gray">
+                    Aún no registras ninguna equivalencia
+                  </p>
+                  <br /><br />
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!---->
