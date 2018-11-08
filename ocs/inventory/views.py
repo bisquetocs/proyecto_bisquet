@@ -54,8 +54,9 @@ def register_private_product(request):
         p_name = request.POST['product_name']
         p_desc = request.POST['product_desc']
         p_amount = int(request.POST['product_amount'])
+        p_unit = request.POST['product_unit']
 
-        if (p_name=='' or p_desc=='' or p_amount==''):
+        if (p_name=='' or p_desc=='' or p_amount=='' or p_unit==''):
             messages.warning(request, 'ERROR: Por favor llena todos los campos')
             return redirect(reverse('franchise:inventory:show_inventory'))
 
@@ -64,7 +65,7 @@ def register_private_product(request):
             return redirect(reverse('franchise:inventory:show_inventory'))
 
         # Check if product name already exist
-        new_product = PrivateProduct(id_franchise=u.id_franchise, name=p_name, description=p_desc, amount=p_amount)
+        new_product = PrivateProduct(id_franchise=u.id_franchise, name=p_name, description=p_desc, amount=p_amount, unit=p_unit)
         try:
             product_test = PrivateProduct.objects.get(name=p_name)
         except:

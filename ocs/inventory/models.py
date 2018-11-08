@@ -18,6 +18,7 @@ class PrivateProduct(models.Model):
     name = models.CharField(max_length=100)
     description = models.CharField(max_length=200)
     amount = models.IntegerField()
+    unit = models.CharField(max_length=100)
 
 class LinkedInventory(models.Model):
     id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)

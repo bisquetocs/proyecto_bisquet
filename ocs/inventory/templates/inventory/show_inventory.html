@@ -15,7 +15,7 @@
       <th>Producto</th>
       <th>Descripción</th>
       <th>Cantidad</th>
-      <!-- <th>Unidad</th> -->
+      <th>Unidad</th>
     </tr>
   </thead>
   <tbody>
@@ -25,7 +25,7 @@
       <td>{{ product.name }}</td>
       <td>{{ product.description }}</td>
       <td>{{ product.amount }}</td>
-      <!-- <td> </td> -->
+      <td>{{ product.unit }}</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -83,9 +83,23 @@
           <input type="text" class="form-control" id="product_desc" name="product_desc" placeholder="Papas cambray"  required>
         </div>
 
-        <div class="col mb-3">
-          <label for="product_amount">Cantidad</label>
-          <input type="number" class="form-control" id="product_amount" name="product_amount" required>
+        <div class="row">
+          <div class="col">
+            <label for="product_amount">Cantidad</label>
+            <input type="number" class="form-control" id="product_amount" name="product_amount" required>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="product_unit">Unidad de medida</label>
+              <select class="form-control" id="product_unit" name="product_unit">
+                <option value="KG">Kilogramos</option>
+                <option value="GR">Gramos</option>
+                <option value="PZ">Piezas</option>
+                <option value="BUL">Bultos</option>
+                <option value="MAN">Manojos</option>
+              </select>
+            </div>
+          </div>
         </div>
 
       </div>
