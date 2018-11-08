@@ -21,11 +21,3 @@ class Franchise(models.Model):
     id_usuario = models.ForeignKey(User, on_delete=models.CASCADE)
     def __str__(self):
         return self.rfc
-
-
-# esta debe estar en products... IMPORTANTE
-class PrivateProduct(models.Model):
-    id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100)
-    description = models.CharField(max_length=200)
-    amount = models.IntegerField()
