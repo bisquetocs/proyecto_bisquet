@@ -10,15 +10,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='linkedinventory',
-            name='id_franchise',
-        ),
-        migrations.RemoveField(
-            model_name='linkedinventory',
-            name='id_product',
-        ),
-        migrations.DeleteModel(
-            name='LinkedInventory',
-        ),
+        
     ]
