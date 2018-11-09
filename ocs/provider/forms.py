@@ -66,4 +66,4 @@ class RegisterProviderForm(forms.Form):
         g = Group.objects.get(name="Administrador de empresa")
         g.user_set.add(u)
         g.save()
-        return 'Registro exitoso'
+        return p

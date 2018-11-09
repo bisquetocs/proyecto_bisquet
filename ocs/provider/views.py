@@ -39,7 +39,7 @@ def registerProvider(request):
     if request.method == 'POST':
         register_form = RegisterProviderForm(request.POST)
         if register_form.is_valid():
-            result = register_form.process_registration(request.user)
+            provider = register_form.process_registration(request.user)
             days_list = Days.objects.all()
             ##Inicia - Asigna horas de oficina por default
             for item in days_list:
