@@ -15,7 +15,7 @@
       <th>Producto</th>
       <th>Descripción</th>
       <th>Cantidad</th>
-      <!-- <th>Unidad</th> -->
+      <th>Unidad</th>
     </tr>
   </thead>
   <tbody>
@@ -25,23 +25,33 @@
       <td>{{ product.name }}</td>
       <td>{{ product.description }}</td>
       <td>{{ product.amount }}</td>
-      <!-- <td> </td> -->
+      <td>{{ product.unit }}</td>
     </tr>
     {% endfor %}
   </tbody>
 </table>
 
 <br />
-<!--Modal Button -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#register_modal" title="Agrega un producto que no sea de un proveedor registrado">
-  <span class="fa fa-plus"></span>
-</button>
 
-{% if post %}
-<p>
-  SE HIZO UN POST
-</p>
-{% endif %}
+<div class="row">
+    <div class="col-1">
+      <!--Modal Button -->
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#register_modal" title="Agrega un producto que no sea de un proveedor registrado">
+        <span class="fa fa-plus"></span>
+      </button>
+    </div>
+    <div class="col-1">
+      <!-- PDF Button -->
+      <form action="{% url 'franchise:inventory:create_excel' %}" method='POST'>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary"  data-toggle="excel" title="Descarga un archivo EXCEL de tu inventario"><i class="fa fa-file-excel-o"></i></button>
+      </form>
+    </div>
+</div>
+
+
+
+
 
 
 <!-- Modal -->
@@ -73,9 +83,23 @@
           <input type="text" class="form-control" id="product_desc" name="product_desc" placeholder="Papas cambray"  required>
         </div>
 
-        <div class="col mb-3">
-          <label for="product_amount">Cantidad</label>
-          <input type="number" class="form-control" id="product_amount" name="product_amount" required>
+        <div class="row">
+          <div class="col">
+            <label for="product_amount">Cantidad</label>
+            <input type="number" class="form-control" id="product_amount" name="product_amount" required>
+          </div>
+          <div class="col">
+            <div class="form-group">
+              <label for="product_unit">Unidad de medida</label>
+              <select class="form-control" id="product_unit" name="product_unit">
+                <option value="KG">Kilogramos</option>
+                <option value="GR">Gramos</option>
+                <option value="PZ">Piezas</option>
+                <option value="BUL">Bultos</option>
+                <option value="MAN">Manojos</option>
+              </select>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -94,6 +118,7 @@
 $(document).ready(function(){
     $('[data-toggle="help_code"]').tooltip();
     $('[data-toggle="modal"]').tooltip();
+    $('[data-toggle="excel"]').tooltip();
 });
 </script>
 {% endblock extras %}
