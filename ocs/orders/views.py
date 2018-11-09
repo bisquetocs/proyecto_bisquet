@@ -207,6 +207,40 @@ def delete_product_from_order(request):
                 'nombre_product':product.nombre.capitalize(),}
     return JsonResponse(data)
 
+# Function that let the providers to edit its company info
+#@login_required
+def consult_orders (request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    prov = ocs_user.id_provider_id
+    #filtro para aislar a la columna id, sirve para solo seleccionar las ordenes de tal proveedor
+    orders = Order.objects.values_list('id', flat=True).filter(id_provider = prov, activo = 1)
+    pedido = OrderInStatus.objects.filter(activo = 1, id_pedido__in = orders, id_status = 2)
+    recibido = OrderInStatus.objects.filter(activo = 1, id_pedido__in = orders, id_status = 3)
+    preparar = OrderInStatus.objects.filter(activo = 1, id_pedido__in = orders, id_status = 6)
+
+#    pedido = Order.objects.filter(id__in = pedido_obj)
+#    recibido = Order.objects.filter(id__in = recibido_obj)
+#    preparar = Order.objects.filter(id__in = preparar_obj)
+
+    if len(pedido) != 0 or len(recibido) != 0:
+        empty_list = 0
+    else:
+        empty_list = 1
+
+    if len(preparar) == 0:
+        empty_list_re = 1
+    else:
+        empty_list_re = 0
+
+    if request.method == 'POST':
+
+    # If not POST then shows edit_provider form
+        p = 0
+    else:
+        return render(request, 'orders/consult_orders.html', {'usuario':ocs_user, 'edit':True, 'empty_list':empty_list, 'pedido':pedido, 'recibido':recibido, 'preparar':preparar, 'empty_list_re':empty_list_re})
+
+
+
 
 
 

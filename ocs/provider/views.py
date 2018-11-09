@@ -203,9 +203,4 @@ def edit_provider (request):
     else:
         return render(request, 'provider/profile.html', {'usuario':ocs_user, 'edit':True,})
 
-
-
-
-
-
 #
