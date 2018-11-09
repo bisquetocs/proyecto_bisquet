@@ -104,25 +104,30 @@ def create_excel(request):
 
         font_style = xlwt.XFStyle()
         font_style.font.bold = True
-        ws.write_merge(0, 0, 0, 3, u.id_franchise.nombre, font_style)
-        ws.write_merge(1, 1, 0, 3, 'Inventario de Productos', font_style)
-        ws.write_merge(2, 2, 0, 3, ''+str(today.strftime('%d-%m-%Y')), font_style)
+        ws.write_merge(0, 0, 0, 4, u.id_franchise.nombre, font_style)
+        ws.write_merge(1, 1, 0, 4, 'Inventario de Productos', font_style)
+        ws.write_merge(2, 2, 0, 4, ''+str(today.strftime('%d-%m-%Y')), font_style)
 
         columns = ['Producto', 'Descripción', 'Cantidad', 'Unidad']
 
+        ws.write(row_num, 0, '#', font_style)
+
         for col_num in range(len(columns)):
-            ws.write(row_num, col_num, columns[col_num], font_style)
+            ws.write(row_num, col_num+1, columns[col_num], font_style)
 
         # Sheet body, remaining rows
         font_style = xlwt.XFStyle()
 
         rows = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
+        counter = 1
         for row in rows:
             row_num += 1
-            ws.write(row_num, 0, row.name, font_style)
-            ws.write(row_num, 1, row.description, font_style)
-            ws.write(row_num, 2, row.amount, font_style)
-            ws.write(row_num, 3, row.unit, font_style)
+            ws.write(row_num, 0, str(counter), font_style)
+            ws.write(row_num, 1, row.name, font_style)
+            ws.write(row_num, 2, row.description, font_style)
+            ws.write(row_num, 3, row.amount, font_style)
+            ws.write(row_num, 4, row.unit, font_style)
+            counter = counter +1
 
         wb.save(response)
         return response
