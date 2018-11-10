@@ -173,12 +173,12 @@
             <div class="row justify-content-md-center">
               <!-- Amount -->
               <label for="product_amount" id="io_text">Cantidad que será ingresada</label>
-              <input type="number" class="form-control" id="product_amount" name="product_amount" required>
+              <input type="number" class="form-control" id="product_amount" name="product_amount"  min="1" required>
             </div>
             <div class="row justify-content-md-center">
               <!-- Comments -->
               <label for="product_comment">Comentarios</label>
-               <textarea class="form-control" id="product_comment" name="product_comment" rows="3"></textarea>
+               <textarea class="form-control" id="product_comment" name="product_comment" rows="3" maxlength="255"></textarea>
             </div>
           </div>
 
@@ -213,12 +213,12 @@
 
         <div class="col mb-3">
           <label for="product_name">Nombre</label>
-          <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Papas"  required>
+          <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Mermelada de fresa"  required>
         </div>
 
         <div class="col mb-3">
           <label for="product_desc">Descripción</label>
-          <input type="text" class="form-control" id="product_desc" name="product_desc" placeholder="Papas cambray"  required>
+          <input type="text" class="form-control" id="product_desc" name="product_desc" placeholder="Frasco de 980gr"  required>
         </div>
 
         <div class="row">

@@ -156,17 +156,27 @@ def update_private_product(request):
             messages.warning(request, 'ERROR: Por favor llena todos los campos.')
             return redirect(reverse('franchise:inventory:show_inventory'))
 
-        if (p_amount < 1):
+        if (int(p_amount) < 1):
             messages.warning(request, 'ERROR: No se pueden insertar cantidades menores a 1.')
             return redirect(reverse('franchise:inventory:show_inventory'))
 
         try:
             updated_product = PrivateProduct.objects.get(id=p_id)
         except:
-            messages.warning(request, 'Sucedió un error, inténtelo de nuevo más tarde')
+            messages.warning(request, 'ERROR: El producto que quieres actualizar no existe')
         else:
-            #TODO: Finish update validations
-            messages.success(request, 'EXITO')
-        messages.success(request, 'id: '+p_id+' |io: '+p_io+' |amount: '+p_amount+' |comment: '+p_comment+' |producto: '+updated_product.name)
+            if (p_io == 'in'):
+                updated_product.amount = updated_product.amount + int(p_amount)
+                updated_product.save()
+                messages.success(request, 'EXITO: Se ha registrado una ENTRADA del producto:   '+updated_product.name)
+            elif (p_io == 'out'):
+                if (int(p_amount) > updated_product.amount):
+                    messages.warning(request, 'ERROR: Estás intentando retirar una cantidad mayor a la que tienes!')
+                else:
+                    updated_product.amount = updated_product.amount-int(p_amount)
+                    updated_product.save()
+                    messages.success(request, 'EXITO: Se ha registrado una SALIDA del producto:   '+updated_product.name)
+            else:
+                messages.warning(request, 'ERROR')
 
     return redirect(reverse('franchise:inventory:show_inventory'))
