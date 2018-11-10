@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.shortcuts import render, redirect, get_object_or_404
 from accounts.models import OCSUser
-from .models import PrivateProduct
+from .models import PrivateProduct, PrivateProductRecord
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -71,6 +71,8 @@ def register_private_product(request):
             product_test = PrivateProduct.objects.get(name=p_name, id_franchise=u.id_franchise)
         except:
             new_product.save()
+            newRecord = PrivateProductRecord(id_franchise=u.id_franchise, id_private_product=new_product, date=datetime.datetime.now(), comment="NUEVO PRODUCTO REGISTRADO POR: "+u.user.first_name+" "+u.user.last_name, amount=int(p_amount), io=True)
+            newRecord.save()
             messages.success(request, 'Producto registrado!')
         else:
             messages.warning(request, 'ERROR: Ya existe un producto con este nombre')
@@ -168,6 +170,8 @@ def update_private_product(request):
             if (p_io == 'in'):
                 updated_product.amount = updated_product.amount + int(p_amount)
                 updated_product.save()
+                newRecord = PrivateProductRecord(id_franchise=u.id_franchise, id_private_product=updated_product, date=datetime.datetime.now(), comment=p_comment, amount=int(p_amount), io=True)
+                newRecord.save()
                 messages.success(request, 'EXITO: Se ha registrado una ENTRADA del producto:   '+updated_product.name)
             elif (p_io == 'out'):
                 if (int(p_amount) > updated_product.amount):
@@ -175,8 +179,28 @@ def update_private_product(request):
                 else:
                     updated_product.amount = updated_product.amount-int(p_amount)
                     updated_product.save()
+                    newRecord = PrivateProductRecord(id_franchise=u.id_franchise, id_private_product=updated_product, date=datetime.datetime.now(), comment=p_comment, amount=int(p_amount), io=False)
+                    newRecord.save()
                     messages.success(request, 'EXITO: Se ha registrado una SALIDA del producto:   '+updated_product.name)
             else:
                 messages.warning(request, 'ERROR')
 
     return redirect(reverse('franchise:inventory:show_inventory'))
+
+@login_required
+def show_inventory_records(request):
+    """
+    By: DanteMaxF
+    Function used to display a record table of the different inputs/outputs on the
+    inventory
+    INPUT
+        - Request method with the values of the session
+    OUTPUT
+        - Query set of the inventory records
+    """
+    u = OCSUser.objects.get(user = request.user)
+    record_list = PrivateProductRecord.objects.filter(id_franchise=u.id_franchise)
+    return render(request, 'inventory/show_records.html', {
+            'usuario' : u,
+            'record_list': record_list
+            })

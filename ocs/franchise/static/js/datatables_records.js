@@ -3,9 +3,9 @@ $(document).ready( function () {
 
 
     $('table.display').DataTable({
-      scrollY:        '22vh',
+      scrollY:        '100vh',
       scrollCollapse: true,
-
+      "order": [[ 0, "desc" ]],
       "language": {
             "lengthMenu": "Mostrar _MENU_ elementos por página",
             "zeroRecords": "No se encontraron resultados",
