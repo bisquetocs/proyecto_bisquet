@@ -7,10 +7,13 @@ function update_private_product(product_id) {
 }
 
 function change_to_input_text() {
-  console.log("hue")
   document.getElementById("io_text").innerHTML = "Cantidad que será ingresada.";
+  document.getElementById("buttonSave").innerHTML = "entrada";
+  document.getElementById("titleModal").innerHTML = "Entrada";
 }
 
 function change_to_output_text() {
   document.getElementById("io_text").innerHTML = "Cantidad que será retirada.";
+  document.getElementById("buttonSave").innerHTML = "salida";
+  document.getElementById("titleModal").innerHTML = "Salida";
 }
