@@ -12,5 +12,6 @@ app_name = 'my_inventory'
 urlpatterns = [
     path('', views.show_inventory, name='show_inventory'),
     path('register/', views.register_private_product, name='register_private_product'),
-    path('create_excel/', views.create_excel, name='create_excel')
+    path('create_excel/', views.create_excel, name='create_excel'),
+    path('update_private_product/', views.update_private_product, name='update_private_product')
 ]

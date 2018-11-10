@@ -108,9 +108,9 @@
     <tr>
       <td>{{ product.amount }}</td>
       <td>{{ product.unit }}</td>
-      <td>{{ product.name }}</td>
+      <td id="product_{{ product.id }}">{{ product.name }}</td>
       <td>{{ product.description }}</td>
-      <td><span  class="fa fa-edit"  data-toggle="modal" data-target="#io_products"></span>
+      <td><span  class="fa fa-edit"  data-toggle="modal" data-target="#io_products" onclick="update_private_product({{ product.id }})" ></span>
 </td>
     </tr>
     {% endfor %}
@@ -149,33 +149,35 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form>
+      <form action="{% url 'franchise:inventory:update_private_product' %}" method="POST">
+        {% csrf_token %}
         <div class="modal-body">
 
           <div class="container">
             <div class="row justify-content-md-center">
               <!-- Product to edit -->
-              <h5>Nombre del producto</h5>
+              <h5 id="product_title">Nombre del producto</h5>
             </div>
             <div class="row justify-content-md-center">
+              <input type="hidden" name="id_product" value="" id="id_product_to_change">
               <!-- Switch in/out -->
               <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                <label class="btn btn-light active">
-                  <input type="radio" name="product_io" id="in" autocomplete="off" checked> Entrada
-                </label>
-                <label class="btn btn-light">
-                  <input type="radio" name="product_io" id="out" autocomplete="off"> Salida
+                  <label onclick="change_to_input_text()" class="btn btn-light active">
+                    <input type="radio" name="product_io" id="in" autocomplete="off" value="in" checked> Entrada
+                  </label>
+                <label onclick="change_to_output_text()" class="btn btn-light">
+                  <input type="radio" name="product_io" id="out" autocomplete="off" value="out"> Salida
                 </label>
               </div>
             </div>
             <div class="row justify-content-md-center">
               <!-- Amount -->
-              <label for="product_amount">Cantidad que ingresa/es retirada</label>
+              <label for="product_amount" id="io_text">Cantidad que será ingresada</label>
               <input type="number" class="form-control" id="product_amount" name="product_amount" required>
             </div>
             <div class="row justify-content-md-center">
               <!-- Comments -->
-              <label for="product_amount">Cantidad que ingresa/es retirada</label>
+              <label for="product_comment">Comentarios</label>
                <textarea class="form-control" id="product_comment" name="product_comment" rows="3"></textarea>
             </div>
           </div>
