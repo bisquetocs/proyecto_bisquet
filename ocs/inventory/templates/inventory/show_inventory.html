@@ -8,24 +8,110 @@
   <h1 class="h2">Mi Inventario</h1>
 </div>
 
-<table class="table table-striped table-bordered" id="my_providers">
+
+<h4 style="display:inline">Inventario automático</h4>
+<span data-toggle="help_code" title="Este inventario se actualiza automáticamente basado en los pedidos que realizan a proveedores registrados." class="fa fa-question-circle" style="display:inline"></span>
+<table class="table table-striped table-bordered fixed display" id="">
   <thead class="thead-dark">
     <tr>
-       <!-- <th>Código   <span data-toggle="help_code" title="Sólo los productos registrados de un proveedor tendrán código" class="fa fa-question-circle"></span></th> -->
-      <th>Producto</th>
+      <th style="width:10px">Cantidad</th>
+      <th style="width:10px">Unidad</th>
+      <th style="width:200px">Nombre</th>
+      <th>Proveedor</th>
+      <th style="width:10px"></th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<h4 style="display:inline">Inventario privado</h4>
+<span data-toggle="help_code" title="Este es un inventario personal, para tener seguimiento de los productos provenientes de un proveedor no registrado." class="fa fa-question-circle" style="display:inline"></span>
+<table class="table table-striped table-bordered fixed display" id="">
+  <thead class="thead-dark">
+    <tr>
+      <th style="width:10px">Cantidad</th>
+      <th style="width:10px">Unidad</th>
+      <th style="width:200px">Nombre</th>
       <th>Descripción</th>
-      <th>Cantidad</th>
-      <th>Unidad</th>
+      <th style="width:10px"></th>
     </tr>
   </thead>
   <tbody>
     {% for product in product_list %}
     <tr>
-      <!-- <td> </td> -->
-      <td>{{ product.name }}</td>
-      <td>{{ product.description }}</td>
       <td>{{ product.amount }}</td>
       <td>{{ product.unit }}</td>
+      <td>{{ product.name }}</td>
+      <td>{{ product.description }}</td>
+      <td><span  class="fa fa-edit"  data-toggle="modal" data-target="#io_products"></span>
+</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -33,9 +119,10 @@
 
 <br />
 
+
 <div class="row">
     <div class="col-1">
-      <!--Modal Button -->
+      <!--Register Button -->
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#register_modal" title="Agrega un producto que no sea de un proveedor registrado">
         <span class="fa fa-plus"></span>
       </button>
@@ -52,9 +139,58 @@
 
 
 
+<!-- Modal in/out products -->
+<div class="modal fade" id="io_products" tabindex="-1" role="dialog" aria-labelledby="io_productsTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Entradas/Salidas</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
 
+          <div class="container">
+            <div class="row justify-content-md-center">
+              <!-- Product to edit -->
+              <h5>Nombre del producto</h5>
+            </div>
+            <div class="row justify-content-md-center">
+              <!-- Switch in/out -->
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-light active">
+                  <input type="radio" name="product_io" id="in" autocomplete="off" checked> Entrada
+                </label>
+                <label class="btn btn-light">
+                  <input type="radio" name="product_io" id="out" autocomplete="off"> Salida
+                </label>
+              </div>
+            </div>
+            <div class="row justify-content-md-center">
+              <!-- Amount -->
+              <label for="product_amount">Cantidad que ingresa/es retirada</label>
+              <input type="number" class="form-control" id="product_amount" name="product_amount" required>
+            </div>
+            <div class="row justify-content-md-center">
+              <!-- Comments -->
+              <label for="product_amount">Cantidad que ingresa/es retirada</label>
+               <textarea class="form-control" id="product_comment" name="product_comment" rows="3"></textarea>
+            </div>
+          </div>
 
-<!-- Modal -->
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-success">Save changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal register product-->
 <div class="modal fade" id="register_modal" tabindex="-1" role="dialog" aria-labelledby="register_modalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">

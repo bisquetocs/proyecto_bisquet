@@ -1,5 +1,11 @@
 $(document).ready( function () {
-    $('#my_providers').DataTable({
+
+
+
+    $('table.display').DataTable({
+      scrollY:        '22vh',
+      scrollCollapse: true,
+
       "language": {
             "lengthMenu": "Mostrar _MENU_ elementos por página",
             "zeroRecords": "No se encontraron resultados",
@@ -15,5 +21,7 @@ $(document).ready( function () {
             },
         }
     });
+
+
 
 });
