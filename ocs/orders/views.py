@@ -217,6 +217,15 @@ def order_detail (request, id_order):
     sum = OrderProductInStatus.objects.filter(id_pedido = id_order, activo = 1).aggregate(total_price=Sum('total'))
     total_p = OrderProductInStatus.objects.filter(id_pedido = id_order, activo = 1).aggregate(total_products=Sum(F('total')/F('cantidad')))
 
+    #Para cambiar el estado de la orden
+    orden = OrderInStatus.objects.get(id_pedido = id_order)
+    pedido = OrderStatus.objects.get(id = 2)
+
+    if(orden.id_status == pedido):
+        status = OrderStatus.objects.get(id = 3)
+        orden.id_status = status
+        orden.save()
+
     return render(request, 'orders/order_detail.html', {'data':data, 'products_list':products_list, 'sum':sum, 'total_p':total_p})
 
 def consult_orders (request):
