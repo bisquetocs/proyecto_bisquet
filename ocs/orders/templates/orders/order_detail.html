@@ -1,0 +1,151 @@
+
+<!--
+
+Importante!
+Para que este template funcione se debe instalar
+$ pip install django-mathfilters
+
+-->
+
+{% extends "provider/home.html" %}
+{% load mathfilters %}
+{% load static %}
+{% load i18n %}
+{% block extras %}
+
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Detalle de orden</h1>
+</div>
+
+<div class="container-fluid">
+  <div class="row border rounded">
+    <div class="container-fluid">
+      <div class="row border-bottom">
+        <div class="col">
+          <h4>{{ data.id_franchise.nombre }}</h4>
+        </div>
+        <div class="col border-left">
+          <p>{{ data.fecha_pedido|date:'M-d-Y' }}</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="row border-bottom">
+            <div class="col">
+            <p>{{ data.id_franchise.domicilio }}</p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+            <p>{{ data.id_franchise.rfc }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col border-left">
+          {% language 'es' %}
+            <p>{{ data.fecha_pedido|date:'l' }}</p>
+          {% endlanguage %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-5">
+    <div class="col-8">
+      <div class="card">
+        <div class="card-body">
+        <h5 class="card-title">Orden</h5>
+        <table class="table table-responsive-xl table-hover table-sm mx-1">
+          <thead>
+            <tr>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Unidad</th>
+              <th scope="col">Producto</th>
+              <th scope="col">Precio por unidad</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody id="consult_orders">
+            {% for p in products_list %}
+            <tr>
+              <td>{{p.total|div:p.cantidad|floatformat:0 }}</td>
+              <td>{{p.id_complete_product.id_unidad.abreviacion}}</td>
+              <td>{{p.id_complete_product.id_product.nombre}}</td>
+              <td>${{p.cantidad|floatformat:2 }}</td>
+              <td>${{p.total|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Totales</h5>
+          <div class="row">
+            <div class="col-5 mt-2">
+              <small>Total de productos:</small>
+            </div>
+
+            <div class="col-7 mt-2">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">#</span>
+                </div>
+                <input disabled id="total_productos" class="form-control" type="number" value="{{ total_p.total_products|floatformat:0 }}" step="1">
+              </div>
+            </div>
+
+            <div class="col-5 mt-2">
+              <small>Total de precio:</small>
+            </div>
+
+            <div class="col-7 mt-2">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">$</span>
+                </div>
+                <input disabled id="total_precio" class="form-control" type="number" value="{{ sum.total_price|floatformat:2 }}" step="0.001">
+              </div>
+            </div>
+
+            </div>
+
+            <div class="row text-center">
+              <div class="col mt-4">
+                <p><a href="#" style="color:black"><i class="fa fa-print fa-3x" aria-hidden="true"></i></a></p>
+                <p><strong>Imprimir Orden</strong></p>
+
+              </div>
+
+            </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row border rounded mt-5">
+      <div class="col-10 mt-4">
+        <p>Para cancelar el pedido es necesario presionar el botón incluido en esta sección. Antes de continuar,
+          se recomienda meditar esta acción pues una vez ejecutada no será posible regresar a la orden.
+        </p>
+      </div>
+      <div class="col-2 mt-4">
+        <button type="button" class="btn btn-danger">Cancelar Orden</button>
+      </div>
+
+  </div>
+
+
+</div>
+
+<script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
+
+{% endblock extras %}
