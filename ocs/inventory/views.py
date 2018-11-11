@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import loader
 from django.shortcuts import render, redirect, get_object_or_404
 from accounts.models import OCSUser
-from .models import PrivateProduct
+from .models import PrivateProduct, PrivateProductRecord
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -68,9 +68,11 @@ def register_private_product(request):
         # Check if product name already exist
         new_product = PrivateProduct(id_franchise=u.id_franchise, name=p_name, description=p_desc, amount=p_amount, unit=p_unit)
         try:
-            product_test = PrivateProduct.objects.get(name=p_name)
+            product_test = PrivateProduct.objects.get(name=p_name, id_franchise=u.id_franchise)
         except:
             new_product.save()
+            newRecord = PrivateProductRecord(id_franchise=u.id_franchise, id_private_product=new_product, date=datetime.datetime.now(), comment="NUEVO PRODUCTO REGISTRADO POR: "+u.user.first_name+" "+u.user.last_name, amount=int(p_amount), io=True)
+            newRecord.save()
             messages.success(request, 'Producto registrado!')
         else:
             messages.warning(request, 'ERROR: Ya existe un producto con este nombre')
@@ -132,3 +134,73 @@ def create_excel(request):
         wb.save(response)
         return response
     return redirect(reverse('franchise:inventory:show_inventory'))
+
+@login_required
+def update_private_product(request):
+    """
+    By: DanteMaxF
+    Function used to update the inputs and outputs of the
+    private products in the inventory
+    INPUT
+        - Request method with the values of the session
+    OUTPUT
+        - Redirect to the inventory table
+        - The updated database of the inventory
+    """
+    u = OCSUser.objects.get(user = request.user)
+    if request.method == 'POST':
+        p_id = request.POST['id_product']
+        p_io = request.POST['product_io']
+        p_amount = request.POST['product_amount']
+        p_comment = request.POST['product_comment']
+
+        if (p_id=='' or p_io=='' or p_amount=='' or p_comment==''):
+            messages.warning(request, 'ERROR: Por favor llena todos los campos.')
+            return redirect(reverse('franchise:inventory:show_inventory'))
+
+        if (int(p_amount) < 1):
+            messages.warning(request, 'ERROR: No se pueden insertar cantidades menores a 1.')
+            return redirect(reverse('franchise:inventory:show_inventory'))
+
+        try:
+            updated_product = PrivateProduct.objects.get(id=p_id)
+        except:
+            messages.warning(request, 'ERROR: El producto que quieres actualizar no existe')
+        else:
+            if (p_io == 'in'):
+                updated_product.amount = updated_product.amount + int(p_amount)
+                updated_product.save()
+                newRecord = PrivateProductRecord(id_franchise=u.id_franchise, id_private_product=updated_product, date=datetime.datetime.now(), comment=p_comment, amount=int(p_amount), io=True)
+                newRecord.save()
+                messages.success(request, 'EXITO: Se ha registrado una ENTRADA del producto:   '+updated_product.name)
+            elif (p_io == 'out'):
+                if (int(p_amount) > updated_product.amount):
+                    messages.warning(request, 'ERROR: Estás intentando retirar una cantidad mayor a la que tienes!')
+                else:
+                    updated_product.amount = updated_product.amount-int(p_amount)
+                    updated_product.save()
+                    newRecord = PrivateProductRecord(id_franchise=u.id_franchise, id_private_product=updated_product, date=datetime.datetime.now(), comment=p_comment, amount=int(p_amount), io=False)
+                    newRecord.save()
+                    messages.success(request, 'EXITO: Se ha registrado una SALIDA del producto:   '+updated_product.name)
+            else:
+                messages.warning(request, 'ERROR')
+
+    return redirect(reverse('franchise:inventory:show_inventory'))
+
+@login_required
+def show_inventory_records(request):
+    """
+    By: DanteMaxF
+    Function used to display a record table of the different inputs/outputs on the
+    inventory
+    INPUT
+        - Request method with the values of the session
+    OUTPUT
+        - Query set of the inventory records
+    """
+    u = OCSUser.objects.get(user = request.user)
+    record_list = PrivateProductRecord.objects.filter(id_franchise=u.id_franchise)
+    return render(request, 'inventory/show_records.html', {
+            'usuario' : u,
+            'record_list': record_list
+            })

@@ -8,24 +8,110 @@
   <h1 class="h2">Mi Inventario</h1>
 </div>
 
-<table class="table table-striped table-bordered" id="my_providers">
+
+<h4 style="display:inline">Inventario automático</h4>
+<span data-toggle="help_code" title="Este inventario se actualiza automáticamente basado en los pedidos que realizan a proveedores registrados." class="fa fa-question-circle" style="display:inline"></span>
+<table class="table table-striped table-bordered fixed display" id="">
   <thead class="thead-dark">
     <tr>
-       <!-- <th>Código   <span data-toggle="help_code" title="Sólo los productos registrados de un proveedor tendrán código" class="fa fa-question-circle"></span></th> -->
-      <th>Producto</th>
+      <th style="width:10px">Cantidad</th>
+      <th style="width:10px">Unidad</th>
+      <th style="width:200px">Nombre</th>
+      <th>Proveedor</th>
+      <th style="width:10px"></th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td>Test</td>
+      <td></td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<h4 style="display:inline">Inventario privado</h4>
+<span data-toggle="help_code" title="Este es un inventario personal, para tener seguimiento de los productos provenientes de un proveedor no registrado." class="fa fa-question-circle" style="display:inline"></span>
+<table class="table table-striped table-bordered fixed display" id="">
+  <thead class="thead-dark">
+    <tr>
+      <th style="width:10px">Cantidad</th>
+      <th style="width:10px">Unidad</th>
+      <th style="width:200px">Nombre</th>
       <th>Descripción</th>
-      <th>Cantidad</th>
-      <th>Unidad</th>
+      <th style="width:10px"><span data-toggle="help_code" title="Registrar Entradas/Salidas" class="fa fa-question-circle"></span></th>
     </tr>
   </thead>
   <tbody>
     {% for product in product_list %}
     <tr>
-      <!-- <td> </td> -->
-      <td>{{ product.name }}</td>
-      <td>{{ product.description }}</td>
       <td>{{ product.amount }}</td>
       <td>{{ product.unit }}</td>
+      <td id="product_{{ product.id }}">{{ product.name }}</td>
+      <td>{{ product.description }}</td>
+      <td><span  class="fa fa-edit"  data-toggle="modal" data-target="#io_products" onclick="update_private_product({{ product.id }})" ></span>
+</td>
     </tr>
     {% endfor %}
   </tbody>
@@ -33,9 +119,10 @@
 
 <br />
 
+
 <div class="row">
     <div class="col-1">
-      <!--Modal Button -->
+      <!--Register Button -->
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#register_modal" title="Agrega un producto que no sea de un proveedor registrado">
         <span class="fa fa-plus"></span>
       </button>
@@ -47,14 +134,76 @@
         <button type="submit" class="btn btn-primary"  data-toggle="excel" title="Descarga un archivo EXCEL de tu inventario"><i class="fa fa-file-excel-o"></i></button>
       </form>
     </div>
+    <div class="col-1">
+      <!--Register Button -->
+      <a  href="{% url 'franchise:inventory:show_inventory_records' %}">
+        <button type="button" class="btn btn-primary">
+          <span class="fa fa-book"></span>&nbsp;Registro de entradas/salidas
+        </button>
+      </a>
+    </div>
 </div>
 
 
 
 
+<!-- Modal in/out products -->
+<div class="modal fade" id="io_products" tabindex="-1" role="dialog" aria-labelledby="io_productsTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="titleModal">Entradas/Salidas</h3>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="{% url 'franchise:inventory:update_private_product' %}" method="POST">
+        {% csrf_token %}
+        <div class="modal-body">
 
+          <div class="container">
+            <div class="row justify-content-md-center">
+              <!-- Product to edit -->
+              <h5 id="product_title">Nombre del producto</h5>
+            </div>
+            <br>
+            <div class="row justify-content-md-center">
+              <input type="hidden" name="id_product" value="" id="id_product_to_change">
+              <!-- Switch in/out -->
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                  <label onclick="change_to_input_text()" class="btn btn-outline-primary active">
+                    <input type="radio" name="product_io" id="in" autocomplete="off" value="in" checked> Entrada
+                  </label>
+                <label onclick="change_to_output_text()" class="btn btn-outline-primary">
+                  <input type="radio" name="product_io" id="out" autocomplete="off" value="out"> Salida
+                </label>
+              </div>
+            </div>
+            <br>
+              <!-- Amount -->
+              <label for="product_amount" id="io_text">Cantidad que será ingresada:</label>
+              <input type="number" class="form-control" size="14" id="product_amount" name="product_amount"  min="1" required>
 
-<!-- Modal -->
+            <br>
+
+              <!-- Comments -->
+              <span data-toggle="help_code" title="Razon/ Responsable/ Comentario/ etc." class="fa fa-question-circle"></span>&nbsp;&nbsp; <label for="product_comment">Comentarios:</label>
+
+               <textarea class="form-control" id="product_comment" name="product_comment" rows="3" maxlength="255"></textarea>
+
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-success">Registrar <b id="buttonSave">entrada</b></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal register product-->
 <div class="modal fade" id="register_modal" tabindex="-1" role="dialog" aria-labelledby="register_modalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -75,12 +224,12 @@
 
         <div class="col mb-3">
           <label for="product_name">Nombre</label>
-          <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Papas"  required>
+          <input type="text" class="form-control" id="product_name" name="product_name" placeholder="Mermelada de fresa"  required>
         </div>
 
         <div class="col mb-3">
           <label for="product_desc">Descripción</label>
-          <input type="text" class="form-control" id="product_desc" name="product_desc" placeholder="Papas cambray"  required>
+          <input type="text" class="form-control" id="product_desc" name="product_desc" placeholder="Frasco de 980gr"  required>
         </div>
 
         <div class="row">
@@ -112,7 +261,7 @@
   </div>
 </div>
 
-
+<script type="text/javascript" src="{% static 'js/setModal.js' %}"></script>
 <script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
 <script>
 $(document).ready(function(){

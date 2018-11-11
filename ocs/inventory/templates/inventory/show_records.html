@@ -1,0 +1,51 @@
+{% extends "franchise/home.html" %}
+{% load static %}
+
+{% block extras %}
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Registro de Entradas/Salidas</h1>
+</div>
+
+<table class="table table-hover fixed display" id="">
+  <thead class="thead-dark">
+    <tr>
+      <th style="width:160px">Fecha y hora</th>
+      <th style="width:10px">Cantidad</th>
+      <th style="width:10px">Unidad</th>
+      <th style="width:150px">Nombre</th>
+      <th style="">Comentario</th>
+      <th style="width:10px">E/S</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for record in record_list %}
+    {% if record.io %}
+    <tr class="table-success">
+      <td>{{ record.date }}</td>
+      <td>{{ record.amount }}</td>
+      <td>{{ record.id_private_product.unit }}</td>
+      <td>{{ record.id_private_product.name }}</td>
+      <td>{{ record.comment }}</td>
+      <td><i class="fa fa-plus"><text style="visibility: hidden;">E</text></i></td>
+    </tr>
+    {% else %}
+    <tr class="table-danger">
+      <td>{{ record.date }}</td>
+      <td>{{ record.amount }}</td>
+      <td>{{ record.id_private_product.unit }}</td>
+      <td>{{ record.id_private_product.name }}</td>
+      <td>{{ record.comment }}</td>
+      <td value="S"><i class="fa fa-minus"><text style="visibility: hidden;">S</text></i></td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+
+
+  </tbody>
+</table>
+
+<script type="text/javascript" charset="utf8" src="{% static 'js/datatables_records.js' %}"></script>
+
+<!-- newR.date.strftime('%d-%m-%Y %H:%M:%S') -->
+{% endblock extras %}
