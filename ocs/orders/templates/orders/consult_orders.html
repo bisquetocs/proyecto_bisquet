@@ -41,9 +41,11 @@
             <td>{{p.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
             <td><i class="fa fa-exclamation-circle fa-lg" aria-hidden="true" style="color: green"></i></td>
             <td>
+              <a href="/orders/order_detail/{{ p.id_pedido.id }}">
               <button type="button" class="btn btn-info" name="button" onclick="">
                 Ver detalle
               </button>
+              </a>
             </td>
           </tr>
           {% endfor %}
@@ -54,9 +56,11 @@
             <td>{{r.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
             <td></td>
             <td>
+              <a href="/orders/order_detail/{{ r.id_pedido.id }}">
               <button type="button" class="btn btn-info" name="button" onclick="">
                 Ver detalle
               </button>
+              </a>
             </td>
           </tr>
           {% endfor %}
@@ -90,9 +94,11 @@
             <td>{{pr.id_pedido.fecha_pedido|date:'M-d-Y'}}</td>
             <td>{{pr.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
             <td>
+              <a href="/orders/order_detail/{{ pr.id_pedido.id }}">
               <button type="button" class="btn btn-info" name="button" onclick="">
                 Ver detalle
               </button>
+              </a>
             </td>
           </tr>
           {% endfor %}
