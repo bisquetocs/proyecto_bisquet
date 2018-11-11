@@ -46,10 +46,6 @@
                 <button type="button" class="btn" name="button" onclick="editProduct({{Producto.id}})" data-toggle="tooltip" data-placement="left" title="Editar información de {{ Producto.nombre }}">
                   <span class="fa fa-edit"></span>
                 </button>
-
-                <a hidden class="btn btn-dark" role="button" href="/products/edit/{{Producto.id}}">
-                  <span class="fa fa-edit"></span>
-                </a>
               </td>
             </tr>
             {% endfor %}
@@ -218,7 +214,7 @@
                 <select required class="form-control" id="unidad_origen" onchange="checkEquivDestino(this.value)">
                   <option value="0" disabled selected>Unidad:</option>
                   {% for Unidad in unidad %}
-                  <option value="{{Unidad.id}}" id="optuni{{Unidad.id}}">{{Unidad.abreviacion}}</option>
+                  <option value="{{Unidad.id}}" id="optuniorg{{Unidad.id}}">{{Unidad.abreviacion}}</option>
                   {% endfor %}
                 </select>
               </div>
