@@ -12,6 +12,7 @@ from django.utils import timezone
 from provider.models import Provider
 from franchise.models import Franchise
 from products.models import CompleteProduct
+from products.models import UnidadDeMedida
 
 class Order(models.Model):
     id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE)
@@ -33,7 +34,9 @@ class OrderProductStatus(models.Model):
 class OrderProductInStatus(models.Model):
     id_pedido = models.ForeignKey(Order, on_delete=models.CASCADE)
     id_complete_product = models.ForeignKey(CompleteProduct, on_delete=models.CASCADE)
+    id_unidad = models.ForeignKey(UnidadDeMedida, on_delete=models.CASCADE, null=True, default=None)
     cantidad = models.DecimalField(max_digits=6 ,decimal_places=2)
+    precio_por_unidad = models.DecimalField(max_digits=6 ,decimal_places=2)
     total = models.DecimalField(max_digits=8 ,decimal_places=3)
     # DATOS UTILES PARA EL CAMBIO DE ESTADOS
     id_status = models.ForeignKey(OrderProductStatus, on_delete=models.CASCADE, null=True)

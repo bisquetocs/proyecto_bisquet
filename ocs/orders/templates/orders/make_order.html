@@ -12,7 +12,6 @@
 <div class="row">
   <div class="col-3">
     <h5><b>Proveedores</b></h5>
-    <hr />
     <div style="overflow-y: scroll; max-height:400px;">
       <div class="card">
         <ul class="list-group list-group-flush">
@@ -28,15 +27,14 @@
   </div>
   <div class="col-6">
     <h5><b>Pedido</b></h5>
-    <hr />
     <div class="card">
       <nav class="navbar navbar-dark bg-dark rounded-top border-bottom" style="color:white">
         <div class="row mt-3">
           <div class="col">
             <div class="input-group input-group-sm mb-3">
               <div class="input-group-prepend"><span class="input-group-text"><b>Producto:</b></span></div>
-              <!-- INPUT DEL PRODUCTO CON SU LISTA DE PRODUCTOS -->
-              <input disabled id="add_product" list="list_products" type="text" class="form-control" onclick="select()"onchange="check_product_unidad()">
+              <!-- INPUT DEL PRODUCTO CON SU LISTA DE PRODUCTOS -->                                     <!--onchange="check_product_unidad(true)"-->
+              <input disabled id="add_product" list="list_products" type="text" class="form-control" onclick="select()"onkeyup="check_product_unidad(false)">
               <datalist id="list_products">
                 {% block list_products %}
                 {% endblock list_products %}
@@ -67,7 +65,7 @@
             <th scope="col">Producto</th>
             <th scope="col">Precio</th>
             <th scope="col">TOTAL:</th>
-            <th scope="col"></th>
+            <th scope="col"> </th>
           </tr>
         </thead>
         <tbody id="contenido_pedido">
@@ -88,7 +86,6 @@
   </div>
   <div class="col-3">
     <h5><b>Resumen</b></h5>
-    <hr />
     <div class="card">
       <div class="text-center mt-1">
         {% block resumen %}

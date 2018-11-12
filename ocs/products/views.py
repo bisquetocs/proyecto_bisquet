@@ -13,6 +13,7 @@ from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 from django.contrib import messages
+from decimal import Decimal
 
 from accounts.models import OCSUser
 from provider.models import Provider
@@ -220,13 +221,11 @@ def delete_price(request):
     return JsonResponse(data)
 
 
-
-
-
-
 def get_product_equiv(request):
     id_product = request.GET.get('id_product', None)
     product = Product.objects.get(id=id_product)
+    complete_products = CompleteProduct.objects.filter(id_product=product, activo=True)
+    unidades = UnidadDeMedida.objects.all()
     equiv = Equivalencias.objects.filter(id_product = product, activo=True).order_by('id_unidad_origen')
     data = {
         'id_equiv': [],
@@ -234,8 +233,13 @@ def get_product_equiv(request):
         'cantidad_origen': [],
         'id_unidad_destino': [],
         'cantidad_destino': [],
+        'id_unidad_posible':[],
+        'id_unidad_total':[],
     }
-    print(equiv)
+    for uni in unidades:
+        data['id_unidad_total'].append(uni.id)
+    for comp in complete_products:
+        data['id_unidad_posible'].append(comp.id_unidad.id)
     for equi in equiv:
         data['id_equiv'].append(equi.id)
         data['id_unidad_origen'].append(equi.id_unidad_origen.abreviacion)
@@ -243,13 +247,13 @@ def get_product_equiv(request):
         data['id_unidad_destino'].append(equi.id_unidad_destino.abreviacion)
         data['cantidad_destino'].append(equi.cantidad_destino)
     return JsonResponse(data)
-
 def add_equivalencia(request):
     id_product = request.GET.get('id_product', None)
     id_unidad_origen = request.GET.get('id_unidad_origen', None)
     cantidad_origen = request.GET.get('cantidad_origen', None)
     id_unidad_destino = request.GET.get('id_unidad_destino', None)
     cantidad_destino = request.GET.get('cantidad_destino', None)
+    #also_price = request.GET.get('also_price', False)
 
     product = Product.objects.get(id=id_product)
     unidad_origen = UnidadDeMedida.objects.get(id=id_unidad_origen)
@@ -264,13 +268,19 @@ def add_equivalencia(request):
     else:
         equiv = Equivalencias(id_product=product, id_unidad_origen=unidad_origen, cantidad_origen=cantidad_origen, id_unidad_destino=unidad_destino, cantidad_destino=cantidad_destino, activo=True)
         equiv.save()
+    #if also_price:
+        #complete_product = CompleteProduct.objects.get(id_product = product, id_unidad=unidad_origen, activo=True)
+        #aux_price = Price.objects.get(id = complete_product.id_price.id, activo = True)
+        #new_price = Price(id_product=product, fecha_inicio=timezone.now(), cantidad= (Decimal(cantidad_destino)/Decimal(cantidad_origen)), activo=True)
+        #new_price.cantidad = aux_price.cantidad/new_price.cantidad
+        #new_price.save()
+        #new_complete_product = CompleteProduct(id_product=product, id_unidad=unidad_destino, id_price=new_price, activo=True)
+        #new_complete_product.save()
     data = { 'unidad_origen': unidad_origen.abreviacion,
                 'cantidad_origen': cantidad_origen,
                 'unidad_destino': unidad_destino.abreviacion,
                 'cantidad_destino': cantidad_destino,}
     return JsonResponse(data)
-
-
 def delete_equiv(request):
     id_equiv = request.GET.get('id_equiv', None)
     equiv = Equivalencias.objects.get(id=id_equiv)
@@ -278,7 +288,6 @@ def delete_equiv(request):
     equiv.save()
     data = { 'success': True,}
     return JsonResponse(data)
-
 def check_equiv_destino(request):
     id_product = request.GET.get('id_product', None)
     id_unidad_origen = request.GET.get('id_unidad_origen', None)
@@ -300,7 +309,6 @@ def check_equiv_destino(request):
     print(data)
     return JsonResponse(data)
 
-
 def check_available_product(request):
     id_provider = request.GET.get('id_provider', None)
     nombre_product = request.GET.get('nombre_product', None)
@@ -309,17 +317,26 @@ def check_available_product(request):
     exists = Product.objects.filter(nombre=nombre_product,id_provider=provider, activo=True).exists()
     if exists:
         product = Product.objects.get(nombre=nombre_product,id_provider=provider, activo=True)
+
+        id_unidades = []
+        complete_product = CompleteProduct.objects.filter(id_product=product, activo=True)
+        equiv = Equivalencias.objects.filter(id_product=product, activo=True)
+        for uni in complete_product:
+            id_unidades.append(uni.id_unidad.id)
+        for equi in equiv:
+            id_unidades.append(equi.id_unidad_origen.id)
+            id_unidades.append(equi.id_unidad_destino.id)
+        unidades = UnidadDeMedida.objects.filter(id__in = id_unidades)
         data = {
             'id_product': product.id,
             'id_unidades': [],
             'unidades': [],
             'nombres_uni': [],
         }
-        complete_product = CompleteProduct.objects.filter(id_product=product, activo=True)
-        for uni in complete_product:
-            data['id_unidades'].append(uni.id_unidad.id)
-            data['unidades'].append(uni.id_unidad.abreviacion)
-            data['nombres_uni'].append(uni.id_unidad.nombre)
+        for uni in unidades:
+            data['id_unidades'].append(uni.id)
+            data['unidades'].append(uni.abreviacion)
+            data['nombres_uni'].append(uni.nombre)
     else:
         data = {
             'error': True,

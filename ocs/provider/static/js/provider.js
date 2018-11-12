@@ -49,6 +49,13 @@ $( document ).ready(function() {
     });
 });
 
+
+function con(aux){
+  console.log(aux);
+}
+function doc(aux){
+  return document.getElementById(aux);
+}
 // EXTRA (LITTLE USE BUT NO USELESS)
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -58,27 +65,27 @@ function capitalizeFirstLetter(string) {
 function editProduct(id_product){
   cancelAgregar();
   //INFO GENERAL DEL PRODUCTO
-  document.getElementById('editar_producto').hidden = false;
-  document.getElementById('agregar_producto').hidden = true;
-  document.getElementById('no_selected').hidden = true;
-  document.getElementById('selected').hidden = false;
+  doc('editar_producto').hidden = false;
+  doc('agregar_producto').hidden = true;
+  doc('no_selected').hidden = true;
+  doc('selected').hidden = false;
   //PRECIOS
-  document.getElementById('selected_price').hidden = false;
-  document.getElementById('no_selected_price').hidden = true;
-  document.getElementById('adding_price').hidden = true;
+  doc('selected_price').hidden = false;
+  doc('no_selected_price').hidden = true;
+  doc('adding_price').hidden = true;
   //EQUIVALENCIAS
-  document.getElementById('selected_equiv').hidden = false;
-  document.getElementById('no_selected_equiv').hidden = true;
-  document.getElementById('adding_equiv').hidden = true;
+  doc('selected_equiv').hidden = false;
+  doc('no_selected_equiv').hidden = true;
+  doc('adding_equiv').hidden = true;
   //SELECTS AND OTHERS
-  document.getElementById('unidad_de_medida').value = 0;
-  document.getElementById('price').value = null;
-  document.getElementById('cantidad_origen').disabled=true;
-  document.getElementById('cantidad_origen').value= 1;
-  document.getElementById('unidad_origen').value = 0;
-  document.getElementById('unidad_destino').value = 0;
-  document.getElementById('unidad_destino').disabled = true;
-  document.getElementById('cantidad_destino').value = null;
+  doc('unidad_de_medida').value = 0;
+  doc('price').value = null;
+  doc('cantidad_origen').disabled=true;
+  doc('cantidad_origen').value= 1;
+  doc('unidad_origen').value = 0;
+  doc('unidad_destino').value = 0;
+  doc('unidad_destino').disabled = true;
+  doc('cantidad_destino').value = null;
   var id_product = id_product;
   $.ajax({
      url: '/products/get_product/',
@@ -88,16 +95,16 @@ function editProduct(id_product){
      dataType: 'json',
      type: 'GET',
      success: function(data) {
-       document.getElementById('id_product').value = data.id_product;
+       doc('id_product').value = data.id_product;
        document.getElementsByClassName('nombre_producto');
        list = document.getElementsByClassName('nombre_producto');
        for(var i=0; i<list.length; i++){
          list[i].innerHTML = capitalizeFirstLetter(data['nombre']);
        }
-       document.getElementById('nombre').value = capitalizeFirstLetter(data['nombre']);
-       document.getElementById('descripcion').innerHTML = data.descripcion;
-       document.getElementById('codigo').value = data.codigo;
-       document.getElementById('activo').checked = data.activo;
+       doc('nombre').value = capitalizeFirstLetter(data['nombre']);
+       doc('descripcion').innerHTML = data.descripcion;
+       doc('codigo').value = data.codigo;
+       doc('activo').checked = data.activo;
        checaUnidad();
      }
   });
@@ -109,12 +116,12 @@ function editProduct(id_product){
      dataType: 'json',
      type: 'GET',
      success: function(data) {
-       document.getElementById('id_product').value = data.id_product;
-       document.getElementById('precios_de_producto').innerHTML = '<div class="col-5"><h6>Unidad de medida:</h6></div>'+
+       doc('id_product').value = data.id_product;
+       doc('precios_de_producto').innerHTML = '<div class="col-5"><h6>Unidad de medida:</h6></div>'+
                                                     '<div class="col-4"><h6>Precio:</h6></div>'+
                                                     '<div class="col-3"></div>';
        for(var i=0; i<data.id_unidad.length; i++){
-         document.getElementById('precios_de_producto').innerHTML = document.getElementById('precios_de_producto').innerHTML +
+         doc('precios_de_producto').innerHTML = doc('precios_de_producto').innerHTML +
          '<div class="col-5"><input required id="uni'+data.id_precio[i]+'" name="'+data.id_unidad[i]+'" type="text" class="form-control" value="'+data.unidad[i]+'" disabled></div>'+
          '<div class="col-5"><input required id="pre'+data.id_precio[i]+'" name="" type="number" class="form-control" value="'+data.precio[i]+'" min="0" step="0.01" disabled></div>'+
 
@@ -144,16 +151,22 @@ function editProduct(id_product){
      dataType: 'json',
      type: 'GET',
      success: function(data) {
-       document.getElementById('equivalencias_de_producto').innerHTML = '<br />'+
+       doc('equivalencias_de_producto').innerHTML = '<br />'+
                                                '<p style="color:gray">'+
                                                 'Aún no registras ninguna equivalencia'+
                                                '</p>'+
                                                '<br /><br />';
        if(data){
+         for(var i=0; i<data.id_unidad_total.length; i++){
+           doc('optuniorg'+data.id_unidad_total[i]).hidden = true;
+         }
+         for(var i=0; i<data.id_unidad_posible.length; i++){
+           doc('optuniorg'+data.id_unidad_posible[i]).hidden = false;
+         }
          if(data.id_unidad_origen.length!=0){
-           document.getElementById('equivalencias_de_producto').innerHTML = '';
+           doc('equivalencias_de_producto').innerHTML = '';
            for(var i=0; i<data.id_unidad_origen.length; i++){
-             document.getElementById('equivalencias_de_producto').innerHTML = document.getElementById('equivalencias_de_producto').innerHTML+
+             doc('equivalencias_de_producto').innerHTML = doc('equivalencias_de_producto').innerHTML+
                                                   '<li class="list-group-item clearfix" onmouseover="showDeleteEquiv('+data.id_equiv[i]+')"  onmouseout="hideDeleteEquiv('+data.id_equiv[i]+')">'+
                                                   '<div class="float-left">'+
                                                   data.cantidad_origen[i]+' '+
@@ -176,26 +189,26 @@ function editProduct(id_product){
 
 function cancelEdit(){
   //PRICE
-  document.getElementById('selected_price').hidden = true;
-  document.getElementById('no_selected_price').hidden = false;
-  document.getElementById('adding_price').hidden = true;
+  doc('selected_price').hidden = true;
+  doc('no_selected_price').hidden = false;
+  doc('adding_price').hidden = true;
   //EQUIVALENCIAS
-  document.getElementById('selected_equiv').hidden = true;
-  document.getElementById('no_selected_equiv').hidden = false;
-  document.getElementById('adding_equiv').hidden = true;
+  doc('selected_equiv').hidden = true;
+  doc('no_selected_equiv').hidden = false;
+  doc('adding_equiv').hidden = true;
   //INFO GENERAL DEL PRODUCTO
-  document.getElementById('editar_producto').hidden = false;
-  document.getElementById('selected').hidden = true;
-  document.getElementById('no_selected').hidden = false;
-  document.getElementById('agregar_producto').hidden = true;
+  doc('editar_producto').hidden = false;
+  doc('selected').hidden = true;
+  doc('no_selected').hidden = false;
+  doc('agregar_producto').hidden = true;
   //OTHERS
-  document.getElementById('id_product').value = '';
-  document.getElementById('nombre').value = '';
-  document.getElementById('descripcion').innerHTML = '';
-  document.getElementById('codigo').value = '';
-  document.getElementById('cantidad_origen').disabled=true;
-  //document.getElementById('activo').checked = True;
-  document.getElementById('precios_de_producto').innerHTML = ' ';
+  doc('id_product').value = '';
+  doc('nombre').value = '';
+  doc('descripcion').innerHTML = '';
+  doc('codigo').value = '';
+  doc('cantidad_origen').disabled=true;
+  //doc('activo').checked = True;
+  doc('precios_de_producto').innerHTML = ' ';
   list = document.getElementsByClassName('nombre_producto');
   for(var i=0; i<list.length; i++){
     list[i].innerHTML = '';
@@ -204,40 +217,40 @@ function cancelEdit(){
 
 function showAgregar(){
   cancelEdit();
-  document.getElementById('selected_price').hidden = true;
-  document.getElementById('no_selected_price').hidden = true;
-  document.getElementById('adding_price').hidden = false;
+  doc('selected_price').hidden = true;
+  doc('no_selected_price').hidden = true;
+  doc('adding_price').hidden = false;
 
-  document.getElementById('selected_equiv').hidden = true;
-  document.getElementById('no_selected_equiv').hidden = true;
-  document.getElementById('adding_equiv').hidden = false;
+  doc('selected_equiv').hidden = true;
+  doc('no_selected_equiv').hidden = true;
+  doc('adding_equiv').hidden = false;
 
-  document.getElementById('editar_producto').hidden = true;
-  document.getElementById('agregar_producto').hidden = false;
+  doc('editar_producto').hidden = true;
+  doc('agregar_producto').hidden = false;
 }
 
 function cancelAgregar(){
   //PRICE
-  document.getElementById('selected_price').hidden = true;
-  document.getElementById('no_selected_price').hidden = false;
-  document.getElementById('adding_price').hidden = true;
+  doc('selected_price').hidden = true;
+  doc('no_selected_price').hidden = false;
+  doc('adding_price').hidden = true;
   //EQUIV
-  document.getElementById('selected_equiv').hidden = true;
-  document.getElementById('no_selected_equiv').hidden = false;
-  document.getElementById('adding_equiv').hidden = true;
+  doc('selected_equiv').hidden = true;
+  doc('no_selected_equiv').hidden = false;
+  doc('adding_equiv').hidden = true;
   //INFO GENERAL
-  document.getElementById('editar_producto').hidden = false;
-  document.getElementById('selected').hidden = true;
-  document.getElementById('no_selected').hidden = false;
-  document.getElementById('agregar_producto').hidden = true;
+  doc('editar_producto').hidden = false;
+  doc('selected').hidden = true;
+  doc('no_selected').hidden = false;
+  doc('agregar_producto').hidden = true;
   //OTHERS
-  document.getElementById('nombre').value = '';
-  document.getElementById('descripcion').innerHTML = '';
-  document.getElementById('codigo').value = '';
+  doc('nombre').value = '';
+  doc('descripcion').innerHTML = '';
+  doc('codigo').value = '';
 }
 
 function ableUnable(id_product){
-  document.getElementById('ableUnable'+id_product).innerHTML = '<div style="color:gary">'+
+  doc('ableUnable'+id_product).innerHTML = '<div style="color:gary">'+
                                                                '<span class="fa fa-eye"></span>'+
                                                                '</div>';
   $.ajax({
@@ -249,11 +262,11 @@ function ableUnable(id_product){
      type: 'GET',
      success: function(data) {
        if(data.able){
-         document.getElementById('ableUnable'+id_product).innerHTML = '<div style="color:green" onclick="ableUnable('+id_product+')">'+
+         doc('ableUnable'+id_product).innerHTML = '<div style="color:green" onclick="ableUnable('+id_product+')">'+
                                                                       '<span class="fa fa-eye"></span>'+
                                                                       '</div>';
        }else{
-         document.getElementById('ableUnable'+id_product).innerHTML = '<div style="color:red" onclick="ableUnable('+id_product+')">'+
+         doc('ableUnable'+id_product).innerHTML = '<div style="color:red" onclick="ableUnable('+id_product+')">'+
                                                                       '<span class="fa fa-eye-slash"></span>'+
                                                                       '</div>';
        }
@@ -262,7 +275,7 @@ function ableUnable(id_product){
 }
 // PRODCUT PRICES
 function checaUnidad(){
-  var id_product = document.getElementById('id_product').value;
+  var id_product = doc('id_product').value;
   if(id_product!=null){
     $.ajax({
        url: '/products/check_unidad/',
@@ -273,10 +286,10 @@ function checaUnidad(){
        type: 'GET',
        success: function(data) {
          for(var i=0; i<data.unidadesTotal.length; i++){
-           document.getElementById('optuni'+data.unidadesTotal[i]).disabled = false;
+           doc('optuni'+data.unidadesTotal[i]).disabled = false;
          }
          for(var i=0; i<data.unidades.length; i++){
-           document.getElementById('optuni'+data.unidades[i]).disabled = true;
+           doc('optuni'+data.unidades[i]).disabled = true;
          }
        }
     });
@@ -284,9 +297,9 @@ function checaUnidad(){
 }
 
 function addPrice(){
-  var id_product = document.getElementById('id_product').value;
-  var id_unidad = document.getElementById('unidad_de_medida').value;
-  var cantidad = document.getElementById('price').value;
+  var id_product = doc('id_product').value;
+  var id_unidad = doc('unidad_de_medida').value;
+  var cantidad = doc('price').value;
   if(cantidad > 0){
     $.ajax({
        url: '/products/add_price/',
@@ -305,17 +318,17 @@ function addPrice(){
 }
 
 function editThisPrice(id_price){
-  document.getElementById('pre'+id_price).disabled = false;
-  document.getElementById('editThisPrice'+id_price).hidden = true;
-  document.getElementById('editThisPriceSection'+id_price).hidden = false;
-  document.getElementById('pre'+id_price).name = document.getElementById('pre'+id_price).value;
+  doc('pre'+id_price).disabled = false;
+  doc('editThisPrice'+id_price).hidden = true;
+  doc('editThisPriceSection'+id_price).hidden = false;
+  doc('pre'+id_price).name = doc('pre'+id_price).value;
 }
 
 function deleteThisPrice(id_price){
-  var producto = document.getElementById('nombre').value;
-  var unidad = document.getElementById('uni'+id_price).value;
-  var id_product = document.getElementById('id_product').value;
-  var id_unidad = document.getElementById('uni'+id_price).name;
+  var producto = doc('nombre').value;
+  var unidad = doc('uni'+id_price).value;
+  var id_product = doc('id_product').value;
+  var id_unidad = doc('uni'+id_price).name;
   if(confirm('¿Seguro que deseas dejar de vender '+producto+' en '+unidad+'?')){
     $.ajax({
        url: '/products/delete_price/',
@@ -334,10 +347,10 @@ function deleteThisPrice(id_price){
 }
 
 function savePrice(id_price){
-  var id_product = document.getElementById('id_product').value;
-  var id_unidad = document.getElementById('uni'+id_price).name;
-  var cantidad = document.getElementById('pre'+id_price).value;
-  if (document.getElementById('pre'+id_price).name != cantidad){
+  var id_product = doc('id_product').value;
+  var id_unidad = doc('uni'+id_price).name;
+  var cantidad = doc('pre'+id_price).value;
+  if (doc('pre'+id_price).name != cantidad){
     $.ajax({
        url: '/products/save_price/',
        data: {
@@ -348,11 +361,11 @@ function savePrice(id_price){
        dataType: 'json',
        type: 'GET',
        success: function(data) {
-         document.getElementById('pre'+id_price).disabled = true;
-         document.getElementById('editThisPrice'+id_price).hidden = false;
-         document.getElementById('editThisPriceSection'+id_price).hidden = true;
-         document.getElementById('pre'+id_price).value = cantidad;
-         document.getElementById('pre'+id_price).name = cantidad;
+         doc('pre'+id_price).disabled = true;
+         doc('editThisPrice'+id_price).hidden = false;
+         doc('editThisPriceSection'+id_price).hidden = true;
+         doc('pre'+id_price).value = cantidad;
+         doc('pre'+id_price).name = cantidad;
        }
     });
   } else{
@@ -361,25 +374,30 @@ function savePrice(id_price){
 }
 
 function cancelPrice(id_price){
-  document.getElementById('pre'+id_price).disabled = true;
-  document.getElementById('editThisPrice'+id_price).hidden = false;
-  document.getElementById('editThisPriceSection'+id_price).hidden = true;
-  document.getElementById('pre'+id_price).value = document.getElementById('pre'+id_price).name;
+  doc('pre'+id_price).disabled = true;
+  doc('editThisPrice'+id_price).hidden = false;
+  doc('editThisPriceSection'+id_price).hidden = true;
+  doc('pre'+id_price).value = doc('pre'+id_price).name;
 }
 
 // PRODUCT EQUIVALENCIAS
 function registrarEquivalencia(){
-  var id_product = document.getElementById('id_product').value;
-  var id_unidad_origen = document.getElementById('unidad_origen').value;
-  var cantidad_origen = document.getElementById('cantidad_origen').value;
-  var id_unidad_destino = document.getElementById('unidad_destino').value;
-  var cantidad_destino = document.getElementById('cantidad_destino').value;
+  var id_product = doc('id_product').value;
+  var id_unidad_origen = doc('unidad_origen').value;
+  var cantidad_origen = doc('cantidad_origen').value;
+  var id_unidad_destino = doc('unidad_destino').value;
+  var cantidad_destino = doc('cantidad_destino').value;
+  var unidad_destino = doc('optunidest'+id_unidad_destino).innerHTML;
 
   if(cantidad_destino > 0 && cantidad_destino != null
         && cantidad_origen > 0 && cantidad_origen != null
         && id_unidad_origen!=0 && id_unidad_origen!=null
         && id_unidad_destino!=0 && id_unidad_destino!=null
         && id_unidad_destino!=id_unidad_origen){
+    var also_price = false;
+    //if(confirm('¿Deseas agregar el precio correspondiente para '+unidad_destino+' ?')){
+    //  also_price = true;
+    //}
     $.ajax({
        url: '/products/add_equivalencia/',
        data: {
@@ -388,6 +406,7 @@ function registrarEquivalencia(){
           'cantidad_origen': cantidad_origen,
           'id_unidad_destino': id_unidad_destino,
           'cantidad_destino': cantidad_destino,
+          //'also_price': also_price,
        },
        dataType: 'json',
        type: 'GET',
@@ -399,15 +418,15 @@ function registrarEquivalencia(){
 }
 
 function showDeleteEquiv(id_equiv){
-  document.getElementById('equiv'+id_equiv).hidden = false;
+  doc('equiv'+id_equiv).hidden = false;
 }
 
 function hideDeleteEquiv(id_equiv){
-  document.getElementById('equiv'+id_equiv).hidden = true;
+  doc('equiv'+id_equiv).hidden = true;
 }
 
 function delete_equiv(id_equiv){
-  var id_product = document.getElementById('id_product').value;
+  var id_product = doc('id_product').value;
   if(confirm('Seguro que deseas eliminar esta equivalencia?')){
     $.ajax({
        url: '/products/delete_equiv/',
@@ -424,7 +443,7 @@ function delete_equiv(id_equiv){
 }
 
 function checkEquivDestino(id_unidad_origen){
-  var id_product = document.getElementById('id_product').value;
+  var id_product = doc('id_product').value;
   $.ajax({
      url: '/products/check_equiv_destino/',
      data: {
@@ -434,15 +453,15 @@ function checkEquivDestino(id_unidad_origen){
      dataType: 'json',
      type: 'GET',
      success: function(data) {
-       document.getElementById('unidad_destino').value = 0;
+       doc('unidad_destino').value = 0;
        for(var i=0; i<data.unidadesTotal.length; i++){
-         document.getElementById('optunidest'+data.unidadesTotal[i]).disabled = false;
+         doc('optunidest'+data.unidadesTotal[i]).disabled = false;
        }
        for(var i=0; i<data.unidades.length; i++){
-         document.getElementById('optunidest'+data.unidades[i]).disabled = true;
+         doc('optunidest'+data.unidades[i]).disabled = true;
        }
-       document.getElementById('unidad_destino').disabled = false;
-       document.getElementById('optunidest'+document.getElementById('optunidest'+id_unidad_origen).value).disabled = true;
+       doc('unidad_destino').disabled = false;
+       doc('optunidest'+doc('optunidest'+id_unidad_origen).value).disabled = true;
      }
   });
 }
