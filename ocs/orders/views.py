@@ -37,100 +37,66 @@ def make_order(request):
     my_providers = LinkWithF.objects.filter(id_franchise = franchise, active = True)
     data ={
         'usuario': u,
-        'franchise': franchise,
+        #'franchise': franchise,
         'my_providers': my_providers,
     }
     return render(request, 'orders/make_order.html', data)
 
 def make_order_to(request, id_provider):
+    #sacamos el usuario, su franquicia y sus proveedores
     u = OCSUser.objects.get(user = request.user)
     franchise = Franchise.objects.get(id = u.id_franchise.id)
     my_providers = LinkWithF.objects.filter(id_franchise = franchise, active = True)
+    #de sus proveedores sacamos al que se le hará el pedido y sus productos con precio activos
     provider = Provider.objects.get(id= id_provider)
-
-    products = Product.objects.filter(id_provider=provider, activo=True).order_by('nombre')
+    products = Product.objects.filter(id_provider=provider, activo=True)
     complete_products = CompleteProduct.objects.filter(id_product__in=products, activo=True)
     id_product_aux = []
     for comp in complete_products:
         id_product_aux.append(comp.id_product.id)
-    my_products = Product.objects.filter(id__in = id_product_aux)
-
-    #unidad_price = CompleteProduct.objects.filter(id_product__in = prodcts, activo=True)
+    my_products = Product.objects.filter(id__in = id_product_aux).order_by('nombre')
+    #creamos la estructura a regresar (OUTPUT)
     data = {
         'usuario': u,
-        'franchise': franchise,
+        #'franchise': franchise,
         'my_providers': my_providers,
         'provider':provider,
         'products':my_products,
         'order_to_edit': False,
-        'too_late': False,
-        'just_one': False,
+        #'too_late': False,
         'orders': None,
         'orders_products': None,
-        'orders_id': [],
-        'orders_date': [],
-        'orders_day': [],
-        'orders_status': [],
-        'orders_status_desc': []
+        #'orders_date': [],
+        'orders_day': None,
+        'orders_status': None,
     }
-    exists = Order.objects.filter(id_franchise=franchise, id_provider=provider, activo=True, arrive=False).exists()
+    exists = Order.objects.filter(id_franchise=franchise, id_provider=provider, activo=True).exists()
     if exists:
-        orders = Order.objects.filter(id_franchise=franchise, id_provider=provider, activo=True, arrive=False)
-        exists = OrderInStatus.objects.filter(id_pedido__in = orders, activo = True).exists()
-        if exists:
-            my_order_status = OrderInStatus.objects.filter(id_pedido__in = orders, activo = True)
-            data['order_to_edit'] = True
-            if my_order_status.count() == 1:
-                data['just_one'] = True
-                ord = OrderInStatus.objects.get(id_pedido__in = orders, activo = True)
-                prods = OrderProductInStatus.objects.filter(id_pedido=ord.id_pedido, activo=True)
-                for p in prods:
-                    products = products.exclude(id=p.id_complete_product.id_product.id)
+        data['order_to_edit'] = True
+        orders = Order.objects.filter(id_franchise=franchise, id_provider=provider, activo=True)
+        order_s = OrderInStatus.objects.get(id_pedido__in = orders, id_status__in=[1,2,3], activo = True)
+        prods = OrderProductInStatus.objects.filter(id_pedido=order_s.id_pedido, activo=True)
+        for p in prods:
+            products = products.exclude(id=p.id_complete_product.id_product.id)
 
-                if ord.id_status.id==1 or ord.id_status.id==2 or ord.id_status.id==3:
-                    data['orders'] = ord.id_pedido
-                    data['orders_products'] = prods
-                    data['products'] = products
-                    data['orders_id'] = (ord.id_pedido.id)
-                    aux_date = str(ord.id_pedido.fecha_pedido.year)+'-'+str(ord.id_pedido.fecha_pedido.month)+'-'+str(ord.id_pedido.fecha_pedido.day)
-                    data['orders_date'] = (aux_date)
-                    aux_day = ord.id_pedido.fecha_pedido.weekday()
-                    if aux_day == 0: day = 'LUNES'
-                    elif aux_day == 1: day = 'MARTES'
-                    elif aux_day == 2: day = 'MIÉRCOLES'
-                    elif aux_day == 3: day = 'JUEVES'
-                    elif aux_day == 4: day = 'VIERNES'
-                    elif aux_day == 5: day = 'SÁBADO'
-                    elif aux_day == 6: day = 'DOMINGO'
-                    data['orders_day'] = day
-                    data['orders_status'] = (ord.id_status.nombre)
-                    data['orders_status_desc'] = (ord.id_status.descripcion)
-                else:
-                    data['too_late'] = True
-            else:
-                for ord in my_order_status:
-                    # Aqui están los id de los estados (Guardado, Pedido, Aceptado)
-                    if ord.id_status.id==1 or ord.id_status.id==2 or ord.id_status.id==3:
-                        auxaux= True
-                        #data['orders'].append(ord)
-                        #data['orders_id'].append(ord.id_pedido.id)
-                        #aux_date = str(ord.id_pedido.fecha_pedido.year)+'-'+str(ord.id_pedido.fecha_pedido.month)+'-'+str(ord.id_pedido.fecha_pedido.day)
-                        #data['orders_date'].append(aux_date)
-                        #aux_day = ord.id_pedido.fecha_pedido.weekday()
-                        #if aux_day == 0: day = 'LUNES'
-                        #elif aux_day == 1: day = 'MARTES'
-                        #elif aux_day == 2: day = 'MIÉRCOLES'
-                        #elif aux_day == 3: day = 'JUEVES'
-                        #elif aux_day == 4: day = 'VIERNES'
-                        #elif aux_day == 5: day = 'SÁBADO'
-                        #elif aux_day == 6: day = 'DOMINGO'
-                        #data['orders_day'].append(day)
-                        #data['orders_status'].append(ord.id_status.nombre)
-                        #data['orders_status_desc'].append(ord.id_status.descripcion)
-                    else:
-                        data['too_late'] = True
+        data['orders'] = order_s.id_pedido
+        data['orders_products'] = prods
+        data['products'] = products
+        #aux_date = str(ord.id_pedido.fecha_pedido.year)+'-'+str(ord.id_pedido.fecha_pedido.month)+'-'+str(ord.id_pedido.fecha_pedido.day)
+        #data['orders_date'] = (aux_date)
+        aux_day = order_s.id_pedido.fecha_ideal.weekday()
+        if aux_day == 0: day = 'LUNES'
+        elif aux_day == 1: day = 'MARTES'
+        elif aux_day == 2: day = 'MIÉRCOLES'
+        elif aux_day == 3: day = 'JUEVES'
+        elif aux_day == 4: day = 'VIERNES'
+        elif aux_day == 5: day = 'SÁBADO'
+        elif aux_day == 6: day = 'DOMINGO'
+        data['orders_day'] = day
+        data['orders_status'] = (order_s)
 
     return render(request, 'orders/make_order_to.html', data)
+
 
 def add_product_to_order(request):
     u = OCSUser.objects.get(user = request.user)
@@ -225,7 +191,6 @@ def add_product_to_order(request):
                 'cantidad_total': order.cantidad_productos,}
     return JsonResponse(data)
 
-
 def delete_product_from_order(request):
     id_pedido = request.GET.get('id_pedido', None)
     id_prod_ord = request.GET.get('id_prod_ord', None)
@@ -246,12 +211,11 @@ def delete_product_from_order(request):
                 'precio_total':pedido.precio_total,}
     return JsonResponse(data)
 
-
 def cancel_order(request):
     id_pedido = request.GET.get('id_pedido', None)
     id_provider = request.GET.get('id_provider', None)
 
-    order = Order.objects.get(id = id_pedido, activo=True, arrive=False)
+    order = Order.objects.get(id = id_pedido, activo=True)
     order.activo = False
     order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
     order_status = OrderStatus.objects.get(id=5)
@@ -263,12 +227,11 @@ def cancel_order(request):
     data = { 'success': True, }
     return JsonResponse(data)
 
-
 def send_order(request):
     id_pedido = request.GET.get('id_pedido', None)
     id_provider = request.GET.get('id_provider', None)
 
-    order = Order.objects.get(id = id_pedido, activo=True, arrive=False)
+    order = Order.objects.get(id = id_pedido, activo=True)
     order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
     order_status = OrderStatus.objects.get(id=2)
     new_order_in_status = OrderInStatus(id_pedido=order,id_status=order_status,fecha=timezone.now(), activo=True)
