@@ -2,8 +2,8 @@
 created by:     Django
 description:    This are the views of the providers that helps their tasks
                 to accomplish
-modify by:      Alberto
-modify date:    26/10/18
+modify by:      Fatima
+modify date:    12/11/18
 """
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -98,29 +98,40 @@ def link_code(request):
 
 #Función para asignar horas de oficina a la empresa de lado proveedor
 @login_required
-def office(request):
+def office_assign(request, id_day_hour):
     u = OCSUser.objects.get(user = request.user)
     prov = u.id_provider_id
     provider = Provider.objects.get(id = prov)
-    days_list = Days.objects.all()
+    days_hour = OfficeHours.objects.get(id = id_day_hour)
     hours_list = OfficeHours.objects.filter(id_provider = provider)
     prov = Group.objects.get(name = "Administrador de empresa")
     user = request.user
     if request.method == 'POST' and (prov in user.groups.all()):
-        #La asignación se hace dentro de un ciclo for pues se asigna a cada día
-        for item in days_list:
-            i = item.id
-            s_hour = "start_hour_" + str(i)
-            f_hour = "finish_hour_" + str(i)
-            #En lugar de añadir más filas a la tabla, sólo se editan las ya existentes
-            edit_object = OfficeHours.objects.get(day = item, id_provider = provider)
-            edit_object.start_hour = request.POST[s_hour]
-            edit_object.finish_hour = request.POST[f_hour]
-            edit_object.save()
+        #En lugar de añadir más filas a la tabla, sólo se editan las ya existentes
+        days_hour.start_hour = request.POST["s_hour"]
+        days_hour.finish_hour = request.POST["f_hour"]
+        days_hour.save()
+
+        return render(request, 'provider/office_main.html', {'hours_list': hours_list, 'usuario':u})
 
     #Only owners can perform the action
     if (prov in user.groups.all()):
-        return render(request, 'provider/office.html', {'days_list':days_list, 'hours_list': hours_list, 'usuario':u})
+        return render(request, 'provider/office.html', {'days_hour':days_hour, 'usuario':u})
+    else :
+        return redirect('../')
+
+@login_required
+def office(request):
+    u = OCSUser.objects.get(user = request.user)
+    prov = u.id_provider_id
+    provider = Provider.objects.get(id = prov)
+    hours_list = OfficeHours.objects.filter(id_provider = provider)
+    prov = Group.objects.get(name = "Administrador de empresa")
+    user = request.user
+
+    #Only owners can perform the action
+    if (prov in user.groups.all()):
+        return render(request, 'provider/office_main.html', {'hours_list': hours_list, 'usuario':u})
     else :
         return redirect('../')
 

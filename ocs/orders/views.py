@@ -1,3 +1,11 @@
+"""
+created by:     Django
+description:    This are the views of the providers that helps their tasks
+                to accomplish
+modify by:      Fatima
+modify date:    12/11/18
+"""
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.http import Http404

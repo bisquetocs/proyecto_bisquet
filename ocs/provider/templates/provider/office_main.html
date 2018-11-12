@@ -1,0 +1,55 @@
+<!--
+"""
+Description: HTML view for the office daily schedule
+Modified by: Fátima
+Modify date: 12-11-18
+"""
+-->
+{% extends "provider/home.html" %}
+{% block title %}OCS - Registro de Horario de Oficina{% endblock title %}
+
+
+{% block content %}
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Horario de oficina</h1>
+  </div>
+
+  <div class="container">
+    <div class='container'>
+      <div class='row'>
+        <div class="col border rounded">
+          <table class="table table-responsive-xl table-hover table-sm mx-1">
+            <thead>
+              <tr>
+                <th scope="col">Día</th>
+                <th scope="col">Hora de Apertura</th>
+                <th scope="col">Hora de Cierre</th>
+                <th scope="col">Opciones</th>
+              </tr>
+            </thead>
+            <tbody id="consult_orders">
+              {% for item in hours_list %}
+              <tr>
+                <td>{{item.day.nombre}}</td>
+                <td>{{item.start_hour}}</td>
+                <td>{{item.finish_hour}}</td>
+                <td>
+                  <a href="/provider/office/{{ item.id }}">
+                  <button type="button" class="btn btn-info" name="button" onclick="">
+                    Editar hora
+                  </button>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+{% endblock content%}

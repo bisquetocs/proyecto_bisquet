@@ -21,29 +21,24 @@ Modify date: 20-10-18
         <div class="col">
           <form method="post">
           {% csrf_token %}
-          {% for days in days_list %}
           <div class="form-group row">
-            <div class="col-sm-2">
-            <strong>{{ days.nombre }}</strong>
+            <div class="col-2">
+            <strong>{{ days_hour.day.nombre }}</strong>
             </div>
-            <div class="col-sm-4">
-              <label for="start_hour_{{ days.id }}">Hora inicio</label>
-              <input class="form-control" type="time" placeholder="12:00" name="start_hour_{{ days.id }}">
+            <div class="col-3">
+              <label for="s_hour">Hora inicio</label>
+              <input class="form-control" type="time" value="12:00" name="s_hour" id="s_hour">
             </div>
-            <div class="col-sm-4">
-              <label for="finish_hour_{{ days.id }}">Hora fin</label>
-              <input class="form-control" type="time" placeholder="12:00" name="finish_hour_{{ days.id }}">
+            <div class="col-3">
+              <label for="f_hour">Hora fin</label>
+              <input class="form-control" type="time" value="12:00" name="f_hour" id="f_hour">
+            </div>
+            <div class="col-3 mt-4">
+              <button type="submit" class="btn btn-md btn-primary">Registrar horas</button>
             </div>
           </div>
           <br><hr>
 
-
-          {% endfor %}
-          <div class="form-group row pull-right">
-            <div class="col-sm-5">
-              <button type="submit" class="btn btn-md btn-primary">Registrar horas</button>
-            </div>
-          </div>
           </form>
           <br><br><br>
         </div>
