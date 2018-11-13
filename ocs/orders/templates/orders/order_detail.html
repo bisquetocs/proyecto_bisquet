@@ -70,11 +70,11 @@ $ pip install django-mathfilters
           <tbody id="consult_orders">
             {% for p in products_list %}
             <tr>
-              <td>{{p.total|div:p.cantidad|floatformat:0 }}</td>
-              <td>{{p.id_complete_product.id_unidad.abreviacion}}</td>
-              <td>{{p.id_complete_product.id_product.nombre}}</td>
-              <td>${{p.cantidad|floatformat:2 }}</td>
-              <td>${{p.total|floatformat:2 }}</td>
+              <td>{{p.cantidad }}</td>
+              <td>{{p.id_unidad.abreviacion}}</td>
+              <td>{{p.id_complete_product.id_product.nombre.capitalize }}</td>
+              <td>$ {{p.precio_por_unidad }}</td>
+              <td>$ {{p.total }}</td>
             </tr>
             {% endfor %}
           </tbody>
@@ -82,7 +82,6 @@ $ pip install django-mathfilters
         </div>
       </div>
     </div>
-
     <div class="col-4">
       <div class="card">
         <div class="card-body">
@@ -91,46 +90,36 @@ $ pip install django-mathfilters
             <div class="col-5 mt-2">
               <small>Total de productos:</small>
             </div>
-
             <div class="col-7 mt-2">
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="basic-addon1">#</span>
                 </div>
-                <input disabled id="total_productos" class="form-control" type="number" value="{{ total_p.total_products|floatformat:0 }}" step="1">
+                <input disabled id="total_productos" class="form-control" type="number" value="{{ data.cantidad_productos }}" step="1">
               </div>
             </div>
-
             <div class="col-5 mt-2">
               <small>Total de precio:</small>
             </div>
-
             <div class="col-7 mt-2">
               <div class="input-group mb-3">
                 <div class="input-group-prepend">
                   <span class="input-group-text" id="basic-addon1">$</span>
                 </div>
-                <input disabled id="total_precio" class="form-control" type="number" value="{{ sum.total_price|floatformat:2 }}" step="0.001">
+                <input disabled id="total_precio" class="form-control" type="number" value="{{ data.precio_total }}" step="0.001">
               </div>
             </div>
-
             </div>
-
             <div class="row text-center">
               <div class="col mt-4">
                 <p><a href="#" style="color:black"><i class="fa fa-print fa-3x" aria-hidden="true"></i></a></p>
                 <p><strong>Imprimir Orden</strong></p>
-
               </div>
-
             </div>
-
         </div>
       </div>
     </div>
-
   </div>
-
   <div class="row border rounded mt-5">
       <div class="col-10 mt-4">
         <p>Para cancelar el pedido es necesario presionar el botón incluido en esta sección. Antes de continuar,
@@ -140,12 +129,8 @@ $ pip install django-mathfilters
       <div class="col-2 mt-4">
         <button type="button" class="btn btn-danger">Cancelar Orden</button>
       </div>
-
   </div>
-
-
 </div>
-
 <script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
 
 {% endblock extras %}

@@ -79,7 +79,7 @@
     </div>
     {% else %}
     <div class="container-fluid mt-3">
-      {% if orders_status == 'Guardado' %}
+      {% if orders_status.id_status.nombre == 'Guardado' %}
       <div class="card">
         <div class="card-body">
           <button id="enviar_pedido" onclick="send_order()" class="btn btn-sm btn-block btn-success" type="button">

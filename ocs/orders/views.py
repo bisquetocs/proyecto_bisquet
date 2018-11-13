@@ -67,15 +67,12 @@ def make_order_to(request, id_provider):
     #creamos la estructura a regresar (OUTPUT)
     data = {
         'usuario': u,
-        #'franchise': franchise,
         'my_providers': my_providers,
         'provider':provider,
         'products':my_products,
         'order_to_edit': False,
-        #'too_late': False,
         'orders': None,
         'orders_products': None,
-        #'orders_date': [],
         'orders_day': None,
         'orders_status': None,
     }
@@ -102,10 +99,9 @@ def make_order_to(request, id_provider):
         elif aux_day == 5: day = 'SÁBADO'
         elif aux_day == 6: day = 'DOMINGO'
         data['orders_day'] = day
-        data['orders_status'] = (order_s)
+        data['orders_status'] = order_s
 
     return render(request, 'orders/make_order_to.html', data)
-
 
 def add_product_to_order(request):
     u = OCSUser.objects.get(user = request.user)
@@ -145,13 +141,13 @@ def add_product_to_order(request):
         order_status.save()
     else:
         order = Order.objects.get(id=id_pedido)
-    alrready_in_order = OrderProductInStatus.objects.filter(id_pedido=order, id_complete_product=complete_product,activo=True).exists()
+    alrready_in_order = OrderProductInStatus.objects.filter(id_pedido=order, id_complete_product=complete_product, activo=True).exists()
     if alrready_in_order:
         order_product = OrderProductInStatus.objects.get(id_pedido=order,id_complete_product=complete_product, activo=True)
         order.precio_total = order.precio_total-order_product.total
         order.cantidad_productos = order.cantidad_productos-1
         order.save()
-        order_product.cantidad= Decimal(cantidad_pedida)
+        order_product.cantidad = Decimal(cantidad_pedida)
         if without_equiv:
             order_product.precio_por_unidad = complete_product.id_price.cantidad
             order_product.total = order_product.cantidad*order_product.precio_por_unidad
@@ -223,21 +219,20 @@ def delete_product_from_order(request):
 # Function that let the providers to edit its company info
 #@login_required
 def order_detail (request, id_order):
-    data = Order.objects.get(id = id_order)
-    products_list = OrderProductInStatus.objects.filter(id_pedido = id_order, activo = 1)
-    sum = OrderProductInStatus.objects.filter(id_pedido = id_order, activo = 1).aggregate(total_price=Sum('total'))
-    total_p = OrderProductInStatus.objects.filter(id_pedido = id_order, activo = 1).aggregate(total_products=Sum(F('total')/F('cantidad')))
-
+    order = Order.objects.get(id = id_order)
+    products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
     #Para cambiar el estado de la orden
-    orden = OrderInStatus.objects.get(id_pedido = id_order)
+    order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
     pedido = OrderStatus.objects.get(id = 2)
-
-    if(orden.id_status == pedido):
+    if(order_s.id_status == pedido):
         status = OrderStatus.objects.get(id = 3)
-        orden.id_status = status
-        orden.save()
-
-    return render(request, 'orders/order_detail.html', {'data':data, 'products_list':products_list, 'sum':sum, 'total_p':total_p})
+        order_s.id_status = status
+        order_s.save()
+    data = {
+        'data':order,
+        'products_list':products_list,
+    }
+    return render(request, 'orders/order_detail.html', data)
 
 def consult_orders (request):
     ocs_user = OCSUser.objects.get(user = request.user)
