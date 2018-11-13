@@ -220,7 +220,6 @@ def delete_product_from_order(request):
                 'precio_total':pedido.precio_total,}
     return JsonResponse(data)
 
-<<<<<<< HEAD
 # Function that let the providers to edit its company info
 #@login_required
 def order_detail (request, id_order):
@@ -259,7 +258,7 @@ def consult_orders (request):
     else:
         empty_list_re = 0
     return render(request, 'orders/consult_orders.html', {'usuario':ocs_user, 'edit':True, 'empty_list':empty_list, 'pedido':pedido, 'recibido':recibido, 'preparar':preparar, 'empty_list_re':empty_list_re})
-=======
+
 def cancel_order(request):
     id_pedido = request.GET.get('id_pedido', None)
     id_provider = request.GET.get('id_provider', None)
@@ -275,7 +274,6 @@ def cancel_order(request):
     order.save()
     data = { 'success': True, }
     return JsonResponse(data)
->>>>>>> Beto-Generate_orders
 
 def send_order(request):
     id_pedido = request.GET.get('id_pedido', None)
