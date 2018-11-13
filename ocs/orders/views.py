@@ -219,6 +219,7 @@ def delete_product_from_order(request):
 # Function that let the providers to edit its company info
 #@login_required
 def order_detail (request, id_order):
+    u = OCSUser.objects.get(user = request.user)
     order = Order.objects.get(id = id_order)
     products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
     #Para cambiar el estado de la orden
@@ -229,6 +230,7 @@ def order_detail (request, id_order):
         order_s.id_status = status
         order_s.save()
     data = {
+        'usuario': u,
         'data':order,
         'products_list':products_list,
     }
