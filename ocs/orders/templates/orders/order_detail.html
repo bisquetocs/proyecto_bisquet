@@ -112,7 +112,7 @@ $ pip install django-mathfilters
             </div>
             <div class="row text-center">
               <div class="col mt-4">
-                <p><a href="#" style="color:black"><i class="fa fa-print fa-3x" aria-hidden="true"></i></a></p>
+                <p onclick="printDiv('print_modal')"><a style="color:black"><i class="fa fa-print fa-3x" aria-hidden="true"></i></a></p>
                 <p><strong>Imprimir Orden</strong></p>
               </div>
             </div>
@@ -131,6 +131,127 @@ $ pip install django-mathfilters
       </div>
   </div>
 </div>
+
+
+
+
+
+
+
+<!-- Modal print -->
+<div class="modal fade" id="print_modal">
+  <br><br>
+  <div class="text-center border-bottom">
+    <h1 class="h1">{{ usuario.id_provider.nombre }}</h1>
+  </div>
+  <br>
+  <div class="text-center">
+    <p>TEL: {{ usuario.phone }} <br> ID #{{ data.id }}<br> Productos: {{  data.cantidad_productos  }}</p>
+  </div>
+
+
+  <div class="container">
+    <div class="row border rounded">
+      <div class="container-fluid">
+        <div class="row border-bottom">
+          <div class="col">
+            <p><strong>Cliente: </strong><br>{{ data.id_franchise.nombre }}</p>
+          </div>
+          <div class="col border-left">
+            <p><strong>Fecha: </strong><br>{{ data.fecha_pedido|date:'M-d-Y' }}</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="row border-bottom">
+              <div class="col">
+              <p><strong>Domicilio: </strong><br>{{ data.id_franchise.domicilio }}</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+              <p><strong>RFC: </strong><br>{{ data.id_franchise.rfc }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="col border-left">
+            {% language 'es' %}
+              <p><strong>Día de entrega: </strong></p><p>{{ data.fecha_pedido|date:'l' }}</p>
+            {% endlanguage %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="container">
+    <div class="row border rounded">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Unidad</th>
+              <th scope="col">Producto</th>
+              <th scope="col">Precio por unidad</th>
+              <th scope="col">Total</th>
+            </tr>
+          </thead>
+          <tbody id="consult_orders">
+            {% for p in products_list %}
+            <tr>
+              <td>{{p.cantidad }}</td>
+              <td>{{p.id_unidad.abreviacion}}</td>
+              <td>{{p.id_complete_product.id_product.nombre.capitalize }}</td>
+              <td>$ {{p.precio_por_unidad }}</td>
+              <td>$ {{p.total }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+  <div class="col-4">
+    <div class="row border rounded">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-5 mt-2">
+            <small>Total:</small>
+          </div>
+          <div class="col-7 mt-2">
+            <div class="input-group mb-3">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon1">$</span>
+              </div>
+              <input disabled id="total_precio" class="form-control" type="number" value="{{ data.precio_total }}" step="0.001">
+            </div>
+          </div>
+          </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+</div>
+
+<script>
+  function printDiv(divID){
+    var divElements = document.getElementById(divID).innerHTML;
+    var oldPage = document.body.innerHTML;
+    document.body.innerHTML = divElements;
+    window.print();
+    document.body.innerHTML = oldPage;
+  }
+</script>
+
 <script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
+
+
+
+
 
 {% endblock extras %}
