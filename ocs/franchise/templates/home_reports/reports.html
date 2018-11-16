@@ -1,0 +1,150 @@
+{% extends "franchise/home.html" %}
+
+{% block extras %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Dashboard</h1>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <canvas id="dateorder" class="chartjs" width="325" height="100" ></canvas>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <canvas id="percentage_order" width="800" height="450"></canvas>
+    </div>
+    <div class="col">
+      <canvas id="percentage_product" width="800" height="450"></canvas>
+    </div>
+    <div class="col">
+      <canvas id="percentage_cost" width="800" height="450"></canvas>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- TODO: Move to separated javascript -->
+<script>
+var lineChart = document.getElementById("dateorder");
+var doughnutChart = document.getElementById("percentage_order");
+var doughnutChart2 = document.getElementById("percentage_product");
+var doughnutChart3 = document.getElementById("percentage_cost");
+doughnutChart.height = 200;
+doughnutChart2.height = 200;
+doughnutChart3.height = 200;
+
+// # of orders by date
+new Chart(lineChart, {
+  type: 'line',
+  data: {
+    labels: ["","Lunes","Martes","Miercoles","Jueves","Viernes","Sabado","Domingo",""],
+    datasets: [{
+        data: [0,1,5,0,2,3,1,2,0],
+        label: "Pedidos",
+        borderColor: "#3e95cd",
+        fill: true
+      }
+    ]
+  },
+  options: {
+    title: {
+      display: true,
+      text: 'Pedidos realizados durante esta semana'
+    }
+  }
+});
+
+// Percentage of orders from providers
+new Chart(doughnutChart, {
+    type: 'doughnut',
+    data: {
+      labels: [
+        "Frutas y Verduras Alberto",
+        "Carnes Dante",
+        "Abarrotes Fátima"
+        ],
+      datasets: [
+        {
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
+          data: [50,20,30]
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Proveedores favoritos'
+      },
+      legend: {
+        display: false
+      }
+    }
+});
+
+// Percentage of products ordered
+new Chart(doughnutChart2, {
+    type: 'doughnut',
+    data: {
+      labels: [
+        "Jitomate",
+        "Chile pasilla",
+        "Bistec",
+        "Leche deslactosada",
+        "Azúcar Morena"
+        ],
+      datasets: [
+        {
+          label: "Population (millions)",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: [2478,5267,734,784,433]
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Productos favoritos'
+      },
+      legend: {
+        display: false
+      }
+    }
+
+});
+
+// Percentage of favorite provider
+new Chart(doughnutChart3, {
+    type: 'doughnut',
+    data: {
+      labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+      datasets: [
+        {
+          label: "Population (millions)",
+          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+          data: [2478,5267,734,784,433]
+        }
+      ]
+    },
+    options: {
+      title: {
+        display: true,
+        text: 'Proveedores con mayor inversión'
+      },
+      legend: {
+        display: false
+      }
+    }
+});
+</script>
+
+
+
+
+
+
+
+
+{% endblock extras %}

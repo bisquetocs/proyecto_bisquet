@@ -43,7 +43,7 @@ def registerFranchise(request):
 def home(request):
     u = OCSUser.objects.get(user = request.user)
     if u.id_franchise!=None:
-        return render(request, 'franchise/home.html', {'usuario':u,})
+        return render(request, 'home_reports/reports.html', {'usuario':u,})
     else:
         return redirect('../')
 
@@ -133,7 +133,7 @@ def provider_detail(request, id_provider):
             'success' : success,
             'provider' : p,
             })
-                
+
 
 @login_required
 def profile (request):
