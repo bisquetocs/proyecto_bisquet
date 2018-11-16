@@ -5,7 +5,7 @@ Modified by: Dante F
 Modify date: 26-10-18
 """
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
@@ -46,6 +46,14 @@ def home(request):
         return render(request, 'home_reports/reports.html', {'usuario':u,})
     else:
         return redirect('../')
+
+def get_light_reports(request):
+    data = {
+        "test" : 10,
+        "test2" : 20,
+    }
+    return JsonResponse(data)
+
 
 @login_required
 def link_provider(request):

@@ -8,20 +8,19 @@ doughnutChart3.height = 200;
 
 
 //AJAX Request
+/*
 $.ajax({
-        url: '/ajax/validate_username/',
+        url: '/franchise/home/ajax_reports',
         data: {
-          'username': username
+          'username': data
         },
         dataType: 'json',
         success: function (data) {
-          if (data.is_taken) {
-            alert("A user with this username already exists.");
-          }
+          alert('WOOO, AJAX!');
         }
       });
 
-
+*/
 // # of orders by date
 new Chart(lineChart, {
   type: 'line',
