@@ -19,8 +19,12 @@ from django.contrib import messages
 from .forms import RegisterFranchiseForm
 from provider.models import LinkWithF, Provider
 from accounts.models import OCSUser
+from orders.models import Order
 
 from .models import Franchise
+
+
+from datetime import datetime, timedelta
 
 @login_required
 def registerFranchise(request):
@@ -47,10 +51,27 @@ def home(request):
     else:
         return redirect('../')
 
+
+@login_required
 def get_light_reports(request):
+    days_ago = 10
+    days = []
+    days_aux = []
+    orders_by_day = []
+    u = OCSUser.objects.get(user = request.user)
+    order_list = Order.objects.filter(id_franchise = u.id_franchise)
+
+    for i in range(days_ago, 0, -1):
+        days_aux.append( ((datetime.now() - timedelta(days=i)).date()) )
+        days.append((datetime.now()-timedelta(days=i)).strftime("%d/%b/%y"))
+    days.append('Today')
+    days_aux.append(datetime.now())
+    for i in range(0,days_ago+1):
+        orders_by_day.append(Order.objects.filter(id_franchise = u.id_franchise, fecha_pedido__range=(days_aux[i] - timedelta(days=1), days_aux[i])).count())
+
     data = {
-        "test" : 10,
-        "test2" : 20,
+        "days": days,
+        "orders_by_day": orders_by_day,
     }
     return JsonResponse(data)
 
