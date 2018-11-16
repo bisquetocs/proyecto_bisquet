@@ -64,7 +64,7 @@ def get_light_reports(request):
         - A Json response with the values needed for the dashboard
     """
     u = OCSUser.objects.get(user = request.user)
-    background_color_pool = ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#40fff1","#3f95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850","#40ff00"]
+    background_color_pool = ["#F39C12", "#011F45","#FF4040","#34A853","#4285F4", "#011F45","#FF4040","#1A457A","#F39C12", "#011F45","#FF4040","#1A457A"]
     # Data for the number of orders in the last 5 days
     days_ago = 5
     days = []
