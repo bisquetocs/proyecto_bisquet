@@ -45,22 +45,18 @@ $.ajax({
       new Chart(doughnutChart, {
           type: 'doughnut',
           data: {
-            labels: [
-              "Frutas y Verduras Alberto",
-              "Carnes Dante",
-              "Abarrotes Fátima"
-              ],
+            labels: data.provider_names,
             datasets: [
               {
-                backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f"],
-                data: [50,20,30]
+                backgroundColor: data.provider_color,
+                data: data.provider_num_orders,
               }
             ]
           },
           options: {
             title: {
               display: true,
-              text: 'Proveedores favoritos'
+              text: '# de pedidos por proveedor'
             },
             legend: {
               display: false
@@ -83,7 +79,7 @@ $.ajax({
               {
                 label: "Population (millions)",
                 backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
-                data: [2478,5267,734,784,433]
+                data: [-2478,5267,734,784,433]
               }
             ]
           },
