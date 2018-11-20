@@ -301,7 +301,21 @@ function send_order(){
     });
   }
 }
-
+function complete_order(id_pedido){
+  if(confirm('¿Confirmas que el pedido llegó completo? ¡Se sumará el contenido del pedido a tu inventario!')){
+    $.ajax({
+      url: '/orders/complete_order/',
+      data: {
+        'id_pedido': id_pedido,
+      },
+      dataType: 'json',
+      type: 'GET',
+      success: function(data) {
+        location.reload();
+      }
+    });
+  }
+}
 
 
 

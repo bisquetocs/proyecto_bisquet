@@ -127,23 +127,23 @@
         </div>
       </div>
       <div class="card mb-3">
-        {% if orders_status == 'Guardado' %}
+        {% if orders_status.id_status.nombre == 'Guardado' %}
         <div class="card-body text-info">
           <small style="color:gray">Estado del pedido:</small> <br />
-          <b>{{ orders_status }}</b><br />
-          <small style="color:gray">{{ orders_status_desc }}</small>
+          <b>{{ orders_status.id_status.nombre }}</b><br />
+          <small style="color:gray">{{ orders_status.id_status.descripcion }}</small>
         </div>
-        {% elif orders_status == 'Pedido' %}
+        {% elif orders_status.id_status.nombre == 'Pedido' %}
         <div class="card-body text-warning">
           <small style="color:gray">Estado del pedido:</small> <br />
-          <b>{{ orders_status }}</b><br />
-          <small style="color:gray">{{ orders_status_desc }}</small>
+          <b>{{ orders_status.id_status.nombre }}</b><br />
+          <small style="color:gray">{{ orders_status.id_status.descripcion }}</small>
         </div>
-        {% elif orders_status == 'Recibido' %}
+        {% elif orders_status.id_status.nombre == 'Recibido' %}
         <div class="card-body text-success">
           <small style="color:gray">Estado del pedido:</small> <br />
-          <b>{{ orders_status }}</b><br />
-          <small style="color:gray">{{ orders_status_desc }}</small>
+          <b>{{ orders_status.id_status.nombre }}</b><br />
+          <small style="color:gray">{{ orders_status.id_status.descripcion }}</small>
         </div>
         {% endif %}
       </div>

@@ -3,63 +3,69 @@
 {% load static %}
 {% block extras %}
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-  <h1 class="h2">Mis pedidos</h1>
+<div class="clearfix">
+  <h3 class="float-left">
+    Pedidos activos:
+  </h3>
+  <h3 class="float-right">
+    <a class="btn btn-primary" href="/orders/consult_order_history_prov/" role="button">
+      <span class="fa fa-sort-amount-asc"></span> Historial de pedidos
+    </a>
+  </h3>
 </div>
+<hr />
 
+{% if empty_list == 1 and empty_list_re == 1 and empty_list_in == 1 %}
 <div class='row'>
-  {% if empty_list == 1 and empty_list_re == 1%}
-  <div class="shadow-lg p-3 mb-5 bg-white rounded">
-    <p>
-      Aún no tienes ningún pedido.
-    </p>
+  <div class="col">
+    <div class="shadow-lg p-3 mb-5 bg-white rounded">
+      <center style="color:gray">
+        No tienes ningún pedido activo
+      </center>
+    </div>
   </div>
-  {% endif %}
 </div>
+{% endif %}
 
 {% if empty_list == 0 %}
 <div class="row">
-  <div class="container-fluid mt-3">
-    <div class="card">
+  <div class="container-fluid ">
+    <div class="card" style="background-color:rgb(233, 236, 239)">
       <div class="card-body">
-      <h5 class="card-title">Sin asignación</h5>
+      <h5 class="card-title">Pedidos nuevos:</h5>
       <table class="table table-responsive-xl table-hover table-sm mx-1">
-        <thead>
+        <thead class="thead-dark">
           <tr>
+            <th></th>
             <th scope="col">Franquicia</th>
             <th scope="col">Fecha pedido</th>
             <th scope="col">Fecha entrega</th>
-            <th scope="col">Estado</th>
             <th scope="col">Opciones</th>
           </tr>
         </thead>
-        <tbody id="consult_orders">
+        <tbody>
           {% for p in pedido %}
           <tr>
+            <td><span class="fa fa-exclamation-circle fa-lg" aria-hidden="true" style="color: green"></span></td>
             <td>{{p.id_pedido.id_franchise.nombre}}</td>
             <td>{{p.id_pedido.fecha_pedido|date:'M-d-Y'}}</td>
             <td>{{p.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
-            <td><i class="fa fa-exclamation-circle fa-lg" aria-hidden="true" style="color: green"></i></td>
             <td>
-              <a href="/orders/order_detail/{{ p.id_pedido.id }}">
-              <button type="button" class="btn btn-info" name="button" onclick="">
-                Ver detalle
-              </button>
+              <a class="btn btn-info" href="/orders/order_detail/{{ p.id_pedido.id }}" role="button">
+                Ver pedido
               </a>
             </td>
           </tr>
           {% endfor %}
           {% for r in recibido %}
           <tr>
+            <td></td>
             <td>{{r.id_pedido.id_franchise.nombre}}</td>
             <td>{{r.id_pedido.fecha_pedido|date:'M-d-Y'}}</td>
             <td>{{r.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
-            <td></td>
             <td>
-              <a href="/orders/order_detail/{{ r.id_pedido.id }}">
-              <button type="button" class="btn btn-info" name="button" onclick="">
-                Ver detalle
-              </button>
+              <a class="btn btn-info" href="/orders/order_detail/{{ r.id_pedido.id }}" role="button">
+                Ver pedido
               </a>
             </td>
           </tr>
@@ -75,11 +81,11 @@
 {% if empty_list_re == 0 %}
 <div class="row">
   <div class="container-fluid mt-3">
-    <div class="card">
+    <div class="card" style="background-color:rgb(233, 236, 239)">
       <div class="card-body">
-      <h5 class="card-title">En progreso</h5>
+      <h5 class="card-title">Pedidos en progreso:</h5>
       <table class="table table-responsive-xl table-hover table-sm mx-1">
-        <thead>
+        <thead class="thead-dark">
           <tr>
             <th scope="col">Franquicia</th>
             <th scope="col">Fecha pedido</th>
@@ -87,17 +93,51 @@
             <th scope="col"></th>
           </tr>
         </thead>
-        <tbody id="consult_orders">
+        <tbody>
           {% for pr in preparar %}
           <tr>
             <td>{{pr.id_pedido.id_franchise.nombre}}</td>
             <td>{{pr.id_pedido.fecha_pedido|date:'M-d-Y'}}</td>
             <td>{{pr.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
             <td>
-              <a href="/orders/order_detail/{{ pr.id_pedido.id }}">
-              <button type="button" class="btn btn-info" name="button" onclick="">
-                Ver detalle
-              </button>
+              <a class="btn btn-info" href="/orders/order_detail/{{ pr.id_pedido.id }}" role="button">
+                Ver pedido
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if empty_list_in == 0 %}
+<div class="row">
+  <div class="container-fluid mt-3">
+    <div class="card" style="background-color:rgb(233, 236, 239)">
+      <div class="card-body">
+      <h5 class="card-title">Pedidos incompletos:</h5>
+      <table class="table table-responsive-xl table-hover table-sm mx-1">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Franquicia</th>
+            <th scope="col">Fecha pedido</th>
+            <th scope="col">Fecha entrega</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for in in incompletos %}
+          <tr>
+            <td>{{in.id_pedido.id_franchise.nombre}}</td>
+            <td>{{in.id_pedido.fecha_pedido|date:'M-d-Y'}}</td>
+            <td>{{in.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
+            <td>
+              <a class="btn btn-info" href="/orders/order_detail/{{ in.id_pedido.id }}" role="button">
+                Ver pedido
               </a>
             </td>
           </tr>

@@ -1,0 +1,86 @@
+{% extends aux %}
+
+{% load static %}
+{% block extras %}
+{% if usuario.id_provider is None %}
+<table class="table table-responsive-xl table-hover table-sm mx-1">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">ID #</th>
+      {% if usuario.id_provider is None %}
+      <th scope="col">Proveedor</th>
+      {% else %}
+      <th scope="col">Franquicia</th>
+      {% endif %}
+      <th scope="col">Fecha pedido</th>
+      <th scope="col">Fecha entrega</th>
+      <th scope="col">Último estado</th>
+      <th scope="col">Opciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in pending %}
+    <tr>
+      <td>{{p.id_pedido.id}}</td>
+      {% if usuario.id_provider is None %}
+      <td>{{p.id_pedido.id_provider.nombre}}</td>
+      {% else %}
+      <td>{{p.id_pedido.id_franchise.nombre}}</td>
+      {% endif %}
+      <td>{{p.id_pedido.fecha_pedido|date:'M-d-Y'}}</td>
+      <td>{{p.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
+      <td>{{p.id_status.nombre}}</td>
+      <td>
+        <div class="btn-group" role="group" aria-label="Basic example">
+          <a class="btn btn-success" href="/orders/register_arrival/{{ p.id_pedido.id }}" role="button">
+            Registrar llegada
+          </a>
+          <a class="btn btn-info" href="/orders/order_detail/{{ p.id_pedido.id }}" role="button">
+            Ver pedido
+          </a>
+        </div>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endif %}
+<table class="table table-responsive-xl table-hover table-sm mx-1">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">ID #</th>
+      {% if usuario.id_provider is None %}
+      <th scope="col">Proveedor</th>
+      {% else %}
+      <th scope="col">Franquicia</th>
+      {% endif %}
+      <th scope="col">Fecha pedido</th>
+      <th scope="col">Fecha entrega</th>
+      <th scope="col">Último estado</th>
+      <th scope="col">Opciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in orders %}
+    <tr>
+      <td>{{p.id_pedido.id}}</td>
+      {% if usuario.id_provider is None %}
+      <td>{{p.id_pedido.id_provider.nombre}}</td>
+      {% else %}
+      <td>{{p.id_pedido.id_franchise.nombre}}</td>
+      {% endif %}
+      <td>{{p.id_pedido.fecha_pedido|date:'M-d-Y'}}</td>
+      <td>{{p.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
+      <td>{{p.id_status.nombre}}</td>
+      <td>
+        <a class="btn btn-info" href="/orders/order_detail/{{ p.id_pedido.id }}" role="button">
+          Ver pedido
+        </a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock extras %}

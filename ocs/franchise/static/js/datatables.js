@@ -3,7 +3,7 @@ $(document).ready( function () {
 
 
     $('table.display').DataTable({
-      scrollY:        '22vh',
+      scrollY:        '100vh',
       scrollCollapse: true,
 
       "language": {
