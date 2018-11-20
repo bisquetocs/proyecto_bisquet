@@ -34,6 +34,8 @@ from products.models import Price
 from products.models import CompleteProduct
 from products.models import Equivalencias
 
+from inventory.models import LinkedInventory
+from inventory.models import LinkedProductRecord
 
 
 from django.http import JsonResponse
@@ -80,27 +82,30 @@ def make_order_to(request, id_provider):
     if exists:
         data['order_to_edit'] = True
         orders = Order.objects.filter(id_franchise=franchise, id_provider=provider, activo=True)
-        order_s = OrderInStatus.objects.get(id_pedido__in = orders, id_status__in=[1,2,3], activo = True)
-        prods = OrderProductInStatus.objects.filter(id_pedido=order_s.id_pedido, activo=True)
-        for p in prods:
-            products = products.exclude(id=p.id_complete_product.id_product.id)
+        exists = OrderInStatus.objects.filter(id_pedido__in = orders, id_status__in=[1,2,3], activo = True).exists()
+        if exists:
+            order_s = OrderInStatus.objects.get(id_pedido__in = orders, id_status__in=[1,2,3], activo = True)
+            prods = OrderProductInStatus.objects.filter(id_pedido=order_s.id_pedido, activo=True)
+            for p in prods:
+                products = products.exclude(id=p.id_complete_product.id_product.id)
 
-        data['orders'] = order_s.id_pedido
-        data['orders_products'] = prods
-        data['products'] = products
-        #aux_date = str(ord.id_pedido.fecha_pedido.year)+'-'+str(ord.id_pedido.fecha_pedido.month)+'-'+str(ord.id_pedido.fecha_pedido.day)
-        #data['orders_date'] = (aux_date)
-        aux_day = order_s.id_pedido.fecha_ideal.weekday()
-        if aux_day == 0: day = 'LUNES'
-        elif aux_day == 1: day = 'MARTES'
-        elif aux_day == 2: day = 'MIÉRCOLES'
-        elif aux_day == 3: day = 'JUEVES'
-        elif aux_day == 4: day = 'VIERNES'
-        elif aux_day == 5: day = 'SÁBADO'
-        elif aux_day == 6: day = 'DOMINGO'
-        data['orders_day'] = day
-        data['orders_status'] = order_s
-
+            data['orders'] = order_s.id_pedido
+            data['orders_products'] = prods
+            data['products'] = products
+            #aux_date = str(ord.id_pedido.fecha_pedido.year)+'-'+str(ord.id_pedido.fecha_pedido.month)+'-'+str(ord.id_pedido.fecha_pedido.day)
+            #data['orders_date'] = (aux_date)
+            aux_day = order_s.id_pedido.fecha_ideal.weekday()
+            if aux_day == 0: day = 'LUNES'
+            elif aux_day == 1: day = 'MARTES'
+            elif aux_day == 2: day = 'MIÉRCOLES'
+            elif aux_day == 3: day = 'JUEVES'
+            elif aux_day == 4: day = 'VIERNES'
+            elif aux_day == 5: day = 'SÁBADO'
+            elif aux_day == 6: day = 'DOMINGO'
+            data['orders_day'] = day
+            data['orders_status'] = order_s
+        else:
+            data['order_to_edit'] = False
     return render(request, 'orders/make_order_to.html', data)
 
 def add_product_to_order(request):
@@ -218,43 +223,76 @@ def delete_product_from_order(request):
 
 # Function that let the providers to edit its company info
 #@login_required
-def order_detail (request, id_order):
-    u = OCSUser.objects.get(user = request.user)
-    order = Order.objects.get(id = id_order)
-    products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
-    #Para cambiar el estado de la orden
-    order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
-    pedido = OrderStatus.objects.get(id = 2)
-    if(order_s.id_status == pedido):
-        status = OrderStatus.objects.get(id = 3)
-        order_s.id_status = status
-        order_s.save()
-    data = {
-        'usuario': u,
-        'data':order,
-        'products_list':products_list,
-    }
-    return render(request, 'orders/order_detail.html', data)
-
 def consult_orders (request):
     ocs_user = OCSUser.objects.get(user = request.user)
-    prov = ocs_user.id_provider_id
+    prov = ocs_user.id_provider
     #filtro para aislar a la columna id, sirve para solo seleccionar las ordenes de tal proveedor
-    orders = Order.objects.values_list('id', flat=True).filter(id_provider = prov, activo = 1)
-    pedido = OrderInStatus.objects.filter(activo = 1, id_pedido__in = orders, id_status = 2)
-    recibido = OrderInStatus.objects.filter(activo = 1, id_pedido__in = orders, id_status = 3)
-    preparar = OrderInStatus.objects.filter(activo = 1, id_pedido__in = orders, id_status = 6)
+    orders = Order.objects.filter(id_provider=prov, activo=True)
+    pedido = OrderInStatus.objects.filter(id_pedido__in = orders, id_status = 2, activo = 1)
+    recibido = OrderInStatus.objects.filter(id_pedido__in = orders, id_status = 3, activo = 1)
+    preparar = OrderInStatus.objects.filter(id_pedido__in = orders, id_status = 6, activo = 1)
+    incompletos = OrderInStatus.objects.filter(id_pedido__in = orders, id_status = 7, activo = 1)
 
-    if len(pedido) != 0 or len(recibido) != 0:
-        empty_list = 0
-    else:
-        empty_list = 1
+    if len(pedido) != 0 or len(recibido) != 0:empty_list = 0
+    else:empty_list = 1
 
-    if len(preparar) == 0:
-        empty_list_re = 1
+    if len(preparar) == 0:empty_list_re = 1
+    else:empty_list_re = 0
+
+    if len(incompletos) == 0:
+        empty_list_in = 1
     else:
-        empty_list_re = 0
-    return render(request, 'orders/consult_orders.html', {'usuario':ocs_user, 'edit':True, 'empty_list':empty_list, 'pedido':pedido, 'recibido':recibido, 'preparar':preparar, 'empty_list_re':empty_list_re})
+        empty_list_in = 0
+
+    data = {
+        'usuario':ocs_user,
+        'empty_list':empty_list,
+        'empty_list_re':empty_list_re,
+        'empty_list_in':empty_list_in,
+        'pedido':pedido,
+        'recibido':recibido,
+        'preparar':preparar,
+        'incompletos':incompletos,
+    }
+    return render(request, 'orders/consult_orders.html', data)
+
+def order_detail (request, id_order):
+    exist = Order.objects.filter(id = id_order).exists()
+    if exist == False:
+        return redirect('/')
+    else:
+        order = Order.objects.get(id = id_order)
+    u = OCSUser.objects.get(user = request.user)
+    aux = False
+    if u.id_provider is None:
+        franchise = Franchise.objects.get(id = u.id_franchise.id)
+        if order.id_franchise == franchise:
+            aux = True
+            other = 'franchise/home.html'
+    else:
+        provider = Provider.objects.get(id = u.id_provider.id)
+        if order.id_provider == provider:
+            aux = True
+            other = 'provider/home.html'
+    if aux:
+        products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
+        #Para cambiar el estado de la orden
+        order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
+        pedido = OrderStatus.objects.get(id = 2)
+        if(order_s.id_status == pedido):
+            status = OrderStatus.objects.get(id = 3)
+            order_s.id_status = status
+            order_s.save()
+        data = {
+            'usuario': u,
+            'order_s':order_s,
+            'data':order,
+            'aux':other,
+            'products_list':products_list,
+        }
+        return render(request, 'orders/order_detail.html', data)
+    else:
+        return redirect('/')
 
 def cancel_order(request):
     id_pedido = request.GET.get('id_pedido', None)
@@ -286,7 +324,190 @@ def send_order(request):
     data = { 'success': True, }
     return JsonResponse(data)
 
+def bloquear_pedido(request):
+    id_pedido = request.GET.get('id_pedido', None)
+    order = Order.objects.get(id = id_pedido, activo=True)
+    order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
+    order_status = OrderStatus.objects.get(id=6)
+    if order_in_status.id_status != order_status:
+        new_order_in_status = OrderInStatus(id_pedido=order,id_status=order_status,fecha=timezone.now(), activo=True)
+        new_order_in_status.save()
+        order_in_status.activo = False
+        order_in_status.save()
+    data = { 'success': True, }
+    return JsonResponse(data)
 
+def desbloquear_pedido(request):
+    id_pedido = request.GET.get('id_pedido', None)
+    order = Order.objects.get(id = id_pedido, activo=True)
+    order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
+    order_status = OrderStatus.objects.get(id=3)
+    if order_in_status.id_status != order_status:
+        new_order_in_status = OrderInStatus(id_pedido=order,id_status=order_status,fecha=timezone.now(), activo=True)
+        new_order_in_status.save()
+        order_in_status.activo = False
+        order_in_status.save()
+    data = { 'success': True, }
+    return JsonResponse(data)
+
+def rechazar_pedido(request):
+    id_pedido = request.GET.get('id_pedido', None)
+
+    order = Order.objects.get(id = id_pedido, activo=True)
+    order.activo = False
+    order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
+    order_status = OrderStatus.objects.get(id=4)
+    new_order_in_status = OrderInStatus(id_pedido=order,id_status=order_status,fecha=timezone.now(), activo=True)
+    new_order_in_status.save()
+    order_in_status.activo = False
+    order_in_status.save()
+    order.save()
+    data = { 'success': True, }
+    return JsonResponse(data)
+
+
+def consult_order_history_prov(request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    prov = ocs_user.id_provider
+    #filtro para aislar a la columna id, sirve para solo seleccionar las ordenes de tal proveedor
+    orders = Order.objects.filter(id_provider=prov, activo=False)
+    status = OrderInStatus.objects.filter(id_pedido__in = orders, activo=True)
+    data = {
+        'usuario':ocs_user,
+        'provider':prov,
+        'aux':'provider/home.html',
+        'orders':status,
+    }
+    return render(request, 'orders/consult_orders_history.html', data)
+
+def consult_order_history_franq(request):
+    ocs_user = OCSUser.objects.get(user = request.user)
+    sucu = ocs_user.id_franchise
+    #filtro para aislar a la columna id, sirve para solo seleccionar las ordenes de tal proveedor
+    orders = Order.objects.filter(id_franchise=sucu, activo=False)
+    status = OrderInStatus.objects.filter(id_pedido__in = orders, activo=True)
+
+    ordersaux = Order.objects.filter(id_franchise=sucu, activo=True)
+    statusaux = OrderInStatus.objects.filter(id_pedido__in = ordersaux, id_status__in=[6,7], activo=True)
+
+    data = {
+        'usuario':ocs_user,
+        'franchise':sucu,
+        'aux':'franchise/home.html',
+        'orders':status,
+        'pending':statusaux,
+    }
+    return render(request, 'orders/consult_orders_history.html', data)
+
+def register_arrival (request, id_order):
+    exist = Order.objects.filter(id = id_order).exists()
+    if exist == False:
+        return redirect('/')
+    else:
+        order = Order.objects.get(id = id_order)
+    u = OCSUser.objects.get(user = request.user)
+    aux = False
+    if u.id_provider is None:
+        franchise = Franchise.objects.get(id = u.id_franchise.id)
+        if order.id_franchise == franchise:
+            products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
+            #Para cambiar el estado de la orden
+            order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
+            pedido = OrderStatus.objects.get(id = 2)
+            if(order_s.id_status == pedido):
+                status = OrderStatus.objects.get(id = 3)
+                order_s.id_status = status
+                order_s.save()
+            data = {
+                'usuario': u,
+                'order_s':order_s,
+                'data':order,
+                'products_list':products_list,
+            }
+            return render(request, 'orders/register_arrival.html', data)
+        else:
+            return redirect('/')
+    else:
+        return redirect('/')
+
+def complete_order(request):
+    id_pedido = request.GET.get('id_pedido', None)
+    print(id_pedido)
+    order = Order.objects.get(id = id_pedido, activo=True)
+    order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
+
+    order_status = OrderStatus.objects.get(id=8)
+    new_order_in_status = OrderInStatus(id_pedido=order,id_status=order_status,fecha=timezone.now(), activo=True)
+    new_order_in_status.save()
+
+    order_in_status.activo = False
+    order_in_status.save()
+
+    order.activo = False
+    order.save()
+
+    productos = OrderProductInStatus.objects.filter(id_pedido = order, activo=True)
+    for p in productos:
+        exist = LinkedInventory.objects.filter(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product).exists()
+        if exist:
+            prod_inv = LinkedInventory.objects.get(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product)
+            if p.id_unidad == prod_inv.id_unidad:
+                prod_inv.amount = prod_inv.amount + p.cantidad
+            else:
+                exist = Equivalencias.objects.filter(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad).exists()
+                if exist:
+                    equiv = Equivalencias.objects.get(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad)
+                    cant_por_equiv = (p.cantidad*equiv.cantidad_origen)/equiv.cantidad_destino
+                    prod_inv.amount = prod_inv.amount + cant_por_equiv
+                else:
+                    equiv = Equivalencias.objects.get(id_product = p.id_complete_product.id_product, id_unidad_destino = prod_inv.id_unidad)
+                    cant_por_equiv = (p.cantidad*equiv.cantidad_destino)/equiv.cantidad_origen
+                    prod_inv.amount = prod_inv.amount + cant_por_equiv
+        else:
+            prod_inv = LinkedInventory(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product, id_unidad=p.id_unidad, amount = p.cantidad)
+        prod_inv.save()
+        bitacora = LinkedProductRecord(id_franchise=order.id_franchise,id_linked_product = prod_inv,id_unidad=p.id_unidad,date = timezone.now(),comment = "Ingreso del pedido #"+str(order.id),amount = p.cantidad,io = True)
+        bitacora.save()
+    data = { 'success': True, }
+    return JsonResponse(data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def has_permission(ocs_u, is_provider, id_company, id_rol):
+    u = OCSUser.objects.get(id = ocs_u)
+    user = User.objects.get(id = u.user)
+    user_groups = user.groups.all()
+    if u.id_provider is None:
+        if is_provider:
+            return False
+        fran = Franchise.objects.get(id = u.id_franchise)
+        if fran.id == id_company:
+            for g in user_groups:
+                if id_rol == g.id:
+                    return True
+        return False
+    elif u.id_franchise is None:
+        if is_provider:
+            prov = Provider.objects.get(id = u.id_provider)
+            if prov.id == id_company:
+                for g in user_groups:
+                    if id_rol == g.id:
+                        return True
+        return False
+    else: return False
 
 
 #

@@ -7,64 +7,94 @@ $ pip install django-mathfilters
 
 -->
 
-{% extends "provider/home.html" %}
+{% extends aux %}
 {% load mathfilters %}
 {% load static %}
 {% load i18n %}
 {% block extras %}
 
-
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-  <h1 class="h2">Detalle de orden</h1>
+<div class="clearfix">
+  <h3 class="float-left">
+    Detalle de orden <small style="color:gray"># <tex id="id_pedido">{{data.id}}</tex></small>
+  </h3>
+  <h3 class="float-right">
+  </h3>
 </div>
+<hr />
 
-<div class="container-fluid">
-  <div class="row border rounded">
-    <div class="container-fluid">
-      <div class="row border-bottom">
-        <div class="col">
-          <h4>{{ data.id_franchise.nombre }}</h4>
-        </div>
-        <div class="col border-left">
-          <p>{{ data.fecha_pedido|date:'M-d-Y' }}</p>
+<div class="container-fluid rounded pt-3" style="background-color:rgb(233, 236, 239)">
+  <div class="card p-1">
+    <div class="row">
+      <div class="col-9">
+        <div class="row p-2">
+          <div class="col-8 border-bottom">
+            <div class="m-1">
+              {% if aux == 'provider/home.html' %}
+              <small>Cliente: </small><b>{{ data.id_franchise.nombre }}</b>
+              {% else %}
+              <small>Proveedor: </small><b>{{ data.id_provider.nombre }}</b>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-4 border-bottom border-left">
+            <div class="m-1">
+              {% if aux == 'provider/home.html' %}
+              <small>RFC: </small>{{ data.id_franchise.rfc }}
+              {% else %}
+              <small>RFC: </small>{{ data.id_provider.rfc }}
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-12 border-bottom">
+            <div class="m-1">
+              {% if aux == 'provider/home.html' %}
+              <small>Razón social: </small>{{ data.id_franchise.razon_social }}
+              {% else %}
+              <small>Razón social: </small>{{ data.id_provider.razon_social }}
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="m-1">
+              {% if aux == 'provider/home.html' %}
+              <small>Domicilio: </small>{{ data.id_franchise.domicilio }}
+              {% else %}
+              <small>Domicilio: </small>{{ data.id_provider.domicilio }}
+              {% endif %}
+            </div>
+          </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col">
-          <div class="row border-bottom">
-            <div class="col">
-            <p>{{ data.id_franchise.domicilio }}</p>
-            </div>
+      <div class="col-3 border-left" style="font-size:18px">
+        <div class="row p-1">
+          <div class="col-12 p-1 border-bottom">
+            <small>Fecha de pedido: {{ data.fecha_pedido }}</small>
           </div>
-          <div class="row">
-            <div class="col">
-            <p>{{ data.id_franchise.rfc }}</p>
-            </div>
+          <div class="col-12 p-1 border-bottom">
+            <small>Fecha de entrega: </small><b>{{ data.fecha_ideal|date:'M-d-Y' }}</b>
           </div>
-        </div>
-        <div class="col border-left">
-          {% language 'es' %}
-            <p>{{ data.fecha_pedido|date:'l' }}</p>
-          {% endlanguage %}
-
+          <div class="col-12 p-1">
+            {% language 'es' %}
+              <small>Entrega el día: </small><b>{{ data.fecha_ideal|date:'l' }}</b>
+            {% endlanguage %}
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="row mt-5">
+  <div class="row mt-3">
     <div class="col-8">
       <div class="card">
-        <div class="card-body">
-        <h5 class="card-title">Orden</h5>
+        <div class="p-2">
         <table class="table table-responsive-xl table-hover table-sm mx-1">
-          <thead>
+          <thead class="thead-dark">
             <tr>
-              <th scope="col">Cantidad</th>
-              <th scope="col">Unidad</th>
-              <th scope="col">Producto</th>
-              <th scope="col">Precio por unidad</th>
-              <th scope="col">Total</th>
+              <th scope="col">Cantidad:</th>
+              <th scope="col">UMedida:</th>
+              <th scope="col">Producto:</th>
+              <th scope="col">Precio por unidad:</th>
+              <th scope="col">Total:</th>
             </tr>
           </thead>
           <tbody id="consult_orders">
@@ -83,52 +113,117 @@ $ pip install django-mathfilters
       </div>
     </div>
     <div class="col-4">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Totales</h5>
+      <div class="card mb-3">
+        <div class="card-body text-center">
+          {% if aux == 'provider/home.html' %}
+          {% if order_s.id_status.id == 6 %}
+          <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons">
+            <label onclick="bloquearDesbloquear(false)" class="btn btn-outline-dark">
+              <input type="radio" name="product_io"  autocomplete="off" value="in">
+              <div class="" id="desb">
+                Desbloquear <span class="fa fa-unlock" style="color:green"></span>
+              </div>
+
+            </label>
+            <label onclick="bloquearDesbloquear(true)" class="btn btn-outline-dark active">
+              <input type="radio" name="product_io"  autocomplete="off" value="out" checked>
+              <div class="" id="bloq">
+                <span class="fa fa-lock" style="color:red"></span> Bloqueado
+              </div>
+
+            </label>
+          </div>
+          {% elif order_s.id_status.id == 3 %}
+          <div class="btn-group btn-group-toggle mb-3" data-toggle="buttons">
+            <label onclick="bloquearDesbloquear(false)" class="btn btn-outline-dark active">
+              <input type="radio" name="product_io" autocomplete="off" value="in" checked>
+              <div class="" id="desb">
+                Desbloqueado <span class="fa fa-unlock" style="color:green"></span>
+              </div>
+            </label>
+            <label onclick="bloquearDesbloquear(true)" class="btn btn-outline-dark">
+              <input type="radio" name="product_io" autocomplete="off" value="out">
+              <div class="" id="bloq">
+                <span class="fa fa-lock" style="color:red"></span> Bloquear
+              </div>
+            </label>
+          </div>
+          {% endif %}
+          {% endif %}
+          <h5 class="card-title">{{ data.id_franchise.nombre }}</h5>
+          <small>Información de la venta:</small>
           <div class="row">
             <div class="col-5 mt-2">
               <small>Total de productos:</small>
             </div>
-            <div class="col-7 mt-2">
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">#</span>
-                </div>
-                <input disabled id="total_productos" class="form-control" type="number" value="{{ data.cantidad_productos }}" step="1">
-              </div>
+            <div class="col-7 mt-2 rounded" style="background-color:rgb(233, 236, 239)">
+              <b># {{ data.cantidad_productos }}</b>
             </div>
             <div class="col-5 mt-2">
-              <small>Total de precio:</small>
+              <small>Importe total:</small>
             </div>
-            <div class="col-7 mt-2">
-              <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="basic-addon1">$</span>
-                </div>
-                <input disabled id="total_precio" class="form-control" type="number" value="{{ data.precio_total }}" step="0.001">
-              </div>
+            <div class="col-7 mt-2 rounded" style="background-color:rgb(233, 236, 239)">
+              <b>$ {{ data.precio_total }}</b>
             </div>
+          </div>
+          <div class="row">
+            <div class="col-6 mt-4">
+              <a href="" class="btn btn-sm btn-block btn-outline-secondary pt-3 pb-3" role="button">
+                <span class="fa fa-print fa-2x"></span><br />
+                <b class="container-fluid">Imprimir pedido</b>
+              </a>
             </div>
-            <div class="row text-center">
-              <div class="col mt-4">
-                <p onclick="printDiv('print_modal')"><a style="color:black"><i class="fa fa-print fa-3x" aria-hidden="true"></i></a></p>
-                <p><strong>Imprimir Orden</strong></p>
-              </div>
+            <div class="col-6 mt-4">
+              <a href="" class="btn btn-sm btn-block btn-outline-primary pt-2 pb-2" role="button">
+                <span class="fa fa-download fa-2x"></span><br />
+                <b class="container-fluid">Descargar excel</b><br />
+                <span class="fa fa-file-excel-o"></span>
+              </a>
             </div>
+          </div>
+          <div class="card mb-2 mt-3">
+            {% if order_s.id_status.nombre == 'Cancelado' %}
+            <div class="card-body text-danger">
+              <small style="color:gray">Estado del pedido:</small> <br />
+              <b>{{ order_s.id_status.nombre }}</b><br />
+              <small style="color:gray">{{ order_s.id_status.descripcion }}</small>
+            </div>
+            {% elif order_s.id_status.nombre == 'Rechazado' %}
+            <div class="card-body text-danger">
+              <small style="color:gray">Estado del pedido:</small> <br />
+              <b>{{ order_s.id_status.nombre }}</b><br />
+              <small style="color:gray">{{ order_s.id_status.descripcion }}</small>
+            </div>
+            {% elif order_s.id_status.nombre == 'Recibido' %}
+            <div class="card-body text-success">
+              <small style="color:gray">Estado del pedido:</small> <br />
+              <b>{{ order_s.id_status.nombre }}</b><br />
+              <small style="color:gray">{{ order_s.id_status.descripcion }}</small>
+            </div>
+            {% else %}
+            <div class="card-body text-dark">
+              <small style="color:gray">Estado del pedido:</small> <br />
+              <b>{{ order_s.id_status.nombre }}</b><br />
+              <small style="color:gray">{{ order_s.id_status.descripcion }}</small>
+            </div>
+            {% endif %}
+          </div>
         </div>
       </div>
+      {% if aux == 'provider/home.html' %}
+      {% if order_s.id_status.nombre != 'Rechazado' and order_s.id_status.nombre != 'Cancelado' and order_s.id_status.nombre != 'Completado' and order_s.id_status.nombre != 'Incompleto' %}
+      <div class="card mt-1 mb-3">
+        <div class="text-center p-3">
+          <small style="color:red">ZONA ROJA</small>
+          <button onclick="rechazar_pedido()" class="btn btn-sm btn-block btn-outline-danger" type="button">
+              <span class="fa fa-thumbs-down"></span> <b>Rechazar pedido</b>
+          </button>
+          <small style="color:gray">Una vez rechazado un pedido, esta acción no se podrá regresar. Se recomienda meditarlo dos veces.</small>
+        </div>
+      </div>
+      {% endif %}
+      {% endif %}
     </div>
-  </div>
-  <div class="row border rounded mt-5">
-      <div class="col-10 mt-4">
-        <p>Para cancelar el pedido es necesario presionar el botón incluido en esta sección. Antes de continuar,
-          se recomienda meditar esta acción pues una vez ejecutada no será posible regresar a la orden.
-        </p>
-      </div>
-      <div class="col-2 mt-4">
-        <button type="button" class="btn btn-danger">Cancelar Orden</button>
-      </div>
   </div>
 </div>
 
@@ -245,7 +340,7 @@ $ pip install django-mathfilters
     document.body.innerHTML = divElements;
     window.print();
     document.body.innerHTML = oldPage;
-    
+
   }
 </script>
 

@@ -466,9 +466,56 @@ function checkEquivDestino(id_unidad_origen){
   });
 }
 
+function bloquearDesbloquear(bloquear){
+  var id_pedido = doc('id_pedido').innerHTML;
+  if(bloquear){
+    $.ajax({
+       url: '/orders/bloquear_pedido/',
+       data: {
+         'id_pedido': id_pedido,
+       },
+       dataType: 'json',
+       type: 'GET',
+       success: function(data) {
+         doc('desb').innerHTML = 'Desbloquear <span class="fa fa-unlock" style="color:green"></span>';
+         doc('bloq').innerHTML = '<span class="fa fa-lock" style="color:red"></span> Bloqueado';
+         location.reload();
+       }
+    });
+  }else{
+    $.ajax({
+       url: '/orders/desbloquear_pedido/',
+       data: {
+         'id_pedido': id_pedido,
+       },
+       dataType: 'json',
+       type: 'GET',
+       success: function(data) {
+         doc('desb').innerHTML = 'Desbloqueado <span class="fa fa-unlock" style="color:green"></span>';
+         doc('bloq').innerHTML = '<span class="fa fa-lock" style="color:red"></span> Bloquear';
+         location.reload();
+       }
+    });
+  }
+}
 
-
-
+function rechazar_pedido(){
+  var id_pedido = doc('id_pedido').innerHTML;
+  if(confirm('¿Seguro que quieres rechazar este pedido? ¡Esta acción no tiene regreso! Y se tomará para cunstruir tu reputación con el cliente')){
+    $.ajax({
+      url: '/orders/rechazar_pedido/',
+      data: {
+        'id_pedido': id_pedido,
+      },
+      dataType: 'json',
+      type: 'GET',
+      success: function(data) {
+        alert('El pedido ha sido rechazado');
+        location.reload();
+      }
+    });
+  }
+}
 
 
 

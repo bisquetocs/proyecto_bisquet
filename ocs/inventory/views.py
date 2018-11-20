@@ -16,6 +16,7 @@ from django.views import generic
 import xlwt
 from django.contrib.auth.models import User
 import datetime
+from .models import LinkedInventory
 
 
 # Create your views here.
@@ -31,11 +32,12 @@ def show_inventory(request):
     """
     u = OCSUser.objects.get(user = request.user)
     product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
-
+    linked_product_list = LinkedInventory.objects.filter(id_franchise=u.id_franchise)
 
     return render(request, 'inventory/show_inventory.html', {
             'usuario' : u,
             'product_list' : product_list,
+            'linked_product_list' : linked_product_list,
             })
 
 @login_required
