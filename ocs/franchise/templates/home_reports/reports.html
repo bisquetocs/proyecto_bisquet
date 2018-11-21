@@ -1,0 +1,33 @@
+{% extends "franchise/home.html" %}
+{% load static %}
+{% block extras %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Dashboard</h1>
+</div>
+
+<div class="container">
+  <div class="row border-bottom">
+    <div class="col">
+      <h4 class="text-center">Pedidos realizados durante esta semana</h4>
+      <canvas id="dateorder" class="chartjs" width="325" height="100" ></canvas>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <canvas id="percentage_order" width="auto" height="450"></canvas>
+      <h4 class="text-center">Pedidos por proveedor</h4>
+    </div>
+
+    <div class="col">
+      <canvas id="percentage_cost" width="auto" height="450"></canvas>
+      <h4 class="text-center">Inversión por proveedor</h4>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/franchise_reports.js' %}"></script>
+
+
+
+
+{% endblock extras %}

@@ -5,7 +5,7 @@ Modified by: Dante F
 Modify date: 26-10-18
 """
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.http import Http404
 from django.shortcuts import get_object_or_404, render, redirect
@@ -15,12 +15,17 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Count
 
 from .forms import RegisterFranchiseForm
 from provider.models import LinkWithF, Provider
 from accounts.models import OCSUser
+from orders.models import Order
 
 from .models import Franchise
+
+
+from datetime import datetime, timedelta
 
 @login_required
 def registerFranchise(request):
@@ -43,9 +48,74 @@ def registerFranchise(request):
 def home(request):
     u = OCSUser.objects.get(user = request.user)
     if u.id_franchise!=None:
-        return render(request, 'franchise/home.html', {'usuario':u,})
+        return render(request, 'home_reports/reports.html', {'usuario':u,})
     else:
         return redirect('../')
+
+
+@login_required
+def get_light_reports(request):
+    """
+    By: DanteMaxF
+     Function used to send in a json format
+     INPUT
+        - Request method with the values of the session
+     OUTPUT
+        - A Json response with the values needed for the dashboard
+    """
+    u = OCSUser.objects.get(user = request.user)
+    background_color_pool = ["#F39C12", "#011F45","#FF4040","#34A853","#4285F4", "#011F45","#FF4040","#1A457A","#F39C12", "#011F45","#FF4040","#1A457A"]
+    # Data for the number of orders in the last 5 days
+    days_ago = 5
+    days = []
+    days_aux = []
+    orders_by_day = []
+
+    order_list = Order.objects.filter(id_franchise = u.id_franchise)
+    for i in range(days_ago, 0, -1):
+        days_aux.append( ((datetime.now() - timedelta(days=i)).date()) )
+        days.append((datetime.now()-timedelta(days=i)).strftime("%d/%b/%y"))
+    days.append('Today')
+    days_aux.append(datetime.now())
+    for i in range(0,days_ago+1):
+        orders_by_day.append(Order.objects.filter(id_franchise = u.id_franchise, fecha_pedido__range=(days_aux[i] - timedelta(days=1), days_aux[i])).count())
+
+
+    # Data for the number of orders per provider
+
+    count_providers = order_list.values('id_provider').annotate(dcount=Count('id_provider'))
+    prov_names = []
+    prov_num_orders = []
+    prov_colors = []
+    for i in range(0, len(count_providers)):
+        prov_names.append( (Provider.objects.get(id=count_providers[i]['id_provider'])).nombre )
+        prov_num_orders.append( count_providers[i]['dcount'] )
+        prov_colors.append( background_color_pool[i] )
+
+
+
+    total_inversion = []
+    for j in range(0, len(count_providers)):
+        aux_sum = 0
+        prov_obj = Provider.objects.get(id=count_providers[j]['id_provider'])
+        orders_by_prov = Order.objects.filter(id_provider = prov_obj)
+        for order in orders_by_prov:
+            aux_sum = aux_sum + order.precio_total
+        total_inversion.append(float(aux_sum))
+
+
+    #Json response
+    data = {
+        "days": days,
+        "orders_by_day": orders_by_day,
+
+        "provider_names": prov_names,
+        "provider_num_orders": prov_num_orders,
+        "provider_color": prov_colors,
+        "total_inversion": total_inversion,
+    }
+    return JsonResponse(data)
+
 
 @login_required
 def link_provider(request):
@@ -133,7 +203,7 @@ def provider_detail(request, id_provider):
             'success' : success,
             'provider' : p,
             })
-                
+
 
 @login_required
 def profile (request):

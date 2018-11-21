@@ -13,6 +13,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('register/', views.registerFranchise, name='register'),
     path('home/', views.home, name='home'),
+    path('home/ajax_reports/', views.get_light_reports, name='get_light_reports'),
     path('my_inventory/', include('inventory.urls', namespace='inventory'), name='my_inventory'),
     path('my_providers/', views.my_providers, name='my_providers'),
     path('my_providers/link/', views.link_provider, name='link_provider'),
