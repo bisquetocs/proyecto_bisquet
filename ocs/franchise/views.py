@@ -93,6 +93,17 @@ def get_light_reports(request):
         prov_colors.append( background_color_pool[i] )
 
 
+
+    total_inversion = []
+    for j in range(0, len(count_providers)):
+        aux_sum = 0
+        prov_obj = Provider.objects.get(id=count_providers[j]['id_provider'])
+        orders_by_prov = Order.objects.filter(id_provider = prov_obj)
+        for order in orders_by_prov:
+            aux_sum = aux_sum + order.precio_total
+        total_inversion.append(float(aux_sum))
+
+
     #Json response
     data = {
         "days": days,
@@ -100,7 +111,8 @@ def get_light_reports(request):
 
         "provider_names": prov_names,
         "provider_num_orders": prov_num_orders,
-        "provider_color": prov_colors
+        "provider_color": prov_colors,
+        "total_inversion": total_inversion,
     }
     return JsonResponse(data)
 
