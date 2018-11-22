@@ -22,7 +22,7 @@ Modify date: 20-10-18
           <form method="post">
           {% csrf_token %}
           <div class="form-group row">
-            <div class="col-2">
+            <div class="col-1">
             <strong>{{ days_hour.day.nombre }}</strong>
             </div>
             <div class="col-3">
@@ -35,6 +35,9 @@ Modify date: 20-10-18
             </div>
             <div class="col-3 mt-4">
               <button type="submit" class="btn btn-md btn-primary">Registrar horas</button>
+            </div>
+            <div class="col-2 mt-4">
+              <a class="btn btn-danger" href="/provider/office">Cancelar</a>
             </div>
           </div>
           <br><hr>

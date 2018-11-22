@@ -10,7 +10,7 @@
 <div class="container">
   <div class='container'>
 
-    <div class="row">
+    <div class="row mt-3">
       <div class="col">
         <b>Razón social</b>
       </div>
@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
       <div class="col">
         <b>RFC</b>
       </div>
@@ -28,7 +28,7 @@
       </div>
     </div>
 
-    <div class="row">
+    <div class="row mt-3">
       <div class="col">
         <b>Domicilio</b>
       </div>
@@ -55,7 +55,7 @@
       </div>
     </div>-->
 
-    <div class="row">
+    <div class="row mt-3">
       <div class="col">
         <b>Responsable</b>
       </div>
@@ -63,6 +63,13 @@
         {{ franchise.id_usuario.first_name }} {{ franchise.id_usuario.last_name }}
       </div>
     </div>
+
+    <div class="row mt-4">
+      <div class="col">
+        <a class="btn btn-secondary" href="/provider/my_clients">Regresar</a>
+      </div>
+    </div>
+
 {% endif %}
 
 {% if success == False %}
