@@ -2,7 +2,7 @@
 created by:     Django
 Description: Tests file for the providers module
 Modified by: Fátima
-Modify date: 19-11-18
+Modify date: 21-11-18
 """
 
 import datetime
@@ -98,12 +98,12 @@ def make_order():
     """
     prov = Provider.objects.get(id = 1)
     fran = Franchise.objects.get(id = 1)
-    status = OrderStatus.objects.get(id = 2)
-    order = Order.objects.create(id = 1, id_franchise = fran, id_provider = prov, fecha_pedido = datetime.datetime.now(),
-                    fecha_ideal = datetime.datetime.now(), fecha_final = datetime.datetime.now(), cantidad_productos = 3, precio_total = 10.00,
+    status = OrderStatus.objects.get(id = 2) #init state for these test cases is "Pedido" (2)
+    order = Order.objects.create(id = 1, id_franchise = fran, id_provider = prov, fecha_pedido = timezone.now(),
+                    fecha_ideal = timezone.now(), fecha_final = timezone.now(), cantidad_productos = 3, precio_total = 10.00,
                     activo = True, arrive = True)
 
-    order_in_status = OrderInStatus.objects.create(id_pedido = order, id_status = status, fecha = datetime.datetime.now(), activo = True)
+    order_in_status = OrderInStatus.objects.create(id_pedido = order, id_status = status, fecha = timezone.now(), activo = True)
 
 class OrderTests(TestCase):
     def setUp(self):
@@ -114,14 +114,90 @@ class OrderTests(TestCase):
         make_order_status()
         make_order()
 
-    def test_view_order_main(self):
+    def test_view_order_main_true(self):
          """
-             Only the owner will be able to consult the order state
+             Only the owner and secretary will be able to consult the order state
+         """
+         login = self.client.login(username="uname", password="testpasswd123") #login as owner
+         response = self.client.get("/orders/consult_orders/")
+         self.assertEqual(response.status_code, 200)
+
+         login = self.client.login(username="uname4", password="testpasswd123") #login as the secretary
+         response = self.client.get("/orders/consult_orders/")
+         self.assertEqual(response.status_code, 200)
+
+    def test_view_order_main_false(self):
+         """
+             Only the owner and the secretary will be able to consult the order state others will be redirected
+         """
+         login = self.client.login(username="uname2", password="testpasswd123") #login as a franchise manager
+         response = self.client.get("/orders/consult_orders/")
+         self.assertNotEqual(response.status_code, 200)
+
+    def test_view_order_detail_true(self):
+         """
+             Only the owner and the secretary will be able to consult each order detail
          """
          login = self.client.login(username="uname", password="testpasswd123") #login as owner
          prov = Provider.objects.get(id = 1)
          order = Order.objects.get(id_provider = prov)
          id = order.id
-         url = "/orders/order_detail/" + str(id)
+         url = "/orders/order_detail/" + str(id) + "/"
          response = self.client.get(url)
          self.assertEqual(response.status_code, 200)
+
+    def test_view_order_detail_false(self):
+         """
+             Only the owner and the secretary will be able to consult each order detail others will be redirected
+         """
+         login = self.client.login(username="uname2", password="testpasswd123") #login as a franchise manager
+         prov = Provider.objects.get(id = 1)
+         order = Order.objects.get(id_provider = prov)
+         id = order.id
+         url = "/orders/order_detail/" + str(id) + "/"
+         response = self.client.get(url)
+         self.assertNotEqual(response.status_code, 200)
+
+    def test_modify_order_state_owner(self):
+         """
+             The owner will be able to modify the order state from "pedido" to "aceptado"
+         """
+         login = self.client.login(username="uname", password="testpasswd123") #login as owner
+         prov = Provider.objects.get(id = 1)
+         order = Order.objects.get(id_provider = prov)
+         status = OrderStatus.objects.get(id = 3)
+
+         id = order.id
+         url = "/orders/order_detail/" + str(id) + "/"
+         response = self.client.get(url)
+         self.assertEqual(response.status_code, 200)
+
+         order_in = OrderInStatus.objects.get(id_pedido = order)
+         final_status = order_in.id_status
+
+         if final_status == status:
+             self.assertTrue(True)
+         else:
+             self.assertTrue(False)
+
+    def test_modify_order_state_secretary(self):
+         """
+             The secretary will be able to modify the order state from "pedido" to "aceptado"
+         """
+         login = self.client.login(username="uname4", password="testpasswd123") #login as a secretary
+         prov = Provider.objects.get(id = 1)
+         order = Order.objects.get(id_provider = prov)
+         status = OrderStatus.objects.get(id = 3)
+
+         id = order.id
+         url = "/orders/order_detail/" + str(id) + "/"
+         response = self.client.get(url)
+         self.assertEqual(response.status_code, 200)
+
+         order_in = OrderInStatus.objects.get(id_pedido = order)
+         final_status = order_in.id_status
+
+         if final_status == status:
+             self.assertTrue(True)
+         else:
+             self.assertTrue(False)

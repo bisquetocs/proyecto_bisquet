@@ -3,7 +3,7 @@ created by:     Django
 description:    This are the views of the providers that helps their tasks
                 to accomplish
 modify by:      Fatima
-modify date:    12/11/18
+modify date:    21/11/18
 """
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -224,25 +224,6 @@ def delete_product_from_order(request):
                 'precio_total':pedido.precio_total,}
     return JsonResponse(data)
 
-# Function that let the providers to edit its company info
-@login_required
-def order_detail (request, id_order):
-    u = OCSUser.objects.get(user = request.user)
-    order = Order.objects.get(id = id_order)
-    products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
-    #Para cambiar el estado de la orden
-    order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
-    pedido = OrderStatus.objects.get(id = 2)
-    if(order_s.id_status == pedido):
-        status = OrderStatus.objects.get(id = 3)
-        order_s.id_status = status
-        order_s.save()
-    data = {
-        'usuario': u,
-        'data':order,
-        'products_list':products_list,
-    }
-    return render(request, 'orders/order_detail.html', data)
 
 @login_required
 def consult_orders (request):
@@ -250,6 +231,7 @@ def consult_orders (request):
     prov = ocs_user.id_provider_id
     user = request.user
     provider = Group.objects.get(name = "Administrador de empresa")
+    secretary = Group.objects.get(name = "Secretario")
 
     #filtro para aislar a la columna id, sirve para solo seleccionar las ordenes de tal proveedor
     orders = Order.objects.filter(id_provider=prov, activo=True)
@@ -279,9 +261,18 @@ def consult_orders (request):
         'preparar':preparar,
         'incompletos':incompletos,
     }
-    return render(request, 'orders/consult_orders.html', data)
 
+    if (provider in user.groups.all() or secretary in user.groups.all()): #Checks privileges of owner and secretary
+        return render(request, 'orders/consult_orders.html', data)
+    else:
+        return redirect("../../")
+
+@login_required
 def order_detail (request, id_order):
+    prov = Group.objects.get(name = "Administrador de empresa")
+    secretary = Group.objects.get(name = "Secretario")
+    user = request.user
+
     exist = Order.objects.filter(id = id_order).exists()
     if exist == False:
         return redirect('/')
@@ -299,7 +290,7 @@ def order_detail (request, id_order):
         if order.id_provider == provider:
             aux = True
             other = 'provider/home.html'
-    if aux:
+    if (aux and (prov in user.groups.all() or secretary in user.groups.all())): #checks privileges
         products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
         #Para cambiar el estado de la orden
         order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
@@ -315,15 +306,11 @@ def order_detail (request, id_order):
             'aux':other,
             'products_list':products_list,
         }
+
         return render(request, 'orders/order_detail.html', data)
     else:
         return redirect('/')
         empty_list_re = 0
-
-    if (provider in user.groups.all()): #Checks privileges of owner
-        return render(request, 'orders/consult_orders.html', {'usuario':ocs_user, 'edit':True, 'empty_list':empty_list, 'pedido':pedido, 'recibido':recibido, 'preparar':preparar, 'empty_list_re':empty_list_re})
-    else:
-        return redirect('../../')
 
 
 def cancel_order(request):
