@@ -2,7 +2,7 @@
 created by:     Django
 Description: Tests file for the providers module
 Modified by: Fátima
-Modify date: 26-10-18
+Modify date: 19-11-18
 """
 import datetime
 from django.contrib.auth.models import User, Group
@@ -222,6 +222,14 @@ class DailyClientsTest(TestCase):
         login = self.client.login(username="uname", password="testpasswd123") #login as owner
         response = self.client.post('/provider/my_clients/daily_clients', {'day':'Lunes', 'client':'Franquicia'})
         self.assertEqual(response.status_code, 200)
+        monday = Days.objects.get(nombre = 'Lunes')
+        fran = Franchise.objects.get(id = 1)
+        daily_client = DailyClients.objects.get(day = monday)
+        if daily_client.franchise == fran:
+            self.assertTrue(True)
+        else:
+            Self.assertTrue(False)
+
 
     def test_assign_daily_clients_false(self):
         """

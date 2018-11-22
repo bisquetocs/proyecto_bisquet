@@ -1,3 +1,8 @@
-from django.contrib import admin
+"""
+created by:     Django
+description:    This are the settings of the provider app
+modify by:      Fatima
+modify date:    20/11/18
+"""
 
-# Register your models here.
+from django.contrib import admin

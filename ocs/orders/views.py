@@ -16,6 +16,9 @@ from django.utils import timezone
 from django.contrib import messages
 from django.db.models import Sum, F
 from decimal import Decimal
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.decorators import login_required
+
 
 from accounts.models import OCSUser
 from provider.models import Provider
@@ -222,10 +225,32 @@ def delete_product_from_order(request):
     return JsonResponse(data)
 
 # Function that let the providers to edit its company info
-#@login_required
+@login_required
+def order_detail (request, id_order):
+    u = OCSUser.objects.get(user = request.user)
+    order = Order.objects.get(id = id_order)
+    products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
+    #Para cambiar el estado de la orden
+    order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
+    pedido = OrderStatus.objects.get(id = 2)
+    if(order_s.id_status == pedido):
+        status = OrderStatus.objects.get(id = 3)
+        order_s.id_status = status
+        order_s.save()
+    data = {
+        'usuario': u,
+        'data':order,
+        'products_list':products_list,
+    }
+    return render(request, 'orders/order_detail.html', data)
+
+@login_required
 def consult_orders (request):
     ocs_user = OCSUser.objects.get(user = request.user)
-    prov = ocs_user.id_provider
+    prov = ocs_user.id_provider_id
+    user = request.user
+    provider = Group.objects.get(name = "Administrador de empresa")
+
     #filtro para aislar a la columna id, sirve para solo seleccionar las ordenes de tal proveedor
     orders = Order.objects.filter(id_provider=prov, activo=True)
     pedido = OrderInStatus.objects.filter(id_pedido__in = orders, id_status = 2, activo = 1)
@@ -292,7 +317,17 @@ def order_detail (request, id_order):
         }
         return render(request, 'orders/order_detail.html', data)
     else:
+<<<<<<< HEAD
         return redirect('/')
+=======
+        empty_list_re = 0
+
+    if (provider in user.groups.all()): #Checks privileges of owner
+        return render(request, 'orders/consult_orders.html', {'usuario':ocs_user, 'edit':True, 'empty_list':empty_list, 'pedido':pedido, 'recibido':recibido, 'preparar':preparar, 'empty_list_re':empty_list_re})
+    else:
+        return redirect('../../')
+
+>>>>>>> fatima-test
 
 def cancel_order(request):
     id_pedido = request.GET.get('id_pedido', None)
