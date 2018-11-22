@@ -3,9 +3,15 @@
 {% block extras %}
 
 {% if success %}
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-  <h1 class="h2">{{ franchise.nombre }}</h1>
+<div class="clearfix">
+  <h3 class="float-left">
+    {{ franchise.nombre }}
+  </h3>
+  <h3 class="float-right">
+  </h3>
 </div>
+
+<hr />
 
 <div class="container">
   <div class='container'>

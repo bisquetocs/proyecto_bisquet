@@ -73,7 +73,7 @@
     {% if too_late %}
     <div class="mt-3 mb-3">
       <small>Tienes un pedido para <b>{{provider.nombre}}</b> en <u>preparación y/o envío</u></small>
-      <button id="realizar_pedido" onclick="start_order()" class="btn btn-sm btn-info" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+      <button id="realizar_pedido" onclick="start_order()" class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
           <span class="fa fa-edit"></span><br />Realizar nuevo pedido a <br /><b>{{provider.nombre}}</b>
       </button>
     </div>
@@ -128,7 +128,7 @@
       </div>
       <div class="card mb-3">
         {% if orders_status.id_status.nombre == 'Guardado' %}
-        <div class="card-body text-info">
+        <div class="card-body text-primary">
           <small style="color:gray">Estado del pedido:</small> <br />
           <b>{{ orders_status.id_status.nombre }}</b><br />
           <small style="color:gray">{{ orders_status.id_status.descripcion }}</small>
@@ -162,7 +162,7 @@
     {% endif %}
   {% else %}
   <div class="mt-3 mb-3">
-    <button id="realizar_pedido" onclick="start_order()" class="btn btn-sm btn-info" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+    <button id="realizar_pedido" onclick="start_order()" class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
         <span class="fa fa-edit"></span><br />Realizar pedido a <br /><b>{{provider.nombre}}</b>
     </button>
   </div>
