@@ -317,9 +317,7 @@ def order_detail (request, id_order):
         }
         return render(request, 'orders/order_detail.html', data)
     else:
-<<<<<<< HEAD
         return redirect('/')
-=======
         empty_list_re = 0
 
     if (provider in user.groups.all()): #Checks privileges of owner
@@ -327,7 +325,6 @@ def order_detail (request, id_order):
     else:
         return redirect('../../')
 
->>>>>>> fatima-test
 
 def cancel_order(request):
     id_pedido = request.GET.get('id_pedido', None)
