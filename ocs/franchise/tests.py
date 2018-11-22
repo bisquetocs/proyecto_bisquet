@@ -142,3 +142,11 @@ class InventoryTests(TestCase):
                                                                  })
         test_query = PrivateProduct.objects.filter(name='Brocoli')
         self.assertEqual(len(test_query), 0)
+
+    def test_user_consult_reports(self):
+        """
+            If the user makes a request of consulting the reports on the home page
+            the system will send a reponse in Json format of the correct order reports.
+        """
+        # TODO:
+        return True
