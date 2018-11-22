@@ -16,6 +16,9 @@ from django.utils import timezone
 from django.contrib import messages
 from django.db.models import Sum, F
 from decimal import Decimal
+from django.contrib.auth.models import User, Group
+from django.contrib.auth.decorators import login_required
+
 
 from accounts.models import OCSUser
 from provider.models import Provider
@@ -217,7 +220,7 @@ def delete_product_from_order(request):
     return JsonResponse(data)
 
 # Function that let the providers to edit its company info
-#@login_required
+@login_required
 def order_detail (request, id_order):
     u = OCSUser.objects.get(user = request.user)
     order = Order.objects.get(id = id_order)
@@ -236,9 +239,13 @@ def order_detail (request, id_order):
     }
     return render(request, 'orders/order_detail.html', data)
 
+@login_required
 def consult_orders (request):
     ocs_user = OCSUser.objects.get(user = request.user)
     prov = ocs_user.id_provider_id
+    user = request.user
+    provider = Group.objects.get(name = "Administrador de empresa")
+
     #filtro para aislar a la columna id, sirve para solo seleccionar las ordenes de tal proveedor
     orders = Order.objects.values_list('id', flat=True).filter(id_provider = prov, activo = 1)
     pedido = OrderInStatus.objects.filter(activo = 1, id_pedido__in = orders, id_status = 2)
@@ -254,7 +261,12 @@ def consult_orders (request):
         empty_list_re = 1
     else:
         empty_list_re = 0
-    return render(request, 'orders/consult_orders.html', {'usuario':ocs_user, 'edit':True, 'empty_list':empty_list, 'pedido':pedido, 'recibido':recibido, 'preparar':preparar, 'empty_list_re':empty_list_re})
+
+    if (provider in user.groups.all()): #Checks privileges of owner
+        return render(request, 'orders/consult_orders.html', {'usuario':ocs_user, 'edit':True, 'empty_list':empty_list, 'pedido':pedido, 'recibido':recibido, 'preparar':preparar, 'empty_list_re':empty_list_re})
+    else:
+        return redirect('../../')
+
 
 def cancel_order(request):
     id_pedido = request.GET.get('id_pedido', None)
