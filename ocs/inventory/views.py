@@ -16,7 +16,7 @@ from django.views import generic
 import xlwt
 from django.contrib.auth.models import User
 import datetime
-from .models import LinkedInventory
+from .models import LinkedInventory, LinkedProductRecord
 
 
 # Create your views here.
@@ -204,5 +204,14 @@ def show_inventory_records(request):
     record_list = PrivateProductRecord.objects.filter(id_franchise=u.id_franchise)
     return render(request, 'inventory/show_records.html', {
             'usuario' : u,
+            'record_list': record_list
+            })
+
+@login_required
+def show_linked_inventory_records(request):
+    u = OCSUser.objects.get(user = request.user)
+    record_list = LinkedProductRecord.objects.filter(id_franchise = u.id_franchise)
+    return render(request, 'inventory/show_records.html',{
+            'usuario': u,
             'record_list': record_list
             })
