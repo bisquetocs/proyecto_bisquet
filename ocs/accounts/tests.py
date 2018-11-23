@@ -293,6 +293,7 @@ class EmployeesModuleTest(TestCase):
 
 
 # ---------------TESTS DE BETO ------------------------ #
+"""
 class BetoTestProduct(TestCase):
     def test_new_product(self):
         myuser = User.objects.create_user(username="user",email="exampleone@example.com",password="testpassword")
@@ -650,7 +651,7 @@ class BetoTestAccounts(TestCase):
         self.assertEqual(ocs_user.phone, '4422822317')
         self.assertRedirects(response, '/accounts/profile/', status_code=302, target_status_code=200, msg_prefix='', fetch_redirect_response=True)
 
-
+"""
 
 
 #

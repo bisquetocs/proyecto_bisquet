@@ -3,7 +3,7 @@
 {% block content %}
 <div class="clearfix">
   <h3 class="float-left">
-    Catálogo de productos:
+    Catálogo de productos: <span data-toggle="help_code" title="En esta sección puedes consultar, registrar, desactivar y editar tus productos." class="fa fa-question-circle"></span>
   </h3>
   <h3 class="float-right nombre_producto">
   </h3>
@@ -21,7 +21,7 @@
               <th scope="col">#</th>
               <th scope="col">Nombre</th>
               <th scope="col">Código</th>
-              <th scope="col">Activo</th>
+              <th scope="col" data-toggle="help_code" title="Desactiva tus productos para que no sean visibles para tus clientes.">Activo</th>
               <th scope="col">Editar</th>
             </tr>
           </thead>
@@ -122,7 +122,7 @@
             <hr />
             <div class="row pb-2">
               <div class="col-6">
-                <label for="unidad_medida">Unidad de medida inicial:</label>
+                <label for="unidad_medida">Unidad de medida inicial: <span data-toggle="help_code" title="Esta se utilizara como la unidad de medida base para tu producto." class="fa fa-question-circle"></span></label>
                 <select required class="form-control" id="unidad_medida" name="unidad_medida" onclick="if (this.value==0){this.value=1;}">
                   <option value="0" disabled selected>Selecciona una unidad</option>
                   {% for Unidad in unidad %}
@@ -149,7 +149,7 @@
     <!-- SECCION DE PRECIOS POR UNIDAD DE MEDIDA -->
     <div class="card">
       <div class="card-body">
-        <h6>Precio por unidad de medida: <b class="nombre_producto"></b></h6>
+        <h6>Precio por unidad de medida: <b class="nombre_producto"></b> <span data-toggle="help_code" title="Registra los diferentes precios por unidad de medida de tus productos o simplemente un precio con sus diferentes equivalencias." class="fa fa-question-circle"></span></h6>
         <hr />
         <div id="no_selected_price" class="text-center" style="color:gray">
           <br />
@@ -190,7 +190,7 @@
     <!-- SECCION DE EQUIVALENCIAS ENTRE UNIDADES DE MEDIDA -->
     <div class="card">
       <div class="card-body">
-        <h6>Equivalencias: <b class="nombre_producto"></b></h6>
+        <h6>Equivalencias: <b class="nombre_producto"></b> <span data-toggle="help_code" title="Las equivalencias sirven para que tus clientes puedan pedir tu producto en diferentes presentaciones con un solo precio registrado." class="fa fa-question-circle"></span></h6>
         <hr />
         <div id="no_selected_equiv" class="text-center" style="color:gray">
           <br />
@@ -260,7 +260,11 @@
     </div>
   </div>
 </div>
-
+<script>
+$(document).ready(function(){
+    $('[data-toggle="help_code"]').tooltip();
+});
+</script>
 {% endblock content %}
 
 
