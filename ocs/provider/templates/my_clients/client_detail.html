@@ -64,11 +64,7 @@
       </div>
     </div>
 
-    <div class="row mt-4">
-      <div class="col">
-        <a class="btn btn-secondary" href="/provider/my_clients">Regresar</a>
-      </div>
-    </div>
+
 
 {% endif %}
 
@@ -77,6 +73,65 @@
   <h1 class="h2">ERROR 404: No encontramos el cliente que estás buscando</h1>
 </div>
 {% endif %}
+
+<div class="row mt-5">
+  <div class="col">
+    <h4>Mapa a la franquicia</h4>
+  </div>
+</div>
+
+<div class="row mt-2">
+  <div class="col-4">
+    <input class="form-control form-control-sm" id="address" type="textbox" value="{{franchise.domicilio}}">
+  </div>
+  <div class="col md-3">
+    <input type="button" class="btn btn-light" value="Consultar" onclick="codeAddress()">
+  </div>
+</div>
+<br>
+<div id="map" style="width: 80%; height: 480px;"></div>
+
+
+<div class="row mt-4">
+  <div class="col">
+    <a class="btn btn-secondary" href="/provider/my_clients">Regresar</a>
+  </div>
+</div>
+
+<script>
+  var geocoder;
+  var map;
+  function initialize() {
+    geocoder = new google.maps.Geocoder();
+    var latlng = new google.maps.LatLng(-34.397, 150.644);
+    var mapOptions = {
+      zoom: 8,
+      center: latlng
+    }
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+  }
+
+  function codeAddress() {
+    var address = document.getElementById('address').value;
+    geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == 'OK') {
+        map.setCenter(results[0].geometry.location);
+        var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  }
+
+
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDDB8Lt-MoLOz3zirxZuFRfbi-Ce-j3z-M&callback=myMap"></script>
+
+
 
   </div>
 </div>
