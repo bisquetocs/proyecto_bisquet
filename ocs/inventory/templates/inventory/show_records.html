@@ -24,8 +24,8 @@
     <tr class="table-success">
       <td>{{ record.date }}</td>
       <td>{{ record.amount }}</td>
-      <td>{{ record.id_private_product.unit }}</td>
-      <td>{{ record.id_private_product.name }}</td>
+      <td>{{ record.id_private_product.unit }} {{ record.id_unidad.abreviacion }}</td>
+      <td>{{ record.id_private_product.name }} {{ record.id_linked_product.id_product.nombre }}</td>
       <td>{{ record.comment }}</td>
       <td><i class="fa fa-plus"><text style="visibility: hidden;">E</text></i></td>
     </tr>

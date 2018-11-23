@@ -7,12 +7,13 @@ Modify date: 26-10-18
 
 from django.contrib.auth.models import User, Group
 from accounts.models import OCSUser
-from .models import Franchise, PrivateProduct
+from .models import Franchise
 from django.test import TestCase
 from django.urls import reverse
 from django.test.client import RequestFactory
 from . import views
 from django.utils import timezone
+from inventory.models import PrivateProduct
 
 def create_user_provider():
     """
@@ -121,7 +122,8 @@ class InventoryTests(TestCase):
 
         response = self.client.post('/franchise/my_inventory/register/',  {'product_name': 'Naranja',
                                                                  'product_desc': 'Naranja proveniente de FRUVELOZ',
-                                                                 'product_amount': '23'
+                                                                 'product_amount': '23',
+                                                                 'product_unit': 'KG'
                                                                  })
         PrivateProduct.objects.get(name='Naranja')
 
@@ -138,7 +140,28 @@ class InventoryTests(TestCase):
 
         response = self.client.post('/franchise/my_inventory/register/',  {'product_name': 'Brocoli',
                                                                  'product_desc': 'Brocoli',
-                                                                 'product_amount': '-23'
+                                                                 'product_amount': '-23',
+                                                                 'product_unit': 'KG'
                                                                  })
         test_query = PrivateProduct.objects.filter(name='Brocoli')
         self.assertEqual(len(test_query), 0)
+
+    def test_user_consult_reports(self):
+        """
+            If the user makes a request of consulting the reports on the home page
+            the system will send a reponse in Json format of the correct order reports.
+        """
+        create_user_franchise()
+        self.client.login(username='uname', password='testpasswd123')
+        u = User.objects.get(username='uname')
+        ou = OCSUser.objects.get(user = u)
+        response = self.client.post('/franchise/my_inventory/register/',    {
+                                                                            'product_name': 'Naranja',
+                                                                            'product_desc': 'Naranja proveniente de FRUVELOZ',
+                                                                            'product_amount': 23,
+                                                                            'product_unit': 'KG'
+                                                                            })
+
+        response2 = self.client.post('/franchise/my_inventory/create_excel/')
+        self.assertEqual(response2.get('Content-Disposition'), 'attachment; filename="Los bisquets de obregon"_inventario.xls"')
+        return False

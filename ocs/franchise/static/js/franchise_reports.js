@@ -2,9 +2,9 @@ var lineChart = document.getElementById("dateorder");
 var doughnutChart = document.getElementById("percentage_order");
 
 var doughnutChart3 = document.getElementById("percentage_cost");
-doughnutChart.height = 200;
+doughnutChart.height = 100;
 
-doughnutChart3.height = 200;
+doughnutChart3.height = 100;
 
 
 //AJAX Request
