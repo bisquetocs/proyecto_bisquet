@@ -34,12 +34,12 @@
           {% endif %}
           &emsp;
           <li class="nav-item">
-            <a class="nav-link" href="" data-toggle="modal" data-target="#modalLogin" style="color:rgb(243,156,18)"><span class="fa fa-sign-in"></span> Iniciar sesión</a>
+            <a class="nav-link" href="" data-toggle="modal" data-target="#modalLogin" style="color:rgb(243,156,18)"><span class="fa fa-sign-in"></span>{% trans "Iniciar sesión"%} </a>
           </li>
           &emsp;
           <li class="nav-item">
             <a class="btn btn-light" href="{% url 'registerUser' %}" style="border-color:rgb(243,156,18);background-color:rgb(243,156,18);color:white">
-              <span class="fa fa-pencil-square-o"></span> <strong>Crear cuenta</strong>
+              <span class="fa fa-pencil-square-o"></span> <strong>{% trans "Crear cuenta"%}</strong>
             </a>
           </li>
         </div>
@@ -66,30 +66,30 @@
       <ul class="navbar-nav px-5">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            <span class="fa fa-group"></span> Conócenos
+            <span class="fa fa-group"></span> {% trans "Conócenos"%}
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <a class="dropdown-item" href="#">¿Qué hacemos?</a>
-            <a class="dropdown-item" href="#">Control</a>
-            <a class="dropdown-item" href="#">Simplicidad</a>
-            <a class="dropdown-item" href="#">Reportes</a>
-            <a class="dropdown-item" href="#">Seguridad</a>
+            <a class="dropdown-item" href="#">{% trans "¿Qué hacemos?"%}"</a>
+            <a class="dropdown-item" href="#">{% trans "Control"%}</a>
+            <a class="dropdown-item" href="#">{% trans "Simplicidad"%}</a>
+            <a class="dropdown-item" href="#">{% trans "Reportes"%}</a>
+            <a class="dropdown-item" href="#">{% trans "Seguridad"%}</a>
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#">Términos y condiciones</a>
-            <a class="dropdown-item" href="#">Clientes satisfechos</a>
-            <a class="dropdown-item" href="#">Tutorial</a>
+            <a class="dropdown-item" href="#">{% trans "Términos y condiciones"%}</a>
+            <a class="dropdown-item" href="#">{% trans "Clientes satisfechos"%}</a>
+            <a class="dropdown-item" href="#">{% trans "Tutorial"%}</a>
           </div>
         </li>
         &emsp;&emsp;&emsp;
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <span class="fa fa-dollar"></span> Precios
+            <span class="fa fa-dollar"></span> {% trans "Precios"%}
           </a>
         </li>
         &emsp;&emsp;&emsp;
         <li class="nav-item">
           <a class="nav-link" href="#">
-            <span class="fa fa-handshake-o"></span> Contacto
+            <span class="fa fa-handshake-o"></span> {% trans "Contacto"%}
           </a>
         </li>
       </ul>
@@ -178,34 +178,34 @@
   <div class="container" style="padding-top:12px">
     <div class="row justify-content-center text-center" style="color:white;">
       <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4" style="padding-bottom:20px">
-        <p style="font-size:18px">Conócenos</p>
+        <p style="font-size:18px">{% trans "Conócenos%"}"</p>
         <hr>
-        <a href="#">¿Qué hacemos?</a>
+        <a href="#">{% trans "¿Qué hacemos?"%}"</a>
         <br>
-        <a href="#">Orden Control y Seguridad</a>
+        <a href="#">{% trans "Orden Control y Seguridad"%}</a>
         <br>
-        <a href="#">Reportes</a>
+        <a href="#">{% trans "Reportes"%}</a>
       </div>
       <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-4" style="padding-bottom:20px">
-        <p style="font-size:18px">Contacto</p>
+        <p style="font-size:18px">{% trans "Contacto"%}</p>
         <hr>
         <a href="#">245 1875</a>
         <br>
         <p>Morera #219 Col. Arboledas, Qro. Qro</p>
       </div>
       <div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4" style="padding-bottom:20px">
-        <p style="font-size:18px">Atención a cliente</p>
+        <p style="font-size:18px">{% trans "Atención a cliente"%}</p>
         <hr>
-        <a href="#">(442) telefono 1</a>
+        <a href="#">(442) {% trans "telefono 1"%}</a>
         <br>
-        <a href="#">(442) telefono 2</a>
+        <a href="#">(442) {% trans "telefono 2"%}</a>
         <br>
-        <a href="#">(442) telefono 3</a>
+        <a href="#">(442) {% trans "telefono 3"%}</a>
       </div>
     </div>
   </div>
   <center style="padding-bottom:4px;color:gray">
-    <p style="font-size:13px">©2018 - Todos los Derechos Reservados Order Control System.</p>
+    <p style="font-size:13px">{% trans "©2018 - Todos los Derechos Reservados Order Control System."%}"</p>
   </center>
 </div>
 {% endblock footer %}

@@ -12,6 +12,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.db import models
 from django.db.models import Q
 from accounts.models import OCSUser, IsProviderOrFranchise
+from django.units.translation import ugettex_lazy as _
+
+APP_DESC = ("Ding an awesome project. (str from views)")
 
 # Create your views here.
 def home(request):
