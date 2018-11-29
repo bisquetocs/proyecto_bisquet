@@ -201,7 +201,8 @@ def borrarEmpleado(request, emp_id):
 def verEmpleado(request, emp_id):
     ocs_user = OCSUser.objects.get(user = request.user)
     request_user = OCSUser.objects.get(user = emp_id)
-    ocs_group = User.groups.through.objects.get(user = emp_id)
+    ocs_group_i = User.groups.through.objects.filter(user = emp_id)
+    ocs_group = ocs_group_i[0]
     id_group = ocs_group.group
     group = Group.objects.get(name = id_group)
     provider = Group.objects.get(name = "Administrador de empresa")
@@ -213,7 +214,7 @@ def verEmpleado(request, emp_id):
         ocs_group.group = Group.objects.get(name = grp)
         ocs_group.save()
         url = '../verEmpleado/' + str(emp_id)
-        return redirect(url) #To return to view employee 
+        return redirect(url) #To return to view employee
 
     else:
         if ocs_user.id_provider is None: #Es franchise
