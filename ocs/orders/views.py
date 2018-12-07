@@ -8,7 +8,9 @@ modify date:    12/11/18
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.http import Http404
+from django.http import Http404, JsonResponse
+import json
+
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
@@ -17,29 +19,12 @@ from django.contrib import messages
 from django.db.models import Sum, F
 from decimal import Decimal
 
-from accounts.models import OCSUser
-from provider.models import Provider
-from provider.models import LinkWithF
-from franchise.models import Franchise
-from products.models import Product
-
-from .models import Order
-from .models import OrderProductStatus
-from .models import OrderProductInStatus
-from .models import OrderStatus
-from .models import OrderInStatus
-
-from products.models import UnidadDeMedida
-from products.models import Price
-from products.models import CompleteProduct
-from products.models import Equivalencias
-
-from inventory.models import LinkedInventory
-from inventory.models import LinkedProductRecord
-
-
-from django.http import JsonResponse
-import json
+from accounts.models import *
+from franchise.models import *
+from inventory.models import *
+from orders.models import *
+from products.models import *
+from provider.models import *
 
 
 def make_order(request):
@@ -221,8 +206,6 @@ def delete_product_from_order(request):
                 'precio_total':pedido.precio_total,}
     return JsonResponse(data)
 
-# Function that let the providers to edit its company info
-#@login_required
 def consult_orders (request):
     ocs_user = OCSUser.objects.get(user = request.user)
     prov = ocs_user.id_provider
@@ -365,7 +348,6 @@ def rechazar_pedido(request):
     data = { 'success': True, }
     return JsonResponse(data)
 
-
 def consult_order_history_prov(request):
     ocs_user = OCSUser.objects.get(user = request.user)
     prov = ocs_user.id_provider
@@ -476,16 +458,6 @@ def complete_order(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
 def has_permission(ocs_u, is_provider, id_company, id_rol):
     u = OCSUser.objects.get(id = ocs_u)
     user = User.objects.get(id = u.user)
@@ -508,6 +480,8 @@ def has_permission(ocs_u, is_provider, id_company, id_rol):
                         return True
         return False
     else: return False
+
+
 
 
 #
