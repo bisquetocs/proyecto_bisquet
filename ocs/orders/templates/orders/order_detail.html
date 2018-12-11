@@ -169,12 +169,14 @@ $ pip install django-mathfilters
             </div>
           </div>
           <div class="row">
-            <div class="col-6 mt-4" onclick="printDiv('print_modal')">
+            <div class="col mt-4" onclick="printDiv('print_modal')">
               <a href="" class="btn btn-sm btn-block btn-outline-secondary pt-3 pb-3" role="button">
                 <span class="fa fa-print fa-2x"></span><br />
                 <b class="container-fluid">Imprimir pedido</b>
               </a>
             </div>
+            <!--
+            TODO: Habilitar imprimir excel
             <div class="col-6 mt-4">
               <a href="" class="btn btn-sm btn-block btn-outline-primary pt-2 pb-2" role="button">
                 <span class="fa fa-download fa-2x"></span><br />
@@ -182,6 +184,7 @@ $ pip install django-mathfilters
                 <span class="fa fa-file-excel-o"></span>
               </a>
             </div>
+            -->
           </div>
           <div class="card mb-2 mt-3">
             {% if order_s.id_status.nombre == 'Cancelado' %}
