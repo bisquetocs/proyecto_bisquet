@@ -96,6 +96,7 @@ def create_excel(request):
     u = OCSUser.objects.get(user = request.user)
     if request.method == 'POST':
         product_list = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
+        linked_product_list = LinkedInventory.objects.filter(id_franchise=u.id_franchise)
         # Generate XLS
         response = HttpResponse(content_type='application/ms-excel')
         response['Content-Disposition'] = 'attachment; filename="'+u.id_franchise.nombre+'"_inventario.xls"'
@@ -122,15 +123,25 @@ def create_excel(request):
         # Sheet body, remaining rows
         font_style = xlwt.XFStyle()
 
-        rows = PrivateProduct.objects.filter(id_franchise=u.id_franchise)
+
         counter = 1
-        for row in rows:
+        for row in product_list:
             row_num += 1
             ws.write(row_num, 0, str(counter), font_style)
             ws.write(row_num, 1, row.name, font_style)
             ws.write(row_num, 2, row.description, font_style)
             ws.write(row_num, 3, row.amount, font_style)
             ws.write(row_num, 4, row.unit, font_style)
+            counter = counter +1
+
+
+        for other_row in linked_product_list:
+            row_num += 1
+            ws.write(row_num, 0, str(counter), font_style)
+            ws.write(row_num, 1, other_row.id_product.nombre, font_style)
+            ws.write(row_num, 2, " - ", font_style)
+            ws.write(row_num, 3, other_row.amount, font_style)
+            ws.write(row_num, 4, other_row.id_unidad.abreviacion, font_style)
             counter = counter +1
 
         wb.save(response)
@@ -184,6 +195,58 @@ def update_private_product(request):
                     newRecord = PrivateProductRecord(id_franchise=u.id_franchise, id_private_product=updated_product, date=datetime.datetime.now(), comment=p_comment, amount=int(p_amount), io=False)
                     newRecord.save()
                     messages.success(request, 'EXITO: Se ha registrado una SALIDA del producto:   '+updated_product.name)
+            else:
+                messages.warning(request, 'ERROR')
+
+    return redirect(reverse('franchise:inventory:show_inventory'))
+
+@login_required
+def update_linked_product(request):
+    """
+    By: DanteMaxF
+    Function used to update the inputs and outputs of the
+    LINKED products in the inventory
+    INPUT
+        - Request method with the values of the session
+    OUTPUT
+        - Redirect to the inventory table
+        - The updated database of the inventory
+    """
+    u = OCSUser.objects.get(user = request.user)
+    if request.method == 'POST':
+        p_id = request.POST['id_product']
+        p_io = request.POST['product_io']
+        p_amount = request.POST['product_amount']
+        p_comment = request.POST['product_comment']
+
+        if (p_id=='' or p_io=='' or p_amount=='' or p_comment==''):
+            messages.warning(request, 'ERROR: Por favor llena todos los campos.')
+            return redirect(reverse('franchise:inventory:show_inventory'))
+
+        if (int(p_amount) < 1):
+            messages.warning(request, 'ERROR: No se pueden insertar cantidades menores a 1.')
+            return redirect(reverse('franchise:inventory:show_inventory'))
+
+        try:
+            updated_product = LinkedInventory.objects.get(id=p_id)
+        except:
+            messages.warning(request, 'ERROR: El producto que quieres actualizar no existe')
+        else:
+            if (p_io == 'in'):
+                updated_product.amount = updated_product.amount + int(p_amount)
+                updated_product.save()
+                newRecord = LinkedProductRecord(id_franchise=u.id_franchise, id_linked_product=updated_product,  id_unidad=updated_product.id_unidad, date=datetime.datetime.now(), comment=p_comment, amount=int(p_amount), io=True)
+                newRecord.save()
+                messages.success(request, 'EXITO: Se ha registrado una ENTRADA del producto:   '+updated_product.id_product.nombre)
+            elif (p_io == 'out'):
+                if (int(p_amount) > updated_product.amount):
+                    messages.warning(request, 'ERROR: Estás intentando retirar una cantidad mayor a la que tienes!')
+                else:
+                    updated_product.amount = updated_product.amount-int(p_amount)
+                    updated_product.save()
+                    newRecord = LinkedProductRecord(id_franchise=u.id_franchise, id_linked_product=updated_product, id_unidad=updated_product.id_unidad , date=datetime.datetime.now(), comment=p_comment, amount=int(p_amount), io=False)
+                    newRecord.save()
+                    messages.success(request, 'EXITO: Se ha registrado una SALIDA del producto:   '+updated_product.id_product.nombre)
             else:
                 messages.warning(request, 'ERROR')
 

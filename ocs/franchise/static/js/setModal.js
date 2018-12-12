@@ -17,3 +17,11 @@ function change_to_output_text() {
   document.getElementById("buttonSave").innerHTML = "salida";
   document.getElementById("titleModal").innerHTML = "Salida";
 }
+
+function update_linked_product(product_id) {
+  product_title = document.getElementById("linked_product_title");
+  product_selected = document.getElementById("l_product_"+product_id);
+
+  product_title.innerHTML = product_selected.innerHTML;
+  document.getElementById("id_l_product_to_change").value = product_id
+}
