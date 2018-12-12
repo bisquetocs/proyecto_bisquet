@@ -5,28 +5,14 @@
 
 
 {% block extras %}
-
+{% if order_s.id_status.nombre == "En preparación/enviado" or order_s.id_status.nombre == "Incompleto" %}
 <div class="container-fluid rounded pt-3" style="background-color:rgb(233, 236, 239)">
   <div class="container pb-4 pt-2" id="compornot">
     <div class="row">
       <div class="col text-center">
-        <h4>El pedido #{{data.id}} ha llegado:</h4>
+        <h4>El pedido #{{data.id}} ha llegado...</h4>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <button onclick="complete_order({{data.id}})" class="btn btn-lg btn-block btn-success" type="button">
-            <span class="fa fa-thumbs-up"></span> <b>Completo</b>
-        </button>
-      </div>
-      <div class="col">
-        <button onclick="document.getElementById('compornot').hidden = true" class="btn btn-lg btn-block btn-outline-danger" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-            <span class="fa fa-thumbs-down"></span> <b>Incompleto</b>
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="collapse pb-3" id="collapseExample">
     <div class="card p-1">
       <div class="row">
         <div class="col-9">
@@ -71,36 +57,149 @@
       </div>
     </div>
     <div class="row mt-3">
-      <div class="col">
+      <div class="col-4">
+        <div class="card mb-3">
+          <div class="card-body text-center">
+            Información de compra:
+            <div class="row">
+              <div class="col-5 mt-2">
+                <small>Total de productos:</small>
+              </div>
+              <div class="col-7 mt-2 rounded" style="background-color:rgb(233, 236, 239)">
+                <b># {{ data.cantidad_productos }}</b>
+              </div>
+              <div class="col-5 mt-2">
+                <small>Importe total:</small>
+              </div>
+              <div class="col-7 mt-2 rounded" style="background-color:rgb(233, 236, 239)">
+                <b>$ {{ data.precio_total }}</b>
+              </div>
+            </div>
+            <div class="card mb-2 mt-3" onmouseover="document.getElementById('registro_incompleto').style=''" onmouseout="document.getElementById('registro_incompleto').style='filter:blur(2px) grayscale(100%);'">
+              <div class="card-body text-dark">
+                <p class="text-danger">En caso de que te llegara un producto incompleto...</p>
+                <div id="registro_incompleto" class="" style="filter:blur(2px) grayscale(100%);">
+                  <small><b>¿Qué producto te llegó incompleto? </b></small>
+                  <select id="producto_incompleto" class="form-control mt-2" onchange="">
+                    <option value="-1" disabled selected>
+                      Selecciona un producto...
+                    </option>
+                    {% for p in aux_p_list %}
+                    <option value="{{p.id}}" id="producto_pedido{{p.id}}">
+                      {{p.id_complete_product.id_product.nombre.capitalize }} | {{p.cantidad }} {{p.id_unidad.abreviacion}}
+                    </option>
+                    {% endfor %}
+                  </select>
+                  <small><b>¿Qué cantidad te llegó? </b></small>
+                  <input class="form-control mt-2" type="number" step="0.01" id="cantidad_llego" value="" min=0>
+                  <button id="incomplete_button" onclick="incomplete_order({{data.id}})" class="btn btn-primary btn-block mt-2" type="button">
+                      Registrar
+                  </button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-8">
         <div class="card">
           <div class="p-2">
-          <table class="table table-responsive-xl table-hover table-sm mx-1">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">Cantidad faltante:</th>
-                <th scope="col">Cantidad:</th>
-                <th scope="col">UMedida:</th>
-                <th scope="col">Producto:</th>
-              </tr>
-            </thead>
-            <tbody id="consult_orders">
-              {% for p in products_list %}
-              <tr>
-                <td><input type="text" name="" value=""></td>
-                <td>{{p.cantidad }}</td>
-                <td>{{p.id_unidad.abreviacion}}</td>
-                <td>{{p.id_complete_product.id_product.nombre.capitalize }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+            <ul class="nav nav-pills nav-fill mb-3" id="pills-tab" role="tablist">
+              <li class="nav-item">
+                <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab" aria-controls="pills-home" aria-selected="true">
+                  Productos incompletos
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="pills-profile-tab" data-toggle="pill" href="#pills-profile" role="tab" aria-controls="pills-profile" aria-selected="false">
+                  Productos del pedido
+                </a>
+              </li>
+            </ul>
+            <div class="tab-content" id="pills-tabContent">
+              <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                <table class="table table-responsive-xl table-hover table-sm mx-1">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th scope="col">Producto:</th>
+                      <th scope="col">UMedida:</th>
+                      <th scope="col">Cant. pedida:</th>
+                      <th scope="col">Cant. actual:</th>
+                      <th scope="col">Cant. reposición:</th>
+                    </tr>
+                  </thead>
+                  <tbody id="incomplete_order">
+                    {% if incomplete %}
+                      {% for p in incomplete_p_list %}
+                      <tr>
+                        <td>{{ p.id_complete_product.id_product.nombre.capitalize }}</td>
+                        <td>{{ p.id_unidad.abreviacion}}</td>
+                        <td>{{ p.cantidad }}</td>
+                        <td>{{ p.cantidad_actual }}</td>
+                        <td>{{ p.cantidad }}-{{p.cantidad_actual}}</td>
+                      </tr>
+                      {% endfor %}
+                    {% else %}
+                      <tr onmouseover="document.getElementById('registro_incompleto').style=''" onmouseout="document.getElementById('registro_incompleto').style='filter:blur(2px) grayscale(100%);'">
+                        <td colspan="5" class="text-center" style="color:gray">¿El pedido llegó completo?</td>
+                      </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+              <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <table class="table table-responsive-xl table-hover table-sm mx-1">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th scope="col">Cantidad:</th>
+                      <th scope="col">UMedida:</th>
+                      <th scope="col">Producto:</th>
+                      <th scope="col">Precio por unidad:</th>
+                      <th scope="col">Total:</th>
+                    </tr>
+                  </thead>
+                  <tbody id="consult_orders">
+                    {% for p in products_list %}
+                    <tr>
+                      <td>{{p.cantidad }}</td>
+                      <td>{{p.id_unidad.abreviacion}}</td>
+                      <td>{{p.id_complete_product.id_product.nombre.capitalize }}</td>
+                      <td>$ {{p.precio_por_unidad }}</td>
+                      <td>$ {{p.total }}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+
           </div>
         </div>
       </div>
     </div>
+    {% if incomplete is False %}
+    <div class="row">
+      <div class="col">
+        <button onclick="complete_order({{data.id}})" class="btn btn-lg btn-block btn-success" type="button">
+            <span class="fa fa-thumbs-up"></span> <b>Completo</b>
+        </button>
+      </div>
+    </div>
+    {% else %}
+    <div class="row">
+      <div class="col">
+        <button onclick="complete_order({{data.id}})" class="btn btn-lg btn-block btn-success" type="button">
+            <span class="fa fa-thumbs-up"></span> <b>Marcar pedido como finalizado</b>
+        </button>
+      </div>
+    </div>
+    {% endif %}
+
   </div>
 </div>
-
+{% endif %}
 
 
 

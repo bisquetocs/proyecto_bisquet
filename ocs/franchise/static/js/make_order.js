@@ -317,6 +317,56 @@ function complete_order(id_pedido){
   }
 }
 
+function incomplete_order(id_pedido){
+  doc('incomplete_button').disabled = true;
+  id_prod_inc = doc('producto_incompleto').value;
+  cantidad_llego = doc('cantidad_llego').value;
+  if (id_prod_inc == -1 || cantidad_llego == ''){
+    alert('Por favor llena los campos necesarios!');
+    doc('incomplete_button').disabled = false;
+  }
+  else if(cantidad_llego < 0){
+    alert('La cantidad no puede ser negativa!');
+    doc('cantidad_llego').value = '';
+    doc('incomplete_button').disabled = false;
+  }
+  else{
+    $.ajax({
+      url: '/orders/incomplete_order/',
+      data: {
+        'id_pedido': id_pedido,
+        'id_prod_ped': id_prod_inc,
+        'cantidad': cantidad_llego,
+      },
+      dataType: 'json',
+      type: 'GET',
+      success: function(data) {
+        if(data.error){
+          location.reload();
+        }
+        if(data.first){
+          location.reload();
+        }
+        else{
+          document.getElementById('incomplete_order').innerHTML += '<tr>'+
+                                  '<td>'+data.producto+'</td>'+
+                                  '<td>'+data.unidad_m+'</td>'+
+                                  '<td>'+data.cantidad_pedida+'</td>'+
+                                  '<td>'+data.cantidad_actual+'</td>'+
+                                  '<td>'+data.cantidad_repo+'</td>'+
+                                '</tr>';
+          doc('producto_pedido'+doc('producto_incompleto').value).disabled = true;
+          doc('incomplete_button').disabled = false;
+          doc('producto_incompleto').value = -1;
+          doc('cantidad_llego').value = '';
+        }
+
+      }
+    });
+  }
+}
+
+
 
 
 
