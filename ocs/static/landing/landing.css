@@ -1,0 +1,14 @@
+/*
+Description: Styles sheet for the landing page
+Modified by:
+Modify date: 
+*/
+
+html, body {
+  height: 100%;
+}
+
+.homeview {
+  height: 100%;
+  width: 100%;
+}
