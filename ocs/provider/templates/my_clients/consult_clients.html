@@ -2,10 +2,15 @@
 {% extends "provider/home.html" %}
 {% load static %}
 {% block extras %}
-
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-  <h1 class="h2">Mis clientes</h1>
+<div class="clearfix">
+  <h3 class="float-left">
+    Mis clientes
+  </h3>
+  <h3 class="float-right">
+  </h3>
 </div>
+
+<hr />
 
 <div class='row'>
   {% if empty_list == 1 %}

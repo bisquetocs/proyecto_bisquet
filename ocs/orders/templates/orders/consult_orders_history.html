@@ -35,7 +35,7 @@
           <a class="btn btn-success" href="/orders/register_arrival/{{ p.id_pedido.id }}" role="button">
             Registrar llegada
           </a>
-          <a class="btn btn-info" href="/orders/order_detail/{{ p.id_pedido.id }}" role="button">
+          <a class="btn btn-primary" href="/orders/order_detail/{{ p.id_pedido.id }}" role="button">
             Ver pedido
           </a>
         </div>
@@ -74,7 +74,7 @@
       <td>{{p.id_pedido.fecha_ideal|date:'M-d-Y'}}</td>
       <td>{{p.id_status.nombre}}</td>
       <td>
-        <a class="btn btn-info" href="/orders/order_detail/{{ p.id_pedido.id }}" role="button">
+        <a class="btn btn-primary" href="/orders/order_detail/{{ p.id_pedido.id }}" role="button">
           Ver pedido
         </a>
       </td>
