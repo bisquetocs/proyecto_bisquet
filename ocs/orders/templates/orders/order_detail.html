@@ -211,7 +211,7 @@ $ pip install django-mathfilters
         </div>
       </div>
       {% if aux == 'provider/home.html' %}
-      {% if order_s.id_status.nombre != 'Rechazado' and order_s.id_status.nombre != 'Cancelado' and order_s.id_status.nombre != 'Completado' and order_s.id_status.nombre != 'Incompleto' %}
+      {% if order_s.id_status.nombre != 'Rechazado' and order_s.id_status.nombre != 'Cancelado' and order_s.id_status.nombre != 'Completado' and order_s.id_status.nombre != 'Incompleto' and order_s.id_status.nombre != 'En preparación/enviado' %}
       <div class="card mt-1 mb-3">
         <div class="text-center p-3">
           <small style="color:red">ZONA ROJA</small>

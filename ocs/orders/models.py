@@ -40,6 +40,7 @@ class OrderProductInStatus(models.Model):
     total = models.DecimalField(max_digits=8 ,decimal_places=3)
     # DATOS UTILES PARA EL CAMBIO DE ESTADOS
     id_status = models.ForeignKey(OrderProductStatus, on_delete=models.CASCADE, null=True)
+    cantidad_actual = models.DecimalField(max_digits=6 ,decimal_places=2, null=True)
     comentario = models.CharField(max_length=200, null=True)
     fecha = models.DateTimeField('date published')
     activo = models.BooleanField()

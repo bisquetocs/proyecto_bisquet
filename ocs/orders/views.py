@@ -27,6 +27,41 @@ from products.models import *
 from provider.models import *
 
 
+def has_permission(ocs_u, is_provider, id_company, id_rol):
+    u = OCSUser.objects.get(id = ocs_u.id)
+    user = User.objects.get(id = u.user.id)
+    user_groups = user.groups.all()
+    if u.id_provider is None:
+        if is_provider:
+            return False
+        else:
+            fran = Franchise.objects.get(id = u.id_franchise.id)
+            if fran.id == id_company:
+                if id_rol is None:
+                    return True
+                else:
+                    for g in user_groups:
+                        if id_rol == g.id:
+                            return True
+                    return False
+    elif u.id_franchise is None:
+        if is_provider:
+            prov = Provider.objects.get(id = u.id_provider.id)
+            if prov.id == id_company:
+                if id_rol is None:
+                    return True
+                else:
+                    for g in user_groups:
+                        if id_rol == g.id:
+                            return True
+                    return False
+        else:
+            return False
+    else:
+        return False
+    return False
+
+
 def make_order(request):
     u = OCSUser.objects.get(user = request.user)
     franchise = Franchise.objects.get(id = u.id_franchise.id)
@@ -384,32 +419,41 @@ def consult_order_history_franq(request):
 def register_arrival (request, id_order):
     exist = Order.objects.filter(id = id_order).exists()
     if exist == False:
+        messages.warning(request, 'Este pedido no existe!')
         return redirect('/')
     else:
         order = Order.objects.get(id = id_order)
     u = OCSUser.objects.get(user = request.user)
-    aux = False
-    if u.id_provider is None:
+    if has_permission(u, False, order.id_franchise.id, None):
         franchise = Franchise.objects.get(id = u.id_franchise.id)
-        if order.id_franchise == franchise:
-            products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
-            #Para cambiar el estado de la orden
-            order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
-            pedido = OrderStatus.objects.get(id = 2)
-            if(order_s.id_status == pedido):
-                status = OrderStatus.objects.get(id = 3)
-                order_s.id_status = status
-                order_s.save()
-            data = {
-                'usuario': u,
-                'order_s':order_s,
-                'data':order,
-                'products_list':products_list,
-            }
-            return render(request, 'orders/register_arrival.html', data)
-        else:
+        products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
+        order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
+
+        if order_s.id_status.id == 8:
+            messages.success(request, 'Este pedido ya está completado')
             return redirect('/')
+        elif order_s.id_status.id == 7:
+            incomplete = True
+            incomplete_p_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True, id_status = 3)
+            aux_p_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True,).exclude(id__in=incomplete_p_list)
+
+        else:
+            incomplete = False
+            incomplete_p_list = None
+            aux_p_list = products_list
+
+        data = {
+            'usuario': u,
+            'order_s':order_s,
+            'data':order,
+            'products_list':products_list,
+            'incomplete': incomplete,
+            'incomplete_p_list': incomplete_p_list,
+            'aux_p_list': aux_p_list,
+        }
+        return render(request, 'orders/register_arrival.html', data)
     else:
+        messages.warning(request, 'No tienes permiso de realizar esta acción')
         return redirect('/')
 
 def complete_order(request):
@@ -436,7 +480,7 @@ def complete_order(request):
             if p.id_unidad == prod_inv.id_unidad:
                 prod_inv.amount = prod_inv.amount + p.cantidad
             else:
-                exist = Equivalencias.objects.filter(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad).exists()
+                exist = Equivalencias.objects.filter(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad, activo=True).exists()
                 if exist:
                     equiv = Equivalencias.objects.get(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad)
                     cant_por_equiv = (p.cantidad*equiv.cantidad_origen)/equiv.cantidad_destino
@@ -453,33 +497,64 @@ def complete_order(request):
     data = { 'success': True, }
     return JsonResponse(data)
 
+def incomplete_order(request):
+    id_pedido = request.GET.get('id_pedido', None)
+    id_prod_ped = request.GET.get('id_prod_ped', None)
+    cantidad = request.GET.get('cantidad', None)
+    order = Order.objects.get(id = id_pedido, activo=True)
+    order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
+
+    first=False
+    error=False
+    if order_in_status.id_status.id == 6:
+        messages.success(request, 'Se registró la entrada incompleta!')
+        order_status = OrderStatus.objects.get(id=7)
+        new_order_in_status = OrderInStatus(id_pedido=order,id_status=order_status,fecha=timezone.now(), activo=True)
+        new_order_in_status.save()
+        order_in_status.activo = False
+        order_in_status.save()
+        first=True
+    elif order_in_status.id_status.id == 8:
+        messages.warning(request, 'El pedido ya ha sido completado')
+        error=True
+    product = OrderProductInStatus.objects.get(id = id_prod_ped, activo=True)
+    ord_prod_status = OrderProductStatus.objects.get(id=3)
+    product.id_status = ord_prod_status
+    product.cantidad_actual = cantidad
+    product.save()
+    exist = LinkedInventory.objects.filter(id_franchise=order.id_franchise, id_product=product.id_complete_product.id_product).exists()
+    if exist:
+        prod_inv = LinkedInventory.objects.get(id_franchise=order.id_franchise, id_product=product.id_complete_product.id_product)
+        if product.id_unidad == prod_inv.id_unidad:
+            prod_inv.amount = prod_inv.amount + Decimal(product.cantidad_actual)
+        else:
+            exist = Equivalencias.objects.filter(id_product = product.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad, activo=True).exists()
+            if exist:
+                equiv = Equivalencias.objects.get(id_product = product.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad)
+                cant_por_equiv = (Decimal(product.cantidad_actual)*equiv.cantidad_origen)/equiv.cantidad_destino
+                prod_inv.amount = prod_inv.amount + cant_por_equiv
+            else:
+                equiv = Equivalencias.objects.get(id_product = product.id_complete_product.id_product, id_unidad_destino = prod_inv.id_unidad)
+                cant_por_equiv = (Decimal(product.cantidad_actual)*equiv.cantidad_destino)/equiv.cantidad_origen
+                prod_inv.amount = prod_inv.amount + cant_por_equiv
+    else:
+        prod_inv = LinkedInventory(id_franchise=order.id_franchise, id_product=product.id_complete_product.id_product, id_unidad=product.id_unidad, amount = product.cantidad_actual)
+    prod_inv.save()
+    bitacora = LinkedProductRecord(id_franchise=order.id_franchise,id_linked_product = prod_inv,id_unidad=product.id_unidad,date = timezone.now(),comment = "Ingreso del pedido #"+str(order.id),amount = product.cantidad_actual,io = True)
+    bitacora.save()
+    data = { 'error': error,
+                'first': first,
+                'producto': product.id_complete_product.id_product.nombre.capitalize(),
+                'unidad_m': product.id_unidad.abreviacion,
+                'cantidad_pedida': product.cantidad,
+                'cantidad_actual': product.cantidad_actual,
+                'cantidad_repo': product.cantidad - Decimal(product.cantidad_actual),
+                }
+    return JsonResponse(data)
 
 
 
 
-
-def has_permission(ocs_u, is_provider, id_company, id_rol):
-    u = OCSUser.objects.get(id = ocs_u)
-    user = User.objects.get(id = u.user)
-    user_groups = user.groups.all()
-    if u.id_provider is None:
-        if is_provider:
-            return False
-        fran = Franchise.objects.get(id = u.id_franchise)
-        if fran.id == id_company:
-            for g in user_groups:
-                if id_rol == g.id:
-                    return True
-        return False
-    elif u.id_franchise is None:
-        if is_provider:
-            prov = Provider.objects.get(id = u.id_provider)
-            if prov.id == id_company:
-                for g in user_groups:
-                    if id_rol == g.id:
-                        return True
-        return False
-    else: return False
 
 
 
