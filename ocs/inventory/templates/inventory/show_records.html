@@ -33,8 +33,8 @@
     <tr class="table-danger">
       <td>{{ record.date }}</td>
       <td>{{ record.amount }}</td>
-      <td>{{ record.id_private_product.unit }}</td>
-      <td>{{ record.id_private_product.name }}</td>
+      <td>{{ record.id_private_product.unit }} {{ record.id_unidad.abreviacion }}</td>
+      <td>{{ record.id_private_product.name }} {{ record.id_linked_product.id_product.nombre }}</td>
       <td>{{ record.comment }}</td>
       <td value="S"><i class="fa fa-minus"><text style="visibility: hidden;">S</text></i></td>
     </tr>
