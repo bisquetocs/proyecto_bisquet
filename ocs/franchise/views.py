@@ -135,22 +135,30 @@ def link_provider(request):
         code = request.POST['link_code']
         try:
             l = LinkWithF.objects.get(link_code=code)
-            print(l.date_of_creation)
+            fran = LinkWithF.objects.filter(id_franchise = u.id_franchise, active = True)
             if l.used or l.check_timeout():
                 messages.warning(request, 'El código ya fue utilizado o caducado, por favor, solicita a tu proveedor que te genere un código nuevo.')
             else:
-                l.id_franchise = u.id_franchise
-                l.active = True
-                l.used = True
-                l.save()
-                f_name = l.id_provider.nombre
-                messages.success(request, '¡EXITO! Te has relacionado con '+f_name)
+                aux=False
+                for f in fran:
+                    if f.id_provider == l.id_provider:
+                        aux = True
+                        break
+                if aux:
+                    messages.warning(request, 'Esta relación ya existe!')
+                else:
+                    l.id_franchise = u.id_franchise
+                    l.active = True
+                    l.used = True
+                    l.save()
+                    f_name = l.id_provider.nombre
+                    messages.success(request, '¡EXITO! Te has relacionado con '+f_name)
         except:
-            messages.error(request, 'El código no coincide con ninguno registrado, ingrésalo de nuevo o consulta a tu proveedor..')
+            messages.error(request, 'El código no coincide con ninguno registrado,consulta a tu proveedor..')
     return render(request, 'link_provider/link_with_provider.html', {
             'usuario' : u,
             'code' : code,
-            'franchise_name' : f_name
+            'franchise_name' : f_name,
             })
 
 @login_required

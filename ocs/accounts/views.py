@@ -236,7 +236,9 @@ def verEmpleado(request, emp_id):
 @login_required
 def profile (request):
     ocs_user = OCSUser.objects.get(user = request.user)
-    if ocs_user.id_provider is None:
+    if ocs_user.id_provider is None and ocs_user.id_franchise is None:
+        aux = "home/index.html"
+    elif ocs_user.id_provider is None:
         #Es franchise
         aux = "franchise/home.html"
     elif ocs_user.id_franchise is None:
@@ -251,7 +253,9 @@ def profile (request):
 @login_required
 def edit_profile (request):
     ocs_user = OCSUser.objects.get(user = request.user)
-    if ocs_user.id_provider is None:
+    if ocs_user.id_provider is None and ocs_user.id_franchise is None:
+        aux = "home/index.html"
+    elif ocs_user.id_provider is None:
         #Es franchise
         aux = "franchise/home.html"
     elif ocs_user.id_franchise is None:

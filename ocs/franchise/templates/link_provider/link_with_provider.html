@@ -6,25 +6,18 @@
   <h1 class="h2">Ingresa el código de enlace</h1>
 </div>
 
-<div class="container">
-  <div class='container'>
-    <div class='row'>
-      <div class="col-sm8">
-        <label for="link_code">Ingresa el código de enlace que te proporcionó tu proveedor para que te puedas conectar con ellos y puedas realizar tus pedidos.</label>
-        <form class="col-3" method="post">
-          {% csrf_token %}
-
-          <input class="form-control" type="text" placeholder="" value="" name="link_code">
-          <br>
-          <input class="btn btn-lg btn-primary " type="submit" value="Enlazar">
-        </form>
-
-
-
-      </div>
+<div class="container-fluid">
+  <div class='row'>
+    <div class="col">
+      <label for="link_code">Ingresa el código de enlace que te proporcionó tu proveedor para que te puedas conectar con ellos y puedas realizar tus pedidos.</label>
+      <form class="col-3" method="post">
+        {% csrf_token %}
+        <input class="form-control" type="text" placeholder="" value="" name="link_code">
+        <br>
+        <input class="btn btn-lg btn-primary " type="submit" value="Enlazar">
+      </form>
     </div>
   </div>
-
 </div>
 
 {% endblock extras %}

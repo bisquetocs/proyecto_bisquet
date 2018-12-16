@@ -21,42 +21,142 @@ Modify date: 21-10-18
 
 <hr />
 
-  <div class="container">
-    <div class="row">
-      <div class="col">
-      <form method="post">
-      {% csrf_token %}
+<div class="row">
+  <div class="col">
+    <form method="post">
+    {% csrf_token %}
       <div class="form-group row">
-        <div class="col-sm-4">
+        <div class="col-4">
+          <label for="client">Cliente</label>
+          <select id="client" name="client" class="form-control">
+            <option selected disabled>Selecciona un cliente</option>
+            {% for client in clients_list %}
+                <option>{{ client.id_franchise.nombre }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-4">
           <label for="day">Día</label>
           <select id="day" name="day" class="form-control">
-            <option selected>Selecciona un día</option>
+            <option selected disabled>Selecciona un día</option>
             {% for day in days_list %}
                 <option>{{ day.nombre }}</option>
             {% endfor %}
           </select>
         </div>
-        <div class="col-sm-4">
-          <label for="client">Cliente</label>
-          <select id="client" name="client" class="form-control">
-            <option selected>Selecciona un cliente</option>
-            {% for client in clients_list %}
-                <option>{{ client.nombre }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-sm-4">
-          <br>
-          <button type="submit" class="btn btn-md btn-primary">Registrar</button>
+        <div class="col-4 align-self-end">
+          <button type="submit" class="btn btn-primary">Registrar</button>
         </div>
       </div>
-      <br><hr>
-      </form>
-    </div>
-    </div>
-
+      <hr class="mt-4">
+    </form>
   </div>
+</div>
 
+<table class="table table-hover table-bordered text-center">
+  <thead class="thead-dark">
+    <tr>
+      <th class="bg-secondary">Clientes:</th>
+      <th>Lunes</th>
+      <th>Martes</th>
+      <th>Miércoles</th>
+      <th>Jueves</th>
+      <th>Viernes</th>
+      <th>Sábado</th>
+      <th>Domingo</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for c in clients_list %}
+    <tr>
+      <th>{{c.id_franchise.nombre}}</th>
+      {% if lunes.count == 0 %}
+        <td class="bg-warning"></td>
+      {% else %}
+        {% for day in lunes %}
+          {% if c.id_franchise.id == day.franchise.id %}
+          <td class="bg-success">LUN</td>
+          {% else %}
+          <td class="bg-warning"></td>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
 
+      {% if martes.count == 0 %}
+        <td class="bg-warning"></td>
+      {% else %}
+        {% for day in martes %}
+          {% if c.id_franchise.id == day.franchise.id %}
+          <td class="bg-success">MAR</td>
+          {% else %}
+          <td class="bg-warning"></td>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if miercoles.count == 0 %}
+        <td class="bg-warning"></td>
+      {% else %}
+        {% for day in miercoles %}
+          {% if c.id_franchise.id == day.franchise.id %}
+          <td class="bg-success">MIE</td>
+          {% else %}
+          <td class="bg-warning"></td>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if jueves.count == 0 %}
+        <td class="bg-warning"></td>
+      {% else %}
+        {% for day in jueves %}
+          {% if c.id_franchise.id == day.franchise.id %}
+          <td class="bg-success">JUE</td>
+          {% else %}
+          <td class="bg-warning"></td>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if viernes.count == 0 %}
+        <td class="bg-warning"></td>
+      {% else %}
+        {% for day in viernes %}
+          {% if c.id_franchise.id == day.franchise.id %}
+          <td class="bg-success">VIE</td>
+          {% else %}
+          <td class="bg-warning"></td>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if sabado.count == 0 %}
+        <td class="bg-warning"></td>
+      {% else %}
+        {% for day in sabado %}
+          {% if c.id_franchise.id == day.franchise.id %}
+          <td class="bg-success">SAB</td>
+          {% else %}
+          <td class="bg-warning"></td>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if domingo.count == 0 %}
+        <td class="bg-warning"></td>
+      {% else %}
+        {% for day in domingo %}
+          {% if c.id_franchise.id == day.franchise.id %}
+          <td class="bg-success">DOM</td>
+          {% else %}
+          <td class="bg-warning"></td>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 
 {% endblock content %}

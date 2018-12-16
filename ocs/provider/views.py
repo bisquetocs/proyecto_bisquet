@@ -81,6 +81,7 @@ def link_code(request):
     """
     u = OCSUser.objects.get(user = request.user)
     code = ''
+    francs = LinkWithF.objects.filter(id_franchise = u.id_franchise, used = False)
     if request.method == 'POST':
         code = code_generator()
         l = LinkWithF(link_code=code, used=False, active=False)
@@ -93,7 +94,8 @@ def link_code(request):
             link_code(request)
     return render(request, 'link_code/generate_link.html', {
             'usuario' : u,
-            'code' : code
+            'code' : code,
+            'francs' : francs,
             })
 
 #Función para asignar horas de oficina a la empresa de lado proveedor
@@ -171,9 +173,36 @@ def daily_clients(request):
 
     #Selecciona la lista de los días
     days_list = Days.objects.all()
+
+    lun = Days.objects.get(nombre="Lunes")
+    lunes = DailyClients.objects.filter(day = lun)
+    mar = Days.objects.get(nombre="Martes")
+    martes = DailyClients.objects.filter(day = mar)
+    mie = Days.objects.get(nombre="Miércoles")
+    miercoles = DailyClients.objects.filter(day = mie)
+    jue = Days.objects.get(nombre="Jueves")
+    jueves = DailyClients.objects.filter(day = jue)
+    vie = Days.objects.get(nombre="Viernes")
+    viernes = DailyClients.objects.filter(day = vie)
+    sab = Days.objects.get(nombre="Sábado")
+    sabado = DailyClients.objects.filter(day = sab)
+    dom = Days.objects.get(nombre="Domingo")
+    domingo = DailyClients.objects.filter(day = dom)
+
     #Se hace un filtro para desplegar solo los clientes ligados con ese usuario proveedor
-    fran_prov = LinkWithF.objects.values_list('id_franchise', flat=True).filter(id_provider = prov)
-    clients_list = Franchise.objects.filter(id__in = fran_prov)
+    clients_list = LinkWithF.objects.filter(id_provider = prov, active=True)
+
+    data = {    'usuario':u,
+                'clients_list': clients_list,
+                'days_list':days_list,
+                'lunes':lunes,
+                'martes':martes,
+                'miercoles':miercoles,
+                'jueves':jueves,
+                'viernes':viernes,
+                'sabado':sabado,
+                'domingo':domingo,
+                }
     if request.method == 'POST' and (group_prov in user.groups.all()):
         #Hace el registro
         obj_fran =  Franchise.objects.get( nombre = request.POST['client'])
@@ -182,8 +211,9 @@ def daily_clients(request):
         register = DailyClients(franchise = obj_fran, day = obj_day, status = 'Sin pedido')
         register.save()
         #Fin de registro
+        return render(request, 'my_clients/daily_clients.html', data)
     if (group_prov in user.groups.all()):
-        return render(request, 'my_clients/daily_clients.html', {'usuario':u, 'clients_list': clients_list, 'days_list':days_list})
+        return render(request, 'my_clients/daily_clients.html', data)
     else:
         return redirect('../')
 

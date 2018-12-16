@@ -22,11 +22,18 @@
     <div style="overflow-y: scroll; max-height:400px;">
       <div class="card">
         <ul class="list-group list-group-flush">
-          {% for provi in my_providers %}
-          <a href="/orders/make_order/{{provi.id_provider.id}}/" class="list-group-item list-group-item-action">
-            {{provi.id_provider.nombre}}
-          </a>
-          {% endfor %}
+          {% if my_providers.count == 0 %}
+            <a href="/franchise/my_providers/link/" class="list-group-item list-group-item-action">
+              No cuentas con proveedores <b>Enlazarme con un proveedor!</b>
+            </a>
+          {% else %}
+            {% for provi in my_providers %}
+            <a href="/orders/make_order/{{provi.id_provider.id}}/" class="list-group-item list-group-item-action">
+              {{provi.id_provider.nombre}}
+            </a>
+            {% endfor %}
+          {% endif %}
+
         </ul>
       </div>
     </div>

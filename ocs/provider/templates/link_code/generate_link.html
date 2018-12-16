@@ -1,39 +1,45 @@
-
 {% extends "provider/home.html" %}
 
-
 {% block extras %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">Crea tu código de enlace</h1>
+</div>
 
+<div class="container-fluid">
+  <div class='row'>
+    <div class="col">
+      <p>Genera un código de enlace para que te puedas conectar con tus clientes y puedan realizar sus pedidos a tu empresa.</p>
+      <p>Ten en cuenta que siempre que quieras enlazarte con una nueva franquicia, ocuparás generar un nuevo código.</p>
 
-  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Crea tu código de enlace</h1>
-  </div>
-
-  <div class="container">
-    <p>Genera un código de enlace para que te puedas conectar con tus clientes y puedan realizar sus pedidos a tu empresa.</p>
-    <p>Ten en cuenta que siempre que quieras enlazarte con una nueva franquicia, ocuparás generar un nuevo código.</p>
-
-    <div class='container'>
-      <div class='row'>
-        <div class="col-sm8">
-
-          <form method="post">
-            {% csrf_token %}
-            <input class="btn btn-lg btn-primary " type="submit" value="Generar código">
-            <br><br>
-            <input class="form-control" type="text" placeholder="" value="{{ code }}" name="link_code" readonly>
-          </form>
-          {% if code != '' %}
-          <p>¡Tu código se ha creado!</p>
-          <p>Recuerda que este código sólo se puede utilizar una vez, si quieres enlazarte con otro cliente, presiona nuevamente el botón de "Generar código"</p>
+      <form method="post">
+        {% csrf_token %}
+        <input class="btn btn-lg btn-primary " type="submit" value="Generar código">
+        <br><br>
+        <input class="form-control" type="text" placeholder="" value="{{ code }}" name="link_code" readonly>
+      </form>
+      {% if code != '' %}
+      <p>¡Tu código se ha creado!</p>
+      <p>Recuerda que este código sólo se puede utilizar una vez, si quieres enlazarte con otro cliente, presiona nuevamente el botón de "Generar código"</p>
+      {% endif %}
+    </div>
+    <div class="col">
+      <div class="card" style="background-color:rgb(233,236,239)">
+        <div class="card-body">
+          <h4>Codigos activos:</h4>
+          <hr>
+          <ul>
+          {% if francs.count == 0 %}
+          <li>No tienes códigos sin usar</li>
+          {% else %}
+            {% for f in francs %}
+            <li>{{ f.link_code }}</li>
+            {% endfor %}
           {% endif %}
-
+          </ul>
         </div>
       </div>
     </div>
-
   </div>
-
-
+</div>
 
 {% endblock extras%}
