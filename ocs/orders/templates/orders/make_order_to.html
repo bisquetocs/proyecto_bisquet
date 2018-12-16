@@ -21,9 +21,13 @@
 
 <!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
 {% block list_products %}
-  {% for p in products %}
-  <option id="product{{p.id}}" name="{{p.id}}" value="{{p.nombre.capitalize}}">
-  {% endfor %}
+  {% if products.count == 0 %}
+    <option value="Sin productos...">
+  {% else %}
+    {% for p in products %}
+    <option id="product{{p.id}}" name="{{p.id}}" value="{{p.nombre.capitalize}}">
+    {% endfor %}
+  {% endif %}
 {% endblock list_products %}
 
 <!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->

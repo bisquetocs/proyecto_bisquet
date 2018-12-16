@@ -295,6 +295,7 @@ def order_detail (request, id_order):
 
     exist = Order.objects.filter(id = id_order).exists()
     if exist == False:
+        messages.warning(request, 'Este pedido no existe!')
         return redirect('/')
     else:
         order = Order.objects.get(id = id_order)
@@ -310,27 +311,24 @@ def order_detail (request, id_order):
         if order.id_provider == provider:
             aux = True
             other = 'provider/home.html'
-    if (aux and (prov in user.groups.all() or secretary in user.groups.all())): #checks privileges
-        products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
-        #Para cambiar el estado de la orden
-        order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
-        pedido = OrderStatus.objects.get(id = 2)
-        if(order_s.id_status == pedido):
-            status = OrderStatus.objects.get(id = 3)
-            order_s.id_status = status
-            order_s.save()
-        data = {
-            'usuario': u,
-            'order_s':order_s,
-            'data':order,
-            'aux':other,
-            'products_list':products_list,
-        }
-
-        return render(request, 'orders/order_detail.html', data)
-    else:
-        return redirect('/')
-        empty_list_re = 0
+    #ESTA MAL ESTE IF...
+    #if (aux and (prov in user.groups.all() or secretary in user.groups.all())): #checks privileges
+    products_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True)
+    #Para cambiar el estado de la orden
+    order_s = OrderInStatus.objects.get(id_pedido=order, activo=True)
+    pedido = OrderStatus.objects.get(id = 2)
+    if(order_s.id_status == pedido):
+        status = OrderStatus.objects.get(id = 3)
+        order_s.id_status = status
+        order_s.save()
+    data = {
+        'usuario': u,
+        'order_s':order_s,
+        'data':order,
+        'aux':other,
+        'products_list':products_list,
+    }
+    return render(request, 'orders/order_detail.html', data)
 
 
 def cancel_order(request):
