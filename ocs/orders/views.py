@@ -250,8 +250,8 @@ def consult_orders (request):
     ocs_user = OCSUser.objects.get(user = request.user)
     prov = ocs_user.id_provider_id
     user = request.user
-    provider = Group.objects.get(name = "Administrador de empresa")
-    secretary = Group.objects.get(name = "Secretario")
+    #provider = Group.objects.get(name = "Administrador de empresa")
+    #secretary = Group.objects.get(name = "Secretario")
 
     #filtro para aislar a la columna id, sirve para solo seleccionar las ordenes de tal proveedor
     orders = Order.objects.filter(id_provider=prov, activo=True)
@@ -281,11 +281,12 @@ def consult_orders (request):
         'preparar':preparar,
         'incompletos':incompletos,
     }
-
-    if (provider in user.groups.all() or secretary in user.groups.all()): #Checks privileges of owner and secretary
-        return render(request, 'orders/consult_orders.html', data)
-    else:
-        return redirect("../../")
+    return render(request, 'orders/consult_orders.html', data)
+    #azsasasajbhvkuv
+    #if (provider in user.groups.all() or secretary in user.groups.all()): #Checks privileges of owner and secretary
+        #return render(request, 'orders/consult_orders.html', data)
+    #else:
+        #return redirect("../../")
 
 @login_required
 def order_detail (request, id_order):

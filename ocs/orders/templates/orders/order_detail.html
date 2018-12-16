@@ -18,6 +18,11 @@ $ pip install django-mathfilters
     Detalle de orden <small style="color:gray"># <tex id="id_pedido">{{data.id}}</tex></small>
   </h3>
   <h3 class="float-right">
+    {% if aux == 'provider/home.html' %}
+    <a class="btn btn-secondary btn-block" href="/orders/consult_orders/"><span class="fa fa-reply"> </span> Regresar</a>
+    {% else %}
+    <a class="btn btn-secondary btn-block" href="/orders/consult_order_history_franq/"><span class="fa fa-reply"> </span> Regresar</a>
+    {% endif %}
   </h3>
 </div>
 <hr />
@@ -152,8 +157,13 @@ $ pip install django-mathfilters
           </div>
           {% endif %}
           {% endif %}
+          {% if aux == 'provider/home.html' %}
           <h5 class="card-title">{{ data.id_franchise.nombre }}</h5>
           <small>Información de la venta:</small>
+          {% else %}
+          <h5 class="card-title">{{ data.id_provider.nombre }}</h5>
+          <small>Información de la compra:</small>
+          {% endif %}
           <div class="row">
             <div class="col-5 mt-2">
               <small>Total de productos:</small>
@@ -228,12 +238,6 @@ $ pip install django-mathfilters
       </div>
       {% endif %}
       {% endif %}
-      <div class="row mt-3">
-        <div class="col text-right">
-          <a class="btn btn-secondary btn-block" href="/orders/consult_orders">Regresar</a>
-        </div>
-      </div>
-      <br>
     </div>
   </div>
 </div>
@@ -254,8 +258,6 @@ $ pip install django-mathfilters
   <div class="text-center">
     <p>TEL: {{ usuario.phone }} <br> ID #{{ data.id }}<br> Productos: {{  data.cantidad_productos  }}</p>
   </div>
-
-
   <div class="container">
     <div class="row border rounded">
       <div class="container-fluid">
@@ -289,8 +291,6 @@ $ pip install django-mathfilters
       </div>
     </div>
   </div>
-
-
   <div class="container">
     <div class="row border rounded">
       <div class="card-body">
@@ -319,29 +319,27 @@ $ pip install django-mathfilters
       </div>
     </div>
   </div>
-
   <div class="container">
-  <div class="col-4">
-    <div class="row border rounded">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-5 mt-2">
-            <small>Total:</small>
-          </div>
-          <div class="col-7 mt-2">
-            <div class="input-group mb-3">
-              <div class="input-group-prepend">
-                <span class="input-group-text" id="basic-addon1">$</span>
-              </div>
-              <input disabled id="total_precio" class="form-control" type="number" value="{{ data.precio_total }}" step="0.001">
+    <div class="col-4">
+      <div class="row border rounded">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-5 mt-2">
+              <small>Total:</small>
             </div>
-          </div>
-          </div>
+            <div class="col-7 mt-2">
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="basic-addon1">$</span>
+                </div>
+                <input disabled id="total_precio" class="form-control" type="number" value="{{ data.precio_total }}" step="0.001">
+              </div>
+            </div>
+            </div>
+        </div>
       </div>
     </div>
   </div>
-  </div>
-
 </div>
 
 <script>
@@ -351,14 +349,9 @@ $ pip install django-mathfilters
     document.body.innerHTML = divElements;
     window.print();
     document.body.innerHTML = oldPage;
-
   }
 </script>
 
 <script type="text/javascript" charset="utf8" src="{% static 'js/datatables.js' %}"></script>
-
-
-
-
 
 {% endblock extras %}
