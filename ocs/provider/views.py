@@ -252,7 +252,7 @@ def daily_clients_interactive(request):
         data = { 'success': True, }
         return JsonResponse(data)
 
-# Function that shows the Provider comppany profile
+# Function that shows the Provider company profile
 @login_required
 def profile (request):
     ocs_user = OCSUser.objects.get(user = request.user)
