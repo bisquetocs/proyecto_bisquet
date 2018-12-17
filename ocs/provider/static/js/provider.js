@@ -517,11 +517,54 @@ function rechazar_pedido(){
   }
 }
 
+// DAILY CLIENTS
+function showHideAddDeleteDailyC(id_franchise, day, show){
+  if(show){
+    doc(day+id_franchise).hidden = false;
+  }else{
+    doc(day+id_franchise).hidden = true;
+  }
+}
 
-
-
-
-
+function addDeleteDailyC(id_franchise, day, add){
+  dia=0;
+  switch(day){
+    case 'lunes':
+      dia  = 1;
+    break;
+    case 'martes':
+      dia  = 2;
+    break;
+    case 'miercoles':
+      dia  = 3;
+    break;
+    case 'jueves':
+      dia  = 4;
+    break;
+    case 'viernes':
+      dia  = 5;
+    break;
+    case 'sabado':
+      dia  = 6;
+    break;
+    case 'domingo':
+      dia  = 7;
+    break;
+  }
+  $.ajax({
+    url: '/provider/my_clients/daily_clients_interactive/',
+    data: {
+      'id_franchise': id_franchise,
+      'day':dia,
+      'add':add,
+    },
+    dataType: 'json',
+    type: 'GET',
+    success: function(data) {
+      location.reload();
+    }
+  });
+}
 
 
 

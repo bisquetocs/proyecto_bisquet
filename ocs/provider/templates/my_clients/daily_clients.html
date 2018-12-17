@@ -70,90 +70,105 @@ Modify date: 21-10-18
     {% for c in clients_list %}
     <tr>
       <th>{{c.id_franchise.nombre}}</th>
-      {% if lunes.count == 0 %}
-        <td class="bg-warning"></td>
+      {% if c.id_franchise.id in lunes %}
+      <td class="bg-success" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'lunes', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'lunes', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'lunes', false)">
+
+        LUN <span class="fa fa-trash" id="lunes{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% else %}
-        {% for day in lunes %}
-          {% if c.id_franchise.id == day.franchise.id %}
-          <td class="bg-success">LUN</td>
-          {% else %}
-          <td class="bg-warning"></td>
-          {% endif %}
-        {% endfor %}
+      <td class="bg-warning" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'lunes', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'lunes', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'lunes', true)">
+
+        <span class="fa fa-plus" id="lunes{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% endif %}
 
-      {% if martes.count == 0 %}
-        <td class="bg-warning"></td>
+      {% if c.id_franchise.id in martes %}
+      <td class="bg-success" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'martes', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'martes', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'martes', false)">
+        MAR <span class="fa fa-trash" id="martes{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% else %}
-        {% for day in martes %}
-          {% if c.id_franchise.id == day.franchise.id %}
-          <td class="bg-success">MAR</td>
-          {% else %}
-          <td class="bg-warning"></td>
-          {% endif %}
-        {% endfor %}
+      <td class="bg-warning" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'martes', true)"
+            	                 onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'martes', false)"
+                               onclick="addDeleteDailyC({{c.id_franchise.id}}, 'martes', true)">
+        <span class="fa fa-plus" id="martes{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% endif %}
 
-      {% if miercoles.count == 0 %}
-        <td class="bg-warning"></td>
+      {% if c.id_franchise.id in miercoles %}
+      <td class="bg-success" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'miercoles', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'miercoles', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'miercoles', false)">
+        MIE <span class="fa fa-trash" id="miercoles{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% else %}
-        {% for day in miercoles %}
-          {% if c.id_franchise.id == day.franchise.id %}
-          <td class="bg-success">MIE</td>
-          {% else %}
-          <td class="bg-warning"></td>
-          {% endif %}
-        {% endfor %}
+      <td class="bg-warning" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'miercoles', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'miercoles', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'miercoles', true)">
+        <span class="fa fa-plus" id="miercoles{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% endif %}
 
-      {% if jueves.count == 0 %}
-        <td class="bg-warning"></td>
+      {% if c.id_franchise.id in jueves %}
+      <td class="bg-success" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'jueves', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'jueves', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'jueves', false)">
+        JUE <span class="fa fa-trash" id="jueves{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% else %}
-        {% for day in jueves %}
-          {% if c.id_franchise.id == day.franchise.id %}
-          <td class="bg-success">JUE</td>
-          {% else %}
-          <td class="bg-warning"></td>
-          {% endif %}
-        {% endfor %}
+      <td class="bg-warning" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'jueves', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'jueves', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'jueves', true)">
+        <span class="fa fa-plus" id="jueves{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% endif %}
 
-      {% if viernes.count == 0 %}
-        <td class="bg-warning"></td>
+      {% if c.id_franchise.id in viernes %}
+      <td class="bg-success" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'viernes', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'viernes', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'viernes', false)">
+        VIE <span class="fa fa-trash" id="viernes{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% else %}
-        {% for day in viernes %}
-          {% if c.id_franchise.id == day.franchise.id %}
-          <td class="bg-success">VIE</td>
-          {% else %}
-          <td class="bg-warning"></td>
-          {% endif %}
-        {% endfor %}
+      <td class="bg-warning" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'viernes', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'viernes', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'viernes', true)">
+        <span class="fa fa-plus" id="viernes{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% endif %}
 
-      {% if sabado.count == 0 %}
-        <td class="bg-warning"></td>
+      {% if c.id_franchise.id in sabado %}
+      <td class="bg-success" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'sabado', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'sabado', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'sabado', false)">
+        SAB <span class="fa fa-trash" id="sabado{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% else %}
-        {% for day in sabado %}
-          {% if c.id_franchise.id == day.franchise.id %}
-          <td class="bg-success">SAB</td>
-          {% else %}
-          <td class="bg-warning"></td>
-          {% endif %}
-        {% endfor %}
+      <td class="bg-warning" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'sabado', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'sabado', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'sabado', true)">
+        <span class="fa fa-plus" id="sabado{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% endif %}
 
-      {% if domingo.count == 0 %}
-        <td class="bg-warning"></td>
+      {% if c.id_franchise.id in domingo %}
+      <td class="bg-success" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'domingo', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'domingo', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'domingo', false)">
+        DOM <span class="fa fa-trash" id="domingo{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% else %}
-        {% for day in domingo %}
-          {% if c.id_franchise.id == day.franchise.id %}
-          <td class="bg-success">DOM</td>
-          {% else %}
-          <td class="bg-warning"></td>
-          {% endif %}
-        {% endfor %}
+      <td class="bg-warning" onmouseover="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'domingo', true)"
+                              onmouseout="showHideAddDeleteDailyC({{c.id_franchise.id}}, 'domingo', false)"
+                              onclick="addDeleteDailyC({{c.id_franchise.id}}, 'domingo', true)">
+        <span class="fa fa-plus" id="domingo{{c.id_franchise.id}}" hidden></span>
+      </td>
       {% endif %}
-
     </tr>
     {% endfor %}
   </tbody>

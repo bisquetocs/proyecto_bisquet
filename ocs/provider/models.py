@@ -48,6 +48,7 @@ class OfficeHours(models.Model):
     finish_hour = models.TimeField()
 
 class DailyClients(models.Model):
-    franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE, blank = True, null = True)
+    id_provider = models.ForeignKey(Provider, on_delete=models.CASCADE, blank = True, null = True)
+    id_franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE, blank = True, null = True)
     day = models.ForeignKey(Days, on_delete = models.CASCADE, blank = True, null = True)
-    status = models.CharField(max_length=12)
+    activo = models.BooleanField()

@@ -16,9 +16,10 @@ urlpatterns = [
     path('my_clients/', views.my_clients, name='my_clients'),
     path('my_clients/link_code/', views.link_code, name='link_code'),
     path('office/', views.office, name='office'),
-    path('office/<int:id_day_hour>', views.office_assign, name='office_assign'),
-    path('my_clients/<int:id_franchise>', views.client_detail, name='client_detail'),
-    path('my_clients/daily_clients', views.daily_clients, name='daily_clients'),
+    path('office/<int:id_day_hour>/', views.office_assign, name='office_assign'),
+    path('my_clients/<int:id_franchise>/', views.client_detail, name='client_detail'),
+    path('my_clients/daily_clients/', views.daily_clients, name='daily_clients'),
+    path('my_clients/daily_clients_interactive/', views.daily_clients_interactive, name='daily_clients_interactive'),
     path('profile/', views.profile, name="profile"),
     path('profile/edit/', views.edit_provider, name="editProfile"),
 ]

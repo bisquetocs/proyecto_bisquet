@@ -8,7 +8,7 @@ modify date:    12/11/18
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
@@ -165,29 +165,29 @@ def client_detail(request, id_franchise):
 #Función para desplegar y añadir los clientes diarios de una empresa del lado de proveedor
 @login_required
 def daily_clients(request):
-    u = OCSUser.objects.get(user = request.user)
-    prov = u.id_provider_id
-    provider = Provider.objects.get(id = prov)
-    group_prov = Group.objects.get(name = "Administrador de empresa")
     user = request.user
+    u = OCSUser.objects.get(user = user)
+    prov = u.id_provider
+    #provider = Provider.objects.get(id = prov.id)
+    group_prov = Group.objects.get(name = "Administrador de empresa")
 
     #Selecciona la lista de los días
     days_list = Days.objects.all()
 
     lun = Days.objects.get(nombre="Lunes")
-    lunes = DailyClients.objects.filter(day = lun)
+    lunes = DailyClients.objects.values_list('id_franchise', flat=True).filter(id_provider = prov, day = lun, activo=True)
     mar = Days.objects.get(nombre="Martes")
-    martes = DailyClients.objects.filter(day = mar)
+    martes = DailyClients.objects.values_list('id_franchise', flat=True).filter(id_provider = prov, day = mar, activo=True)
     mie = Days.objects.get(nombre="Miércoles")
-    miercoles = DailyClients.objects.filter(day = mie)
+    miercoles = DailyClients.objects.values_list('id_franchise', flat=True).filter(id_provider = prov, day = mie, activo=True)
     jue = Days.objects.get(nombre="Jueves")
-    jueves = DailyClients.objects.filter(day = jue)
+    jueves = DailyClients.objects.values_list('id_franchise', flat=True).filter(id_provider = prov, day = jue, activo=True)
     vie = Days.objects.get(nombre="Viernes")
-    viernes = DailyClients.objects.filter(day = vie)
+    viernes = DailyClients.objects.values_list('id_franchise', flat=True).filter(id_provider = prov, day = vie, activo=True)
     sab = Days.objects.get(nombre="Sábado")
-    sabado = DailyClients.objects.filter(day = sab)
+    sabado = DailyClients.objects.values_list('id_franchise', flat=True).filter(id_provider = prov, day = sab, activo=True)
     dom = Days.objects.get(nombre="Domingo")
-    domingo = DailyClients.objects.filter(day = dom)
+    domingo = DailyClients.objects.values_list('id_franchise', flat=True).filter(id_provider = prov, day = dom, activo=True)
 
     #Se hace un filtro para desplegar solo los clientes ligados con ese usuario proveedor
     clients_list = LinkWithF.objects.filter(id_provider = prov, active=True)
@@ -205,18 +205,52 @@ def daily_clients(request):
                 }
     if request.method == 'POST' and (group_prov in user.groups.all()):
         #Hace el registro
-        obj_fran =  Franchise.objects.get( nombre = request.POST['client'])
+        obj_prov = prov
+        obj_fran = Franchise.objects.get( nombre = request.POST['client'])
         obj_day = Days.objects.get(nombre = request.POST['day'])
 
-        register = DailyClients(franchise = obj_fran, day = obj_day, status = 'Sin pedido')
-        register.save()
+        daily_clients = DailyClients.objects.filter(id_provider = prov, activo=True)
+        aux = False
+        for d in daily_clients:
+            if d.id_franchise == obj_fran and d.day == obj_day:
+                aux = True
+                messages.warning(request, '¡Esa relación ya existe!')
+
+        if aux is False:
+            register = DailyClients(id_provider = obj_prov, id_franchise = obj_fran, day = obj_day, activo = True)
+            register.save()
+            messages.success(request, 'Tu cliente ya te podrá pedir estos días...')
         #Fin de registro
-        return render(request, 'my_clients/daily_clients.html', data)
+        return redirect(reverse('provider:daily_clients'))
     if (group_prov in user.groups.all()):
         return render(request, 'my_clients/daily_clients.html', data)
     else:
         return redirect('../')
 
+def daily_clients_interactive(request):
+    user = request.user
+    u = OCSUser.objects.get(user = user)
+    prov = u.id_provider
+    id_franchise = request.GET.get('id_franchise', None)
+    day = request.GET.get('day', None)
+    add = request.GET.get('add', None)
+    if id_franchise is not None and day is not None and add is not None:
+        obj_prov = prov
+        obj_fran = Franchise.objects.get(id = id_franchise)
+        obj_day = Days.objects.get(id = day)
+        daily_clients = DailyClients.objects.filter(id_provider = prov, activo=True)
+        for d in daily_clients:
+            if d.id_franchise == obj_fran and d.day == obj_day:
+                d.activo = False
+                d.save()
+                d.delete()
+                messages.warning(request, 'Tu cliente ya NO te podrá pedir estos días... (Solo pedidos emergentes)')
+        if add == 'true':
+            register = DailyClients(id_provider = obj_prov, id_franchise = obj_fran, day = obj_day, activo = True)
+            register.save()
+            messages.success(request, 'Tu cliente ya te podrá pedir estos días...')
+        data = { 'success': True, }
+        return JsonResponse(data)
 
 # Function that shows the Provider comppany profile
 @login_required
