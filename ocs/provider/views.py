@@ -208,17 +208,18 @@ def daily_clients(request):
         obj_prov = prov
         obj_fran = Franchise.objects.get( nombre = request.POST['client'])
         obj_day = Days.objects.get(nombre = request.POST['day'])
-
+        link = LinkWithF.objects.get(id_provider = obj_prov, id_franchise=obj_fran, active=True)
         daily_clients = DailyClients.objects.filter(id_provider = prov, activo=True)
         aux = False
         for d in daily_clients:
             if d.id_franchise == obj_fran and d.day == obj_day:
                 aux = True
                 messages.warning(request, '¡Esa relación ya existe!')
-
         if aux is False:
             register = DailyClients(id_provider = obj_prov, id_franchise = obj_fran, day = obj_day, activo = True)
             register.save()
+            link.is_daily_client = True
+            link.save()
             messages.success(request, 'Tu cliente ya te podrá pedir estos días...')
         #Fin de registro
         return redirect(reverse('provider:daily_clients'))
@@ -238,17 +239,23 @@ def daily_clients_interactive(request):
         obj_prov = prov
         obj_fran = Franchise.objects.get(id = id_franchise)
         obj_day = Days.objects.get(id = day)
+        link = LinkWithF.objects.get(id_provider = obj_prov, id_franchise=obj_fran, active=True)
         daily_clients = DailyClients.objects.filter(id_provider = prov, activo=True)
         for d in daily_clients:
             if d.id_franchise == obj_fran and d.day == obj_day:
-                d.activo = False
-                d.save()
                 d.delete()
                 messages.warning(request, 'Tu cliente ya NO te podrá pedir estos días... (Solo pedidos emergentes)')
         if add == 'true':
             register = DailyClients(id_provider = obj_prov, id_franchise = obj_fran, day = obj_day, activo = True)
             register.save()
+            link.is_daily_client = True
+            link.save()
             messages.success(request, 'Tu cliente ya te podrá pedir estos días...')
+        else:
+            total = DailyClients.objects.filter(id_provider = prov, id_franchise=obj_fran, activo=True)
+            if total.count == 0:
+                link.is_daily_client = False
+                link.save()
         data = { 'success': True, }
         return JsonResponse(data)
 

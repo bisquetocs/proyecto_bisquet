@@ -30,6 +30,7 @@ class LinkWithF(models.Model):
     link_code = models.CharField(max_length=12)
     active = models.BooleanField()
     used = models.BooleanField()
+    is_daily_client = models.BooleanField()
     date_of_creation = models.DateTimeField(default=timezone.now, blank=True)
     def check_timeout(self):
         if (timezone.now() - self.date_of_creation) > datetime.timedelta(days=5):
