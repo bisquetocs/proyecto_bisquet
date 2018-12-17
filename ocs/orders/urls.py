@@ -30,5 +30,6 @@ urlpatterns = [
     path('register_arrival/<int:id_order>/', views.register_arrival, name='register_arrival'),
     path('complete_order/', views.complete_order, name='complete_order'),
     path('incomplete_order/', views.incomplete_order, name='incomplete_order'),
+    path('completed_order/', views.completed_order, name='completed_order'),
 
 ]

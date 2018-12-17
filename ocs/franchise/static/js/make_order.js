@@ -366,7 +366,21 @@ function incomplete_order(id_pedido){
   }
 }
 
-
+function completed_order(id_pedido){
+  if(confirm('¿Confirmas que el resto de productos te llegó completo?')){
+    $.ajax({
+      url: '/orders/completed_order/',
+      data: {
+        'id_pedido': id_pedido,
+      },
+      dataType: 'json',
+      type: 'GET',
+      success: function(data) {
+        location.reload();
+      }
+    });
+  }
+}
 
 
 

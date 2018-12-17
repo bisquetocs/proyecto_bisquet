@@ -81,7 +81,7 @@ def link_code(request):
     """
     u = OCSUser.objects.get(user = request.user)
     code = ''
-    francs = LinkWithF.objects.filter(id_franchise = u.id_franchise, used = False)
+    francs = LinkWithF.objects.filter(id_provider = u.id_provider, used = False)
     if request.method == 'POST':
         code = code_generator()
         l = LinkWithF(link_code=code, used=False, active=False)

@@ -13,7 +13,7 @@
 
       <form method="post">
         {% csrf_token %}
-        <input class="btn btn-lg btn-primary " type="submit" value="Generar código">
+        <input class="btn btn-lg btn-primary " type="submit" value="Generar código" {% if francs.count  >= 5 %}disabled{% endif %}>
         <br><br>
         <input class="form-control" type="text" placeholder="" value="{{ code }}" name="link_code" readonly>
       </form>

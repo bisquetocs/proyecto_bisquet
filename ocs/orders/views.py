@@ -160,7 +160,8 @@ def add_product_to_order(request):
                         cantidad_productos=0,
                         precio_total=None,
                         activo=True,
-                        arrive=False)
+                        arrive=False,
+                        completed=False)
         order.save()
         order_status = OrderInStatus(id_pedido=order,
                                         id_status=OrderStatus.objects.get(id=1),
@@ -456,7 +457,6 @@ def register_arrival (request, id_order):
             incomplete = True
             incomplete_p_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True, id_status = 3)
             aux_p_list = OrderProductInStatus.objects.filter(id_pedido = order, activo = True,).exclude(id__in=incomplete_p_list)
-
         else:
             incomplete = False
             incomplete_p_list = None
@@ -468,6 +468,7 @@ def register_arrival (request, id_order):
             'data':order,
             'products_list':products_list,
             'incomplete': incomplete,
+            'completed': order.completed,
             'incomplete_p_list': incomplete_p_list,
             'aux_p_list': aux_p_list,
         }
@@ -478,7 +479,6 @@ def register_arrival (request, id_order):
 
 def complete_order(request):
     id_pedido = request.GET.get('id_pedido', None)
-    print(id_pedido)
     order = Order.objects.get(id = id_pedido, activo=True)
     order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
 
@@ -492,27 +492,41 @@ def complete_order(request):
     order.activo = False
     order.save()
 
-    productos = OrderProductInStatus.objects.filter(id_pedido = order, activo=True)
+    incomplete_order_status = OrderStatus.objects.get(id=7)
+    incomplete = False
+    if order_in_status.id_status == incomplete_order_status:
+        incomplete = True
+
+    if incomplete:
+        status = OrderProductStatus.objects.get(id=3)
+        productos = OrderProductInStatus.objects.filter(id_pedido = order, activo=True, id_status=status)
+    else:
+        productos = OrderProductInStatus.objects.filter(id_pedido = order, activo=True)
+
     for p in productos:
+        if incomplete:
+            aux_cant = (p.cantidad-p.cantidad_actual)
+        else:
+            aux_cant = (p.cantidad)
         exist = LinkedInventory.objects.filter(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product).exists()
         if exist:
             prod_inv = LinkedInventory.objects.get(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product)
             if p.id_unidad == prod_inv.id_unidad:
-                prod_inv.amount = prod_inv.amount + p.cantidad
+                prod_inv.amount = prod_inv.amount + aux_cant
             else:
                 exist = Equivalencias.objects.filter(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad, activo=True).exists()
                 if exist:
                     equiv = Equivalencias.objects.get(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad)
-                    cant_por_equiv = (p.cantidad*equiv.cantidad_origen)/equiv.cantidad_destino
+                    cant_por_equiv = (aux_cant*equiv.cantidad_origen)/equiv.cantidad_destino
                     prod_inv.amount = prod_inv.amount + cant_por_equiv
                 else:
                     equiv = Equivalencias.objects.get(id_product = p.id_complete_product.id_product, id_unidad_destino = prod_inv.id_unidad)
-                    cant_por_equiv = (p.cantidad*equiv.cantidad_destino)/equiv.cantidad_origen
+                    cant_por_equiv = (aux_cant*equiv.cantidad_destino)/equiv.cantidad_origen
                     prod_inv.amount = prod_inv.amount + cant_por_equiv
         else:
-            prod_inv = LinkedInventory(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product, id_unidad=p.id_unidad, amount = p.cantidad)
+            prod_inv = LinkedInventory(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product, id_unidad=p.id_unidad, amount = aux_cant)
         prod_inv.save()
-        bitacora = LinkedProductRecord(id_franchise=order.id_franchise,id_linked_product = prod_inv,id_unidad=p.id_unidad,date = timezone.now(),comment = "Ingreso del pedido #"+str(order.id),amount = p.cantidad,io = True)
+        bitacora = LinkedProductRecord(id_franchise=order.id_franchise,id_linked_product = prod_inv,id_unidad=p.id_unidad,date = timezone.now(),comment = "Ingreso del pedido #"+str(order.id),amount = aux_cant,io = True)
         bitacora.save()
     data = { 'success': True, }
     return JsonResponse(data)
@@ -572,8 +586,43 @@ def incomplete_order(request):
                 }
     return JsonResponse(data)
 
+def completed_order(request):
+    id_order = request.GET.get('id_pedido', None)
+    exist = Order.objects.filter(id = id_order).exists()
+    if exist == False:
+        messages.warning(request, 'Este pedido no existe!')
+        return redirect('/')
+    else:
+        order = Order.objects.get(id = id_order)
+    u = OCSUser.objects.get(user = request.user)
 
-
+    status = OrderProductStatus.objects.get(id=3)
+    productos = OrderProductInStatus.objects.filter(id_pedido = order, activo=True).exclude(id_status=status)
+    for p in productos:
+        exist = LinkedInventory.objects.filter(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product).exists()
+        if exist:
+            prod_inv = LinkedInventory.objects.get(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product)
+            if p.id_unidad == prod_inv.id_unidad:
+                prod_inv.amount = prod_inv.amount + p.cantidad
+            else:
+                exist = Equivalencias.objects.filter(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad, activo=True).exists()
+                if exist:
+                    equiv = Equivalencias.objects.get(id_product = p.id_complete_product.id_product, id_unidad_origen = prod_inv.id_unidad)
+                    cant_por_equiv = (p.cantidad*equiv.cantidad_origen)/equiv.cantidad_destino
+                    prod_inv.amount = prod_inv.amount + cant_por_equiv
+                else:
+                    equiv = Equivalencias.objects.get(id_product = p.id_complete_product.id_product, id_unidad_destino = prod_inv.id_unidad)
+                    cant_por_equiv = (p.cantidad*equiv.cantidad_destino)/equiv.cantidad_origen
+                    prod_inv.amount = prod_inv.amount + cant_por_equiv
+        else:
+            prod_inv = LinkedInventory(id_franchise=order.id_franchise, id_product=p.id_complete_product.id_product, id_unidad=p.id_unidad, amount = p.cantidad)
+        prod_inv.save()
+        bitacora = LinkedProductRecord(id_franchise=order.id_franchise,id_linked_product = prod_inv,id_unidad=p.id_unidad,date = timezone.now(),comment = "Ingreso del pedido #"+str(order.id),amount = p.cantidad,io = True)
+        bitacora.save()
+    order.completed = True
+    order.save()
+    data = { 'success': True, }
+    return JsonResponse(data)
 
 
 

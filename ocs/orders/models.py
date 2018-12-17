@@ -24,6 +24,7 @@ class Order(models.Model):
     precio_total = models.DecimalField(max_digits=8 ,decimal_places=3, null=True)
     activo = models.BooleanField()
     arrive = models.BooleanField()
+    completed = models.BooleanField()
 
 # Estado de un producto en ese pedido (incompleto, mal estado, completo...)
 class OrderProductStatus(models.Model):
