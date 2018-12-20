@@ -16,15 +16,17 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
+from datetime import datetime, timedelta
 
 
-from .forms import RegisterProviderForm
-from accounts.models import OCSUser
-from products.models import Product
-from franchise.models import Franchise
+from accounts.models import *
+from franchise.models import *
+from inventory.models import *
+from orders.models import *
+from products.models import *
+from provider.models import *
 
-from .models import Provider, LinkWithF, Days, OfficeHours, DailyClients
-
+import xlwt
 import string
 import random
 
@@ -284,5 +286,72 @@ def edit_provider (request):
     # If not POST then shows edit_provider form
     else:
         return render(request, 'provider/profile.html', {'usuario':ocs_user, 'edit':True,})
+
+#test de BETO para exportar EXCEL
+def excel(request):
+    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    u = OCSUser.objects.get(user = request.user)
+    if request.method == 'POST':
+        franchises = LinkWithF.objects.filter(id_provider=u.id_provider, used=True, active=True)
+        tomorrow_orders = Order.objects.filter(id_provider=u.id_provider, fecha_ideal=tomorrow)
+        products_orders = OrderProductInStatus.objects.filter(id_pedido__in=tomorrow_orders,activo=True)
+        # Generate XLS
+        response = HttpResponse(content_type='application/ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="'+str(tomorrow)+'_concentrado.xls"'
+        wb = xlwt.Workbook(encoding='utf-8')
+        ws = wb.add_sheet('Concentrado_'+str(tomorrow))
+        font_style = xlwt.XFStyle()
+        font_style.font.bold = True
+
+        row_aux = 1
+        for p in products_orders:
+            ws.write(row_aux, 0, p.id_complete_product.id_product.nombre.capitalize(), font_style)
+            row_aux=row_aux+1
+
+        col_aux = 1
+        for f in franchises:
+            ws.write(0, col_aux, f.id_franchise.nombre, font_style)
+            col_aux=col_aux+1
+
+        font_style = xlwt.XFStyle()
+        col_aux = 1
+        #--ESTA FUNCION ESTA MAL ---------------MAL----------------MAL------------------MAL---------------
+        for f in franchises:
+            row_aux = 1
+            exists = tomorrow_orders.filter(id_franchise=f.id_franchise).exists()
+            if exists:
+                order = tomorrow_orders.get(id_franchise=f.id_franchise)
+                product_order = OrderProductInStatus.objects.filter(id_pedido=order,activo=True)
+                aux_query = 0
+                while aux_query < product_order.count():
+                    for p in product_order:
+                        if p.id_complete_product.id_product == products_orders[aux_query].id_complete_product.id_product:
+                            ws.write(row_aux, col_aux, p.cantidad , font_style)
+                            row_aux = row_aux+1
+                        aux_query = aux_query+1
+                    aux_query = None
+            col_aux = col_aux+1
+        wb.save(response)
+        return response
+    return redirect(reverse('provider:home'))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #

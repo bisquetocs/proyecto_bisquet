@@ -16,8 +16,13 @@ from django.views import generic
 import xlwt
 from django.contrib.auth.models import User
 import datetime
-from .models import LinkedInventory, LinkedProductRecord
 
+from accounts.models import *
+from franchise.models import *
+from inventory.models import *
+from orders.models import *
+from products.models import *
+from provider.models import *
 
 # Create your views here.
 @login_required

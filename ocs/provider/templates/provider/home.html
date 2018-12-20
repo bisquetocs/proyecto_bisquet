@@ -48,7 +48,15 @@
 
 {% block content %}
   {% block extras %}
+  <h4>Exportar concentrado de pedidos del día de mañana...</h4>
+  <hr>
+  <form action="/provider/excel/" method="POST">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary"><span class="fa fa-file-excel-o"> </span> </button> <small> testing</small>
+  </form>
   {% endblock extras %}
+
+
 {% endblock content %}
 
 {% block footer %}

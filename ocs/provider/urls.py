@@ -22,4 +22,5 @@ urlpatterns = [
     path('my_clients/daily_clients_interactive/', views.daily_clients_interactive, name='daily_clients_interactive'),
     path('profile/', views.profile, name="profile"),
     path('profile/edit/', views.edit_provider, name="editProfile"),
+    path('excel/', views.excel, name="excel"),
 ]

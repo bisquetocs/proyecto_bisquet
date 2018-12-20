@@ -16,16 +16,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count
-
-from .forms import RegisterFranchiseForm
-from provider.models import LinkWithF, Provider
-from accounts.models import OCSUser
-from orders.models import Order
-
-from .models import Franchise
-
-
 from datetime import datetime, timedelta
+
+from accounts.models import *
+from franchise.models import *
+from inventory.models import *
+from orders.models import *
+from products.models import *
+from provider.models import *
+
 
 @login_required
 def registerFranchise(request):
