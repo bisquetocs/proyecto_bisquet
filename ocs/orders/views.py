@@ -99,6 +99,7 @@ def make_order_to(request, id_provider):
         'orders': None,
         'orders_products': None,
         'orders_day': None,
+        'supposed_day': None,
         'orders_status': None,
     }
     exists = Order.objects.filter(id_franchise=franchise, id_provider=provider, activo=True).exists()
@@ -129,6 +130,37 @@ def make_order_to(request, id_provider):
             data['orders_status'] = order_s
         else:
             data['order_to_edit'] = False
+    else:
+        daily_clients = DailyClients.objects.values_list('day', flat=True).filter(id_provider=provider, id_franchise=franchise, activo=True)
+        if daily_clients.count() is not 0:
+            today = datetime.datetime.today()
+            date_pedido = today - datetime.timedelta(days=1)
+            i = today.weekday()
+            turn = False
+            while i < 8:
+                if i in daily_clients:
+                    if (i-1) > today.weekday() and not turn:
+                        day_pedido = i-1
+                        break
+                    elif turn:
+                        day_pedido = min(daily_clients)-1
+                        break
+                if i == 7:
+                    i = 1
+                    turn = True
+                else:
+                    i = i+1
+                date_pedido = date_pedido + datetime.timedelta(days=1)
+            if day_pedido == 0: day = 'LUNES'
+            elif day_pedido == 1: day = 'MARTES'
+            elif day_pedido == 2: day = 'MIÉRCOLES'
+            elif day_pedido == 3: day = 'JUEVES'
+            elif day_pedido == 4: day = 'VIERNES'
+            elif day_pedido == 5: day = 'SÁBADO'
+            elif day_pedido == 6: day = 'DOMINGO'
+            data['orders_day'] = day
+            data['supposed_day'] = date_pedido.date()
+
     return render(request, 'orders/make_order_to.html', data)
 
 def add_product_to_order(request):
@@ -152,6 +184,7 @@ def add_product_to_order(request):
         equiv = Equivalencias.objects.filter(id_product = product, id_unidad_destino = unidad, activo = True)[0]
         complete_product = CompleteProduct.objects.get(id_product=product, id_unidad=equiv.id_unidad_origen, activo=True)
 
+    first = False
     if id_pedido is None or id_pedido == '':
         order = Order(id_franchise=franchise,
                         id_provider=provider,
@@ -168,6 +201,7 @@ def add_product_to_order(request):
                                         fecha=timezone.now(),
                                         activo=True)
         order_status.save()
+        first = True
     else:
         order = Order.objects.get(id=id_pedido)
     alrready_in_order = OrderProductInStatus.objects.filter(id_pedido=order, id_complete_product=complete_product, activo=True).exists()
@@ -222,7 +256,8 @@ def add_product_to_order(request):
                 'precio': order_product.precio_por_unidad,
                 'total': order_product.total,
                 'precio_total': order.precio_total,
-                'cantidad_total': order.cantidad_productos,}
+                'cantidad_total': order.cantidad_productos,
+                'first': first,}
     return JsonResponse(data)
 
 def delete_product_from_order(request):
@@ -340,12 +375,15 @@ def cancel_order(request):
     order = Order.objects.get(id = id_pedido, activo=True)
     order.activo = False
     order_in_status = OrderInStatus.objects.get(id_pedido=order, activo=True)
-    order_status = OrderStatus.objects.get(id=5)
-    new_order_in_status = OrderInStatus(id_pedido=order,id_status=order_status,fecha=timezone.now(), activo=True)
-    new_order_in_status.save()
-    order_in_status.activo = False
-    order_in_status.save()
-    order.save()
+    if order_in_status.id_status.id == 1 or order_in_status.id_status.id == 2:
+        order.delete()
+    else:
+        order_status = OrderStatus.objects.get(id=5)
+        new_order_in_status = OrderInStatus(id_pedido=order,id_status=order_status,fecha=timezone.now(), activo=True)
+        new_order_in_status.save()
+        order_in_status.activo = False
+        order_in_status.save()
+        order.save()
     data = { 'success': True, }
     return JsonResponse(data)
 

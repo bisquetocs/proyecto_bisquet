@@ -7,7 +7,9 @@ modify date:    04/11/18
 # Create your views here.
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.http import Http404
+from django.http import Http404, JsonResponse
+import json
+
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
@@ -15,16 +17,12 @@ from django.utils import timezone
 from django.contrib import messages
 from decimal import Decimal
 
-from accounts.models import OCSUser
-from provider.models import Provider
-from .models import Product
-from .models import UnidadDeMedida
-from .models import Price
-from .models import CompleteProduct
-from .models import Equivalencias
-
-from django.http import JsonResponse
-import json
+from accounts.models import *
+#from franchise.models import *
+#from inventory.models import *
+#from orders.models import *
+from products.models import *
+from provider.models import *
 
 
 # INPUT
@@ -327,13 +325,16 @@ def check_available_product(request):
             id_unidades.append(equi.id_unidad_origen.id)
             id_unidades.append(equi.id_unidad_destino.id)
         unidades = UnidadDeMedida.objects.filter(id__in = id_unidades)
+        list_u = list(unidades)
+        list_u.sort(key=lambda uni: id_unidades.index(uni.id))
+
         data = {
             'id_product': product.id,
             'id_unidades': [],
             'unidades': [],
             'nombres_uni': [],
         }
-        for uni in unidades:
+        for uni in list_u:
             data['id_unidades'].append(uni.id)
             data['unidades'].append(uni.abreviacion)
             data['nombres_uni'].append(uni.nombre)

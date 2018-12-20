@@ -123,8 +123,13 @@ function activate_add_button(){
 
 function add_product_to_order(){
   if (doc('fecha_ideal').value != null){
+    if(doc('fecha_ideal').type == 'date'){
+      aux_date = 1;
+    }else{
+      aux_date = 0;
+    }
     var date = new Date(doc('fecha_ideal').value);
-    var dd = date.getDate();
+    var dd = date.getDate()+aux_date;
     var mm = date.getMonth()+1; //January is 0!
     var yyyy = date.getFullYear();
      if(dd<10){
@@ -137,7 +142,9 @@ function add_product_to_order(){
     if(doc('add_product').value != null){
       if(doc('ud_medida').value != 0){
         if(doc('cantidad_pedida').value != null && doc('cantidad_pedida').value != 0){
-          doc('enviar_pedido').disabled = true;
+          if(doc('enviar_pedido')){
+            doc('enviar_pedido').disabled = true;
+          }
           $.ajax({
              url: '/orders/add_product_to_order/',
              data: {
@@ -152,8 +159,16 @@ function add_product_to_order(){
              type: 'GET',
              success: function(data) {
                if(data.success){
-                 if (doc('edited').value == 0){
-                   doc('edited').value = 1;
+                 if(data.first){
+                   location.reload();
+                 }
+                 if(data.cantidad_total==0){
+                   doc('contenido_pedido').innerHTML = '<tr>'+
+                                                         '<td colspan="6"><center class="mt-3 mb-3" style="color:gray">'+
+                                                           'NO tienes productos en este pedido'+
+                                                         '</center></td>'+
+                                                       '</tr>';
+                 }else if (data.cantidad_total==1){
                    doc('contenido_pedido').innerHTML = '<tr id="row'+data.id_ord_prod+'" scope="row">'+
                                                          '<td>'+data.cantidad+'</td>'+
                                                          '<td>'+data.ud_medida+'</td>'+
@@ -194,7 +209,6 @@ function add_product_to_order(){
                  doc('cantidad_pedida').disabled = true;
                }
                removeElement('product'+data.id_product);
-               doc('enviar_pedido_card').hidden = false;
              }
           });
         }else{
@@ -230,7 +244,10 @@ function calculate_day(){
 
 function start_order(){
   doc('realizar_pedido').hidden = true;
-  doc('fecha_ideal').focus()
+  doc('fecha_ideal').focus();
+  doc('add_product').disabled = false;
+  doc('add_product').focus();
+  doc('add_product').click();
 }
 function edit_order(){
   doc('editar_pedido').hidden = true;
@@ -258,6 +275,13 @@ function delete_product_from_order(id_prod_ord){
            doc('list_products').innerHTML = doc('list_products').innerHTML+'<option id="product'+data.id_product+'" name="'+data.id_product+'" value="'+data.nombre_product+'">';
            doc('total_productos').value = data.cantidad_total;
            doc('total_precio').value = data.precio_total;
+           if(data.cantidad_total==0){
+             doc('contenido_pedido').innerHTML = '<tr>'+
+                                                   '<td colspan="6"><center class="mt-3 mb-3" style="color:gray">'+
+                                                     'NO tienes productos en este pedido'+
+                                                   '</center></td>'+
+                                                 '</tr>';
+           }
          }
        }
     });
@@ -285,20 +309,24 @@ function cancel_order(){
   }
 }
 function send_order(){
-  if(confirm('¿Seguro que quieres enviar este pedido? ¡El proveedor ya podrá ver el contenido y las actualizaciones que vayas haciendo!')){
-    $.ajax({
-      url: '/orders/send_order/',
-      data: {
-        'id_pedido': doc('id_pedido').value,
-        'id_provider': doc('orderProvider').value,
-      },
-      dataType: 'json',
-      type: 'GET',
-      success: function(data) {
-        alert('El pedido ha sido enviado');
-        location.reload();
-      }
-    });
+  if(doc('total_productos').value==0){
+    alert('¡NO puedes enviar un pedido con 0 (cero) productos!');
+  }else{
+    if(confirm('¿Seguro que quieres enviar este pedido? ¡El proveedor ya podrá ver el contenido y las actualizaciones que vayas haciendo!')){
+      $.ajax({
+        url: '/orders/send_order/',
+        data: {
+          'id_pedido': doc('id_pedido').value,
+          'id_provider': doc('orderProvider').value,
+        },
+        dataType: 'json',
+        type: 'GET',
+        success: function(data) {
+          alert('El pedido ha sido enviado');
+          location.reload();
+        }
+      });
+    }
   }
 }
 function complete_order(id_pedido){

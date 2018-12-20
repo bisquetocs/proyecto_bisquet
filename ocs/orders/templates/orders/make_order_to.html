@@ -2,21 +2,12 @@
 
 <!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
 {% block headerinfo %}
-{% if order_to_edit %}
-  {% if orders_products.count == 0 %}
   <input id="orderProvider" type="text" name="{{provider.nombre}}" value="{{provider.id}}"hidden>
-  <input id="edited" type="text" name="" value="0" hidden>
-  <input id="id_pedido" type="number" name="" value="{{ orders.id }}" hidden>
+  {% if order_to_edit %}
+    <input id="id_pedido" type="number" name="" value="{{ orders.id }}" hidden>
   {% else %}
-  <input id="orderProvider" type="text" name="{{provider.nombre}}" value="{{provider.id}}"hidden>
-  <input id="edited" type="text" name="" value="1" hidden>
-  <input id="id_pedido" type="number" name="" value="{{ orders.id }}" hidden>
+    <input id="id_pedido" type="number" name="" value="" hidden>
   {% endif %}
-{% else %}
-<input id="orderProvider" type="text" name="{{provider.nombre}}" value="{{provider.id}}"hidden>
-<input id="edited" type="text" name="" value="0" hidden>
-<input id="id_pedido" type="number" name="" value="" hidden>
-{% endif %}
 {% endblock headerinfo %}
 
 <!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
@@ -32,56 +23,48 @@
 
 <!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
 {% block contenido_pedido %}
-{% if order_to_edit %}
-  {% if orders_products.count == 0 %}
+  {% if order_to_edit %}
+    {% if orders_products.count == 0 %}
+    <tr>
+      <td colspan="6"><center class="mt-3 mb-3" style="color:gray">
+        NO tienes productos en este pedido
+      </center></td>
+    </tr>
+    {% else %}
+      {% for prod in orders_products %}
+      <tr id="row{{prod.id}}">
+        <td>{{prod.cantidad}}</td>
+        <td>
+          {% if prod.id_unidad is None %}
+          {{prod.id_complete_product.id_unidad.abreviacion}}
+          {% else %}
+          {{prod.id_unidad.abreviacion}}
+          {% endif %}
+        </td>
+        <td>{{prod.id_complete_product.id_product.nombre.capitalize}}</td>
+        <td>$ {{prod.precio_por_unidad}}</td>
+        <td>$ {{prod.total}}</td>
+        <td>
+          <button type="button" class="btn btn-sm btn-outline-danger" name="button" onclick="delete_product_from_order({{prod.id}})">
+            <span class="fa fa-trash"></span>
+          </button>
+        </td>
+      </tr>
+      {% endfor %}
+    {% endif %}
+  {% else %}
   <tr>
     <td colspan="6"><center class="mt-3 mb-3" style="color:gray">
-      NO tienes productos en este pedido
+      Aún no tienes pedido con <b>{{provider.nombre}}</b><br />
+      <b><span class="fa fa-plus"></span></b><br />Haz un pedido agregando el primer producto...
     </center></td>
   </tr>
-  {% else %}
-    {% for prod in orders_products %}
-    <tr id="row{{prod.id}}">
-      <td>{{prod.cantidad}}</td>
-      <td>
-        {% if prod.id_unidad is None %}
-        {{prod.id_complete_product.id_unidad.abreviacion}}
-        {% else %}
-        {{prod.id_unidad.abreviacion}}
-        {% endif %}
-      </td>
-      <td>{{prod.id_complete_product.id_product.nombre.capitalize}}</td>
-      <td>$ {{prod.precio_por_unidad}}</td>
-      <td>$ {{prod.total}}</td>
-      <td>
-        <button type="button" class="btn btn-sm btn-outline-danger" name="button" onclick="delete_product_from_order({{prod.id}})">
-          <span class="fa fa-trash"></span>
-        </button>
-      </td>
-    </tr>
-    {% endfor %}
   {% endif %}
-{% else %}
-<tr>
-  <td colspan="6"><center class="mt-3 mb-3" style="color:gray">
-    Aún no tienes pedido con <b>{{provider.nombre}}</b><br />
-    <b><span class="fa fa-edit"></span></b><br />Haz un pedido
-  </center></td>
-</tr>
-{% endif %}
 {% endblock contenido_pedido %}
 
 <!-- IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII -->
 {% block resumen %}
   {% if order_to_edit %}
-    {% if too_late %}
-    <div class="mt-3 mb-3">
-      <small>Tienes un pedido para <b>{{provider.nombre}}</b> en <u>preparación y/o envío</u></small>
-      <button id="realizar_pedido" onclick="start_order()" class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-          <span class="fa fa-edit"></span><br />Realizar nuevo pedido a <br /><b>{{provider.nombre}}</b>
-      </button>
-    </div>
-    {% else %}
     <div class="container-fluid mt-3">
       {% if orders_status.id_status.nombre == 'Guardado' %}
       <div class="card">
@@ -99,7 +82,7 @@
           <small>Fecha de entrega:</small>
         </div>
         <div class="col-7 mt-2">
-          <input disabled id="fecha_ideal" class="form-control" type="text" name="" value="{{ orders.fecha_ideal }}" onchange="calculate_day()">
+          <input disabled id="fecha_ideal" class="form-control" type="text" name="" value="{{ orders.fecha_ideal }}">
         </div>
         <div class="col-5 mt-2">
           <small>Entrega el día:</small>
@@ -160,25 +143,8 @@
         </div>
       </div>
     </div>
-    <script>
-      document.getElementById('add_product').disabled = false;
-    </script>
-    {% endif %}
   {% else %}
-  <div class="mt-3 mb-3">
-    <button id="realizar_pedido" onclick="start_order()" class="btn btn-sm btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-        <span class="fa fa-edit"></span><br />Realizar pedido a <br /><b>{{provider.nombre}}</b>
-    </button>
-  </div>
-  {% endif %}
-  <div class="collapse container-fluid" id="collapseExample">
-    <div id="enviar_pedido_card" class="card" hidden>
-      <div class="card-body">
-        <button id="enviar_pedido" onclick="send_order()" class="btn btn-sm btn-block btn-success" type="button">
-            <span class="fa fa-send"></span> <b>Enviar pedido</b>
-        </button>
-      </div>
-    </div>
+  <div class="container-fluid mt-3" id="">
     <small>Pedido para:</small>
     <h5 class="mb-3">{{provider.nombre}}</h5>
     <div class="row">
@@ -186,13 +152,21 @@
         <small>Fecha de entrega:</small>
       </div>
       <div class="col-7 mt-2">
-        <input id="fecha_ideal" class="form-control" type="date" name="" onchange="calculate_day()">
+        {% if supposed_day is None %}
+        <input id="fecha_ideal" class="form-control" type="date" name="" onchange="calculate_day()" value="">
+        {% else %}
+        <input disabled id="fecha_ideal" class="form-control" type="text" name="" value="{{supposed_day}}">
+        {% endif %}
       </div>
       <div class="col-5 mt-2">
         <small>Entrega el día:</small>
       </div>
       <div class="col-7 mt-2">
-        <input disabled id="dia_ideal" class="form-control" type="text" name="">
+        {% if orders_day is None %}
+        <input disabled id="dia_ideal" class="form-control" type="text" name="" value="-----">
+        {% else %}
+        <input disabled id="dia_ideal" class="form-control" type="text" name="" value="{{orders_day}}">
+        {% endif %}
       </div>
       <div class="col-5 mt-2">
         <small>Total de productos:</small>
@@ -218,7 +192,6 @@
       </div>
     </div>
   </div>
-
   <script type="text/javascript">
     var today = new Date();
     var dd = today.getDate()+1;
@@ -232,6 +205,11 @@
      }
     today = yyyy+'-'+mm+'-'+dd;
     document.getElementById("fecha_ideal").setAttribute("min", today);
+  </script>
+  {% endif %}
+  <script>
+    document.getElementById('add_product').disabled = false;
+    document.getElementById('add_product').focus();
   </script>
 {% endblock resumen %}
 
